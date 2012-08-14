@@ -7,7 +7,7 @@ function ctrl_c() {
 if [ `uname` == Darwin ]; then
 	echo "Darwin detected"
     PATH=$PATH:/opt/local/bin
-    PATH=$PATH:/Users/dsullivan2/scripts
+    PATH=$PATH:/Users/`whoami`/scripts
     PATH=$PATH:/opt/local/lib/postgresql91/bin
     PATH=$PATH:/Users/dsullivan2/Dropbox/scripts/adedit
 elif [ `uname` == Linux ]; then 
