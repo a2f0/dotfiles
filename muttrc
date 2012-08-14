@@ -1,0 +1,17 @@
+set imap_user = "dansullivan@gmail.com"
+set imap_pass = ""
+
+set smtp_url = "smtp://dansullivan@smtp.gmail.com:587/"
+set smtp_pass = ""
+set from = "dansullivan@gmail.com"
+set realname = "Dan Sullivan"
+
+set folder = "imaps://imap.gmail.com:993"
+set spoolfile = "+INBOX"
+set postponed="+[Gmail]/Drafts"
+
+set header_cache=~/.mutt/cache/headers
+set message_cachedir=~/.mutt/cache/bodies
+set certificate_file=~/.mutt/certificates
+
+set move = no
