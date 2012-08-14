@@ -40,14 +40,45 @@ killwin7rdp () {
 }
 
 pdf () {
-	evince $1 
+	evince $1 &
 }
 
-ldap() {
+ldap () {
 	ldapsearch -v -x -LLL -h ldap.uchicago.edu -p 389 -b dc=uchicago,dc=edu uid=$1
 }
 
 #query google's dns servers
-qg() {
+qg () {
 	dig @8.8.8.8 $1
+}
+
+compress_win7 () {
+	vboxmanage modifyhd "~/VirtualBox VMs/Win7 (BSDAD)/Win7 (BSDAD).vdi" --compact
+}
+
+show_swap_utilization () {
+        swapon -s 
+}
+
+rdp () {
+       rdesktop $1 & 
+}
+
+short () {
+       export QUERY_RESULT=`dig +short $1`
+       dig $1
+       if [ `uname` == Darwin ]; then
+            echo $QUERY_RESULT | tail -n 1 | awk '{ print $NF }' | tr -d '\n' | pbcopy
+       elif [ `uname` == Linux ]; then
+            echo $QUERY_RESULT | tail -n 1 | awk '{ print $NF }' | tr -d '\n' | xclip 
+            echo $QUERY_RESULT | tail -n 1 | awk '{ print $NF }' | tr -d '\n' \
+            | xclip -out -selection clipbaord 
+       else
+           echo "Unknown platform"
+       fi
+       unset QUERY_RESULT
+}
+
+whatismyip () {
+       curl http://icanhazip.com/
 }
