@@ -54,5 +54,5 @@ if [ $TERM == xterm ]; then
     xset r rate 200 100
 fi
 
-#Enable timestamping on bash_history
-export HISTTIMEFORMAT="%d.%m.%y %T 
+#Enable timestamping on bash_history (type history to see timestamps)
+export HISTTIMEFORMAT="%d.%m.%y %T "
