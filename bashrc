@@ -31,7 +31,6 @@ fi
 source ~/.aliases
 source ~/.aliases-private
 source ~/.functions
-source ~/.insanely_lazy
 
 dirty_bash_prompt
 
