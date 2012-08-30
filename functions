@@ -3,82 +3,91 @@
 #Dan Sullivan
 #use source ~/.functions to load
 #declare -F to list functions from bash 
-#test_function straight from bash to check it (esists in this file)
+#test_function straight from bash to check it (exists in this file)
 
 show_date () {
-	echo `date +%m`.`date +%d`.`date +%y`
+    echo `date +%m`.`date +%d`.`date +%y`
 }
 
 test_function () {
-	echo "whatever"
+    echo "whatever"
 } 
 
 #Take a time-stamped snapshot of my Win7 virtualbox instantiation.
 snapwin7 () {
-	vboxmanage snapshot Win7 take function.`date +%m`.`date +%d`.`date +%y`
+    vboxmanage snapshot Win7 take function.`date +%m`.`date +%d`.`date +%y`
 }
 
 snapxpucad () {
-	vboxmanage snapshot "XP (UCAD)" take function.`date +%m`.`date +%d`.`date +%y`
+    vboxmanage snapshot "XP (UCAD)" take function.`date +%m`.`date +%d`.`date +%y`
 }
 
 #kill every open RDP session on my box.
 rdpkill () {
-	for i in `ps -ef | grep rdesktop | grep -v grep | awk '{ print $2 }'`; do kill $i; done
+    for i in `ps -ef | grep rdesktop | grep -v grep | awk '{ print $2 }'`; do kill $i; done
 }
 
 killrdp () {
-	rdpkill
+    rdpkill
 }
 
 dirty_bash_prompt () {
-	PS1="--(\u@\h)-(\w)--\n> "
+    PS1="--(\u@\h)-(\w)--\n> "
 }
 
 killwin7rdp () {
-	kill `ps -ef | grep rdesktop | grep -v grep | grep win7.bsd.uchicago.edu:3389 | awk '{ print $ 2 } '`
+    kill `ps -ef | grep rdesktop | grep -v grep | grep win7.bsd.uchicago.edu:3389 | awk '{ print $ 2 } '`
 }
 
 pdf () {
-	evince $1 &
+    evince $1 &
 }
 
 ldap () {
-	ldapsearch -v -x -LLL -h ldap.uchicago.edu -p 389 -b dc=uchicago,dc=edu uid=$1
+    ldapsearch -v -x -LLL -h ldap.uchicago.edu -p 389 -b dc=uchicago,dc=edu uid=$1
 }
 
 #query google's dns servers
 qg () {
-	dig @8.8.8.8 $1
+    dig @8.8.8.8 $1
 }
 
 compress_win7 () {
-	vboxmanage modifyhd "~/VirtualBox VMs/Win7 (BSDAD)/Win7 (BSDAD).vdi" --compact
+    vboxmanage modifyhd "~/VirtualBox VMs/Win7 (BSDAD)/Win7 (BSDAD).vdi" --compact
+}
+
+screenshot () {
+    if [ -e /tmp/screenshot.jpg ]; then
+           rm -rf /tmp/screenshot.jpg
+    fi
+    import /tmp/screenshot.jpg
+    print "The screenshot can be picked up at /tmp/screenshot.jpg"
+    echo "test"
 }
 
 show_swap_utilization () {
-        swapon -s 
+    swapon -s 
 }
 
 rdp () {
-       rdesktop $1 & 
+    rdesktop $1 & 
 }
 
 short () {
-       export QUERY_RESULT=`dig +short $1`
-       dig $1
-       if [ `uname` == Darwin ]; then
-            echo $QUERY_RESULT | tail -n 1 | awk '{ print $NF }' | tr -d '\n' | pbcopy
-       elif [ `uname` == Linux ]; then
-            echo $QUERY_RESULT | tail -n 1 | awk '{ print $NF }' | tr -d '\n' | xclip 
-            echo $QUERY_RESULT | tail -n 1 | awk '{ print $NF }' | tr -d '\n' \
-            | xclip -out -selection clipbaord 
-       else
-           echo "Unknown platform"
-       fi
-       unset QUERY_RESULT
+    export QUERY_RESULT=`dig +short $1`
+    dig $1
+    if [ `uname` == Darwin ]; then
+        echo $QUERY_RESULT | tail -n 1 | awk '{ print $NF }' | tr -d '\n' | pbcopy
+    elif [ `uname` == Linux ]; then
+        echo $QUERY_RESULT | tail -n 1 | awk '{ print $NF }' | tr -d '\n' | xclip 
+        echo $QUERY_RESULT | tail -n 1 | awk '{ print $NF }' | tr -d '\n' \
+        | xclip -out -selection clipbaord 
+    else
+        echo "Unknown platform"
+    fi
+        unset QUERY_RESULT
 }
 
 whatismyip () {
-       curl http://icanhazip.com/
+    curl http://icanhazip.com/
 }
