@@ -1,4 +1,4 @@
-#!/bin/bash
+#load this file with 'source aliases'
 alias chrome="chromium --user-data-dir=~/chromium-user-data/&"
 alias chromium="chromium --user-data-dir=~/chromium-user-data/&"
 #alias dropbox="/root/.dropbox-dist/dropboxd > /var/log/dropbox.log &"
@@ -45,7 +45,9 @@ alias xpacpi="vboxmanage controlvm {024b812d-89c3-4143-870d-96b9e5419281} acpipo
 
 if [[ `uname -a`  =~ ARCH ]]; then
     #libreoffice writer
-    alias word="lowriter"
+    alias word="lowriter $1 &"
     #libreoffice calc
-    alias excel="localc"
+    alias excel="localc $1 & "
+    alias calc="localc $1 & "
+    #full screen rdp
 fi
