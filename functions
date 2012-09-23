@@ -1,4 +1,3 @@
-#!/bin/bash
 #My public bash functions
 #Dan Sullivan
 #use source ~/.functions to load
@@ -74,16 +73,15 @@ rdp () {
 }
 
 short () {
-    export QUERY_RESULT=`dig +short $1`
+    export QUERY_RESULT=`dig +short $1 | tail -n 1 | awk '{ print $NF }' | tr -d '\n'`
     dig $1
     if [ `uname` == Darwin ]; then
-        echo $QUERY_RESULT | tail -n 1 | awk '{ print $NF }' | tr -d '\n' | pbcopy
+        echo -n $QUERY_RESULT | pbcopy
     elif [ `uname` == Linux ]; then
-        echo $QUERY_RESULT | tail -n 1 | awk '{ print $NF }' | tr -d '\n' | xclip 
-        echo $QUERY_RESULT | tail -n 1 | awk '{ print $NF }' | tr -d '\n' \
-        | xclip -out -selection clipbaord 
+        echo -n $QUERY_RESULT | xclip 
+        xclip -out | xclip -selection clipboard
     else
-        echo "Unknown platform"
+        echo -n "Unknown platform"
     fi
         unset QUERY_RESULT
 }
