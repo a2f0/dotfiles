@@ -1,3 +1,4 @@
+#!/bin/sh
 trap ctrl_c INT
 
 function ctrl_c() {
@@ -9,7 +10,8 @@ if [ `uname` == Darwin ]; then
     PATH=$PATH:/opt/local/bin
     PATH=$PATH:/Users/dsullivan2/scripts
     PATH=$PATH:/opt/local/lib/postgresql91/bin
-    PATH=$PATH:/Users/dsullivan2/Dropbox/scripts/adedit
+    #PATH=$PATH:/Users/dsullivan2/Dropbox/scripts/adedit
+    PATH=$PATH:~/Dropbox/scripts
 elif [ `uname` == Linux ]; then 
     echo "Linux box detected."
     #disable terminal beep
