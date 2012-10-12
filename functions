@@ -4,6 +4,11 @@
 #declare -F to list functions from bash 
 #test_function straight from bash to check it (exists in this file)
 
+cb () {
+    xclip -out | xclip -selection clipboard
+}
+
+
 show_date () {
     echo `date +%m`.`date +%d`.`date +%y`
 }
