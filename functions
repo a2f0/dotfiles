@@ -60,7 +60,7 @@ compress_win7 () {
     vboxmanage modifyhd "~/VirtualBox VMs/Win7 (BSDAD)/Win7 (BSDAD).vdi" --compact
 }
 
-screenshot () {
+ss () {
     if [ -e /tmp/screenshot.jpg ]; then
            rm -rf /tmp/screenshot.jpg
     fi
@@ -74,7 +74,7 @@ show_swap_utilization () {
 }
 
 rdp () {
-    rdesktop $1 & 
+    rdesktop -K $1 &
 }
 
 short () {
