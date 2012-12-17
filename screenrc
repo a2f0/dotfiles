@@ -1,6 +1,6 @@
 #defscrollback 10000
 #disable the flashing visual bell
-#vbell off
+vbell off
 #disable splash screen
 #startup_message off
 #allow clearning of the scrollback buffer
