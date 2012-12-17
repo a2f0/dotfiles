@@ -1,9 +1,8 @@
+#run this with offlineimap  -c ~/.offlineimaprc
+
 [general]
-# This should contain a comma delimited list of all identifiers of the accounts
-# that are to be synced
-accounts = bsdad 
-# If there are two accounts; `main' and `alternative'...
-#accounts = main,alternative
+# comma-delimited list of active accounts, i.e. gmail, bsdad
+accounts = gmail
 
 [Account bsdad]
 localrepository = bsdad-local
@@ -12,6 +11,7 @@ remoterepository = bsdad-remote
 [Account gmail]
 localrepository = gmail-local
 remoterepository = gmail-remote
+#remotepass =
 
 [Repository bsdad-local]
 type = Maildir

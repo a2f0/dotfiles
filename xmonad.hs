@@ -19,10 +19,9 @@ myPP = xmobarPP { ppCurrent = xmobarColor "#429942" "" . wrap "<" ">" }
 --http://hackage.haskell.org/packages/archive/X11/1.6.0/doc/html/Graphics-X11-Types.html
 toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
 
---this sets the default key binding to the windows key.
---I like the alt key, which is default.
---Leaving this commented.
-myConfig = defaultConfig {      --modMask = mod4Mask
-				terminal="xterm"
-                        	--terminal="rxvt"
-			 }
+myConfig = defaultConfig {
+    --this sets the default key binding to the windows key.
+    --modMask = mod4Mask
+    terminal="xterm"
+    --terminal="rxvt"
+}

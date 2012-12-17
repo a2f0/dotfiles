@@ -1,17 +1,19 @@
 #load this file with 'source aliases'
-alias chrome="chromium --user-data-dir=~/chromium-user-data/&"
-alias chromium="chromium --user-data-dir=~/chromium-user-data/&"
+alias acpi="vboxmanage controlvm $1 acpipowerbutton"
+alias cal="cal -y"
+alias chrome="chromium --user-data-dir=~/.chromium-user-data/&"
+alias chromium="chromium --user-data-dir=~/.chromium-user-data/&"
 #alias dropbox="/root/.dropbox-dist/dropboxd > /var/log/dropbox.log &"
 alias ff="/usr/bin/firefox &"
 alias firefox="firefox &"
 alias function="declare -F"
 alias functions="declare -F"
 alias kb="/usr/bin/firefox \"uhmya.com/wiki/doku.php?id=keyboard_shortcuts\""
-alias keepass="keepassx"
-alias keepass-x="keepassx"
+alias keepass="keepassx &"
+alias keepass-x="keepassx &"
 alias listrunning="vboxmanage list runningvms"
 alias listvms="vboxmanage list vms"
-alias look_busy="cat /dev/urandom | hexdump -C | grep \"ca fe\""
+alias random_hex="cat /dev/urandom | hexdump -C | grep \"ca fe\""
 alias lynx="lynx --accept_all_cookies"
 alias ra="source ~/.bashrc"
 alias reflector="reflector -l 5 --sort rate --save /etc/pacman.d/mirrorlist"
@@ -49,5 +51,8 @@ if [[ `uname -a`  =~ ARCH ]]; then
     #libreoffice calc
     alias excel="localc $1 & "
     alias calc="localc $1 & "
-    #full screen rdp
+    #copy whatever was selected into the actual clipboard
+    alias clipboard="xclip -out | xclip -selection clipboard"
+    alias rdesktop="rdesktop -K -r disk:root=/ -g 1920x1200 $1" 
+    alias console="rdesktop -0 -K -r disk:root=/ -g 1920x1200 $1" 
 fi
