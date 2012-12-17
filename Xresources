@@ -1,0 +1,4 @@
+#these don't appear to actually work
+dzen2.font:       -*-fixed-*-*-*-*-*-*-*-*-*-*-*-*
+dzen2.foreground: #22EE11
+dzen2.background: red
