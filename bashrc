@@ -7,11 +7,13 @@ function ctrl_c() {
 
 if [ `uname` == Darwin ]; then
     echo "Darwin detected"
+    PATH=$PATH:/usr/local/rvm/bin
     PATH=$PATH:/opt/local/bin
     PATH=$PATH:/Users/dsullivan2/scripts
     PATH=$PATH:/opt/local/lib/postgresql91/bin
     #PATH=$PATH:/Users/dsullivan2/Dropbox/scripts/adedit
     PATH=$PATH:~/Dropbox/scripts
+    PATH=$PATH:/opt/local/lib/mysql5/bin/
 elif [ `uname` == Linux ]; then 
     echo "Linux box detected."
     #disable terminal beep
