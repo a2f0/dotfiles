@@ -24,6 +24,9 @@
 #Sample CIDR block rule 
 #-A INPUT -s 10.0.0/17 -p udp --dport 8000 -j LOGPERMIT 
 
+#identd from irc.servercentral.net
+-A INPUT -s 66.225.225.225 -p tcp --dport 113 -j ACCEPT
+
 -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j LOGPERMIT 
 -A INPUT -j LOGDROP 
 -A OUTPUT -o lo -j ACCEPT 
