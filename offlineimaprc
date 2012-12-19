@@ -1,8 +1,9 @@
+#Offline IMAP Configuration File.
 #run this with offlineimap  -c ~/.offlineimaprc
 
 [general]
 # comma-delimited list of active accounts, i.e. gmail, bsdad
-accounts = gmail
+accounts = gmail,bsdad
 
 [Account bsdad]
 localrepository = bsdad-local
@@ -15,7 +16,7 @@ remoterepository = gmail-remote
 
 [Repository bsdad-local]
 type = Maildir
-localfolders = ~/offlineimap-bsdad
+localfolders = ~/Mail/bsdad
 
 [Repository bsdad-remote]
 type = IMAP
@@ -24,15 +25,31 @@ remoteuser = dsullivan2
 
 [Repository gmail-local]
 type = Maildir
-localfolders = ~/offlineimap-gmail
+localfolders = ~/Mail/gmail
+nametrans = lambda folder: re.sub('spam', '[Gmail].Spam',
+                           re.sub('drafts', '[Gmail].Drafts',
+                           re.sub('sent', '[Gmail].Sent Mail',
+                           re.sub('flagged', '[Gmail].Starred',
+                           re.sub('trash', '[Gmail].Trash',
+                           re.sub('important', '[Gmail].Important',
+                           re.sub('archive', '[Gmail].All Mail', folder)))))))
 
 [Repository gmail-remote]
 type = Gmail
-remoteuser = dansullivan@gmail.com 
+remoteuser = dansullivan@gmail.com
+sep = .
 #remotepass = password
-nametrans = lambda foldername: re.sub ('^\[gmail\]', 'bak',
-                               re.sub ('sent_mail', 'sent',
-                               re.sub ('starred', 'flagged',
-                               re.sub (' ', '_', foldername.lower()))))
-folderfilter = lambda foldername: foldername not in '[Gmail]/All Mail'
-cert_fingerprint = f3043dd689a2e7dddfbef82703a6c65ea9b634c1
+nametrans = lambda folder: re.sub('.*Spam$', 'spam', 
+                           re.sub('.*Drafts$', 'drafts', 
+                           re.sub('.*Sent Mail$', 'sent', 
+                           re.sub('.*Starred$', 'flagged', 
+                           re.sub('.*Trash$', 'trash', 
+                           re.sub('.*Important$', 'important', 
+                           re.sub('.*All Mail$', 'archive', folder)))))))
+
+folderfilter = lambda foldername: foldername not in ['[Gmail]/All Mail','[Gmail]/Important','[Gmail]/Spam']
+#This is not required when sslcacertfile is specified
+#cert_fingerprint = f3043dd689a2e7dddfbef82703a6c65ea9b634c1
+
+#this requires the ca-certificates file in Arch Linux
+sslcacertfile = /usr/share/ca-certificates/mozilla/Equifax_Secure_CA.crt
