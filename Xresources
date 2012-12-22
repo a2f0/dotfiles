@@ -1,4 +1,14 @@
-#these don't appear to actually work
+!Dan Sullivan ~/.Xresources
+!verify the syntax of this file with xrdb -load ~/.Xresources
+
 dzen2.font:       -*-fixed-*-*-*-*-*-*-*-*-*-*-*-*
 dzen2.foreground: #22EE11
 dzen2.background: red
+
+xterm*font:             fixed
+xterm*boldFont:         fixed
+xterm*toolBar:          true
+xterm*background:       black
+xterm*foreground:       white
+!proof that settings here can be arbitrary
+xterm*arbitrary:        dan
