@@ -1,0 +1,32 @@
+set mbox_type   = Maildir
+#set sendmail    = /usr/bin/msmtp
+
+#this will set the correct "from" address depding on folder
+folder-hook gmail set from="dansullivan@gmail.com"
+folder-hook bsdad set from="dsullivan2@bsd.uchicago.edu"
+
+set folder      = ~/Mail/
+set spoolfile   = "+gmail/INBOX"
+set mbox        = "+gmail/All Mail"
+set postponed   = "+gmail/Drafts"
+unset record
+
+set editor="vim"
+
+mailboxes +INBOX
+
+set my_name = "Dan Sullivan"
+
+#some authenticated smtp server
+#set smtp_url=smtps://$imap_user:$imap_pass@smtp.domain.tld
+#non-authenticated smtp server
+set smtp_url=smtp://smtp.uchicago.edu
+
+#macro index D \
+#    "<save-message>+[Gmail]/Trash<enter>" \
+#
+#    "move message to the trash"
+#
+#macro index S \
+#    "<save-message>+[Gmail]/Spam<enter>" \
+#    "mark message as spam"
