@@ -22,6 +22,9 @@ toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
 myConfig = defaultConfig {
     --this sets the default key binding to the windows key.
     --modMask = mod4Mask
-    terminal="xterm"
+    terminal="xterm",
     --terminal="rxvt"
+    borderWidth=1,
+    normalBorderColor="#cccccc",
+    focusedBorderColor="#ff00d7"
 }
