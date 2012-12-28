@@ -16,6 +16,7 @@ if [ `uname` == Darwin ]; then
     PATH=$PATH:/opt/local/lib/mysql5/bin/
 elif [ `uname` == Linux ]; then 
     echo "Linux box detected."
+    PATH=$PATH:~/.gem/ruby/1.9.1/bin
     #disable terminal beep
     setterm -blength 0
     if [ -z "${SSH_CONNECTION}" ]; then
@@ -36,7 +37,7 @@ source ~/.aliases
 source ~/.aliases-private
 source ~/.functions
 
-dirty_bash_prompt
+bash_prompt
 
 #set vi mode
 set -o vi
@@ -55,7 +56,18 @@ if [ $TERM == xterm ]; then
     xset m 7 10
         # set the keyboard repeat rate 
     xset r rate 200 100
+    
+    #re-hash this with every load
+    xrdb -load ~/.Xresources
+    
+    #verify settings
+    xrdb -query
 fi
 
 #Enable timestamping on bash_history (type history to see timestamps)
 export HISTTIMEFORMAT="%d.%m.%y %T "
+
+#Set the editor
+export EDITOR="vim"
+
+screen -list
