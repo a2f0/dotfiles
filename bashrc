@@ -33,9 +33,15 @@ else
     echo "Unknown platform detected."
 fi
 
+#unset all aliases
+unalias -a
 source ~/.aliases
 source ~/.aliases-private
+
+#unset all functions
+for function in `declare -F | awk '{ print $3 }' `; do unset $function; done
 source ~/.functions
+source ~/.functions-private
 
 bash_prompt
 
@@ -49,7 +55,7 @@ export IRCNAME="dan sullivan"
 #exempt commands that start with spaces from ~/.bash_history
 export HISTCONTROL=ignorespace
 
-if [ $TERM == xterm ]; then 
+if [[ $TERM == xterm || $TERM == "rxvt-unicode-256color" ]]; then
     #disable audible beep for X11
     xset -b 
         #set the mouse tracking speed to fast
