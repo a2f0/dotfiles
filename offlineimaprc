@@ -5,6 +5,8 @@
 # comma-delimited list of active accounts, i.e. gmail, bsdad
 accounts = gmail,bsdad
 
+pythonfile = /opt/local/scripts/offline_imap.py
+
 [Account bsdad]
 localrepository = bsdad-local
 remoterepository = bsdad-remote
@@ -21,7 +23,9 @@ localfolders = ~/Mail/bsdad
 [Repository bsdad-remote]
 type = IMAP
 remotehost = mail.bsd.uchicago.edu 
-remoteuser = dsullivan2
+#remoteuser = dsullivan2
+remoteusereval = get_username("mail.bsd.uchicago.edu")
+remotepasseval = get_password("mail.bsd.uchicago.edu")
 
 [Repository gmail-local]
 type = Maildir
@@ -36,7 +40,9 @@ nametrans = lambda folder: re.sub('spam', '[Gmail].Spam',
 
 [Repository gmail-remote]
 type = Gmail
-remoteuser = dansullivan@gmail.com
+#remoteuser = dansullivan@gmail.com
+remoteusereval = get_username("imap.gmail.com")
+remotepasseval = get_password("imap.gmail.com")
 sep = .
 #remotepass = password
 nametrans = lambda folder: re.sub('.*Spam$', 'spam', 
