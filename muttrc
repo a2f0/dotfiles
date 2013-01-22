@@ -1,7 +1,7 @@
-set mbox_type   = Maildir
-#set sendmail    = /usr/bin/msmtp
+set mbox_type = Maildir
+#set sendmail = /usr/bin/msmtp
 
-#this will set the correct "from" address depding on folder
+#this will set the correct "from" address depending on folder
 folder-hook gmail set from="dansullivan@gmail.com"
 folder-hook bsdad set from="dsullivan2@bsd.uchicago.edu"
 
@@ -25,14 +25,35 @@ set my_name = "Dan Sullivan"
 #non-authenticated smtp server
 set smtp_url=smtp://smtp.uchicago.edu
 
-#macro index D \
-#    "<save-message>+[Gmail]/Trash<enter>" \
-#
-#    "move message to the trash"
-#
-#macro index S \
-#    "<save-message>+[Gmail]/Spam<enter>" \
-#    "mark message as spam"
-
 #view html formatted email, look at ~/.mailcap for program launcher, added 12/27/2012 dps
 auto_view text/html
+
+#Disable printing so messages cannot be printed directly from the inbox.  Added 12/30/2012
+set print=no
+
+#Do not bring up postponed messages Added 12/30/2012
+set recall=no
+
+#Save a copy of messages I send to the location specified in the record variable
+set copy=yes
+
+#The location to save a copy of sent messages
+set record="~/Mail/bsdad/sent"
+
+#Do not confirm when appending messages to an existing mailbox.
+set confirmappend=no
+
+#macro functions are listed here
+#http://www.mutt.org/doc/manual/manual-6.html
+
+macro index d "<save-message>+bsdad/trash<enter><sync-mailbox>" "copy message to the trash"
+macro pager d "<save-message>+bsdad/trash<enter><sync-mailbox>" "copy message to the trash"
+macro index i "<change-folder> =bsdad/INBOX<enter>" "go to the inbox"
+macro index s "<change-folder> =bsdad/sent<enter>" "go to the sent items"
+macro index t "<change-folder> =bsdad/trash<enter>" "go to the sent items"
+macro index q "<sync-mailbox>" "null out quit"
+macro index x "<sync-mailbox>" "null out quit"
+macro index u "l(~N|~O)\n" "show all new and old unread messages"
+
+#do not confirm delete of purged messages when synchronizing mailboxes
+set delete=yes
