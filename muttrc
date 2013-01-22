@@ -1,3 +1,5 @@
+#Dan Sullivan
+#.muttrc
 set mbox_type = Maildir
 #set sendmail = /usr/bin/msmtp
 
