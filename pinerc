@@ -1,0 +1,7 @@
+# List of SMTP servers for sending mail. If blank: Unix Alpine uses sendmail.
+smtp-server=authsmtp.uchicago.edu:587/tls/user=dansully/novalidate-cert
+
+# Normal Unix default is the local INBOX (usually /usr/spool/mail/$USER).
+inbox-path={mail.bsd.uchicago.edu/user=dsullivan2/ssl/novalidate-cert}INBOX
+
+customized-hdrs=From: dsullivan2@bsd.uchicago.edu

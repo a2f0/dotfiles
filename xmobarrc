@@ -1,7 +1,7 @@
 --xmobar config
 --Dan Sullivan
 --Started 12/28/2012
---Running 
+--Running
 
 Config { 
        --font = "-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*"
@@ -21,11 +21,12 @@ Config {
             , Run Cpu ["-L","3","-H","50","--normal","grey","--high","grey"] 10
             , Run Memory ["-t","Mem: <usedratio>%"] 10
             , Run StdinReader
+            , Run Com "echo" ["dps"] "" 0
        ]
        --The character to be used for indicating commands in the output template.
        , sepChar = "%"
        --The text before the first character will be left aligned, the text between them
        --will be centered, and the text to the right of the last character will be right aligned.
        , alignSep = "}{"
-       , template = "%eth0% %memory% %cpu% }{ %StdinReader%"
+       , template = "%echo% %eth0% %memory% %cpu% }{ %StdinReader%"
 }
