@@ -2,3 +2,4 @@
 #MailCap. Started 12/27/2012
 text/html; lynx %s; nametemplate=%s.html
 text/html; lynx -dump %s; nametemplate=%s.html; copiousoutput
+image/png; mirage %s

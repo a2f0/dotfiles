@@ -6,7 +6,8 @@ set server = im.uchicago.edu
 
 #removed the underscore from this to not display offline buddies
 #use /roster to change this at runtime
-set roster_display_filter = ofdna
+#set roster_display_filter = ofdna
+set roster_display_filter = ofdna_
 
 #this drives me crazy
 alias exit = quit
@@ -20,8 +21,8 @@ set color_status = black
 alias quit = exit
 alias q = exit
 
-#enable otr (this will automatically generate a key if one doesn't already exist)
+#enable otr (this will automatically generate a key if one doesn't already exist) 1/22/2013
 set otr = 1
 
-#magically start otr conversations
+#magically start otr conversations 1/22/2013
 otrpolicy default opportunistic

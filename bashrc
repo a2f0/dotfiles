@@ -1,9 +1,6 @@
 #!/bin/sh
-trap ctrl_c INT
 
-function ctrl_c() {
-    echo "* Trapped CTRL-C *"
-}
+trap ctrl_c INT
 
 if [ `uname` == Darwin ]; then
     echo "Darwin detected"
@@ -12,11 +9,12 @@ if [ `uname` == Darwin ]; then
     PATH=$PATH:/Users/dsullivan2/scripts
     PATH=$PATH:/opt/local/lib/postgresql91/bin
     #PATH=$PATH:/Users/dsullivan2/Dropbox/scripts/adedit
-    PATH=$PATH:~/Dropbox/scripts
+    #PATH=$PATH:~/Dropbox/scripts
     PATH=$PATH:/opt/local/lib/mysql5/bin/
 elif [ `uname` == Linux ]; then 
     echo "Linux box detected."
     PATH=$PATH:~/.gem/ruby/1.9.1/bin
+    PATH=$PATH:/opt/local/scripts
     #disable terminal beep
     setterm -blength 0
     if [ -z "${SSH_CONNECTION}" ]; then
@@ -43,6 +41,7 @@ for function in `declare -F | awk '{ print $3 }' `; do unset $function; done
 source ~/.functions
 source ~/.functions-private
 
+#call my bash_prompt funcion
 bash_prompt
 
 #set vi mode
@@ -76,4 +75,6 @@ export HISTTIMEFORMAT="%d.%m.%y %T "
 #Set the editor
 export EDITOR="vim"
 
+#wipe out old screens
+screen -wipe > /dev/null
 screen -list

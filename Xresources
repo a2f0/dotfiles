@@ -1,14 +1,25 @@
 !Dan Sullivan ~/.Xresources
-!verify the syntax of this file with xrdb -load ~/.Xresources
+!The syntax of this file can be verified with  xrdb -load ~/.Xresources
 
-dzen2.font:       -*-fixed-*-*-*-*-*-*-*-*-*-*-*-*
-dzen2.foreground: #22EE11
-dzen2.background: red
+!dzen2.font:             -*-fixed-*-*-*-*-*-*-*-*-*-*-*-*
+dzen2.font:             -nil-profont-medium-r-normal--12-120-72-72-c-60-iso8859-1
+dzen2.foreground:       #22EE11
+dzen2.background:       red
 
-xterm*font:             fixed
-xterm*boldFont:         fixed
-xterm*toolBar:          true
 xterm*background:       black
 xterm*foreground:       white
 !proof that settings here can be arbitrary
 xterm*arbitrary:        dan
+xterm*font:             -nil-profont-medium-r-normal--12-120-72-72-c-60-iso8859-1
+xterm*boldFont:         -nil-profont-medium-r-normal--12-120-72-72-c-60-iso8859-1
+!xterm*font:             fixed
+!xterm*boldFont:         fixed
+xterm*boldMode:         false
+
+URxvt.scrollBar:        false
+URxvt.foreground:       #ffffff
+URxvt.background:       #000000
+URxvt*font:             -nil-profont-medium-r-normal--12-120-72-72-c-60-iso8859-1
+URxvt*boldFont:         -nil-profont-medium-r-normal--12-120-72-72-c-60-iso8859-1
+!Set the term declaration to override the default of rxvt-unicode-256color 1/3/2012
+URrxvt*termName:        rxvt-256color

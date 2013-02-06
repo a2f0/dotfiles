@@ -5,6 +5,9 @@
 # comma-delimited list of active accounts, i.e. gmail, bsdad
 accounts = gmail,bsdad
 
+#This supplies the functions get_username and get_password.
+#This file can be found here:
+#https://github.com/dsulli99/misc_scripts/blob/master/offline_imap.py
 pythonfile = /opt/local/scripts/offline_imap.py
 
 [Account bsdad]
@@ -19,6 +22,9 @@ remoterepository = gmail-remote
 [Repository bsdad-local]
 type = Maildir
 localfolders = ~/Mail/bsdad
+nametrans = lambda folder: re.sub('trash', 'Deleted Items',
+                           re.sub('drafts', 'Drafts',
+                           re.sub('sent', 'Sent Items', folder)))
 
 [Repository bsdad-remote]
 type = IMAP
@@ -26,6 +32,9 @@ remotehost = mail.bsd.uchicago.edu
 #remoteuser = dsullivan2
 remoteusereval = get_username("mail.bsd.uchicago.edu")
 remotepasseval = get_password("mail.bsd.uchicago.edu")
+nametrans = lambda folder: re.sub('.*Deleted Items$', 'trash',
+                           re.sub('.*Drafts$', 'drafts',
+                           re.sub('.*Sent Items$', 'sent', folder)))
 
 [Repository gmail-local]
 type = Maildir
@@ -57,5 +66,5 @@ folderfilter = lambda foldername: foldername not in ['[Gmail]/All Mail','[Gmail]
 #This is not required when sslcacertfile is specified
 #cert_fingerprint = f3043dd689a2e7dddfbef82703a6c65ea9b634c1
 
-#this requires the ca-certificates file in Arch Linux
+#this requires the ca-certificates package in Arch Linux
 sslcacertfile = /usr/share/ca-certificates/mozilla/Equifax_Secure_CA.crt
