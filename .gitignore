@@ -1,2 +1,7 @@
+.gitignore
 aliases-private
 syslog-ng.conf-private
+functions-private
+fstab-private
+hosts-private
+iptables.rules-private

@@ -2,3 +2,5 @@ join #oBk
 join #Cheeze_Out
 /load ~/anduril/anduril.irc
 /skin pretty
+/set autoaway off
+/set orignick dps

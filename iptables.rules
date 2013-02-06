@@ -1,5 +1,5 @@
 #Created by Dan Sullivan
-#This is an IPTables rule set that will log everything. 
+#This is an IPTables rule set that will log everything.
 #It has example access lists in the RFC1918 address space
 #For conveinence.
 *filter
@@ -9,27 +9,27 @@
 
 #LOGDROP chain
 :LOGDROP - [0:0]
--A LOGDROP -m limit --limit 5/m --limit-burst 10 -j LOG
+-A LOGDROP -m limit --limit 5/m --limit-burst 10 -j LOG --log-prefix "IPTABLES Dropped: "
 -A LOGDROP -j DROP
 
 #LOGACCEPTINBOUND chain
 :LOGPERMIT - [0:0]
--A LOGPERMIT -m limit --limit 5/m --limit-burst 10 -j LOG
--A LOGPERMIT -j ACCEPT 
+-A LOGPERMIT -m limit --limit 5/m --limit-burst 10 -j LOG --log-prefix "IPTABLES Accept: "
+-A LOGPERMIT -j ACCEPT
 
 #The rules
--A INPUT -i lo -j ACCEPT 
-#Sample unicast rule 
-#-A INPUT -s 192.168.1.10 -p tcp --dport 22 -j LOGPERMIT 
-#Sample CIDR block rule 
-#-A INPUT -s 10.0.0/17 -p udp --dport 8000 -j LOGPERMIT 
+-A INPUT -i lo -j ACCEPT
+#Sample unicast rule
+#-A INPUT -s 192.168.1.10 -p tcp --dport 22 -j LOGPERMIT
+#Sample CIDR block rule
+#-A INPUT -s 10.0.0/17 -p udp --dport 8000 -j LOGPERMIT
 
 #identd from irc.servercentral.net
 -A INPUT -s 66.225.225.225 -p tcp --dport 113 -j ACCEPT
 
--A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j LOGPERMIT 
--A INPUT -j LOGDROP 
--A OUTPUT -o lo -j ACCEPT 
--A OUTPUT -m state --state NEW,RELATED,ESTABLISHED -j LOGPERMIT 
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j LOGPERMIT
+-A INPUT -j LOGDROP
+-A OUTPUT -o lo -j ACCEPT
+-A OUTPUT -m state --state NEW,RELATED,ESTABLISHED -j LOGPERMIT
 COMMIT
 # Completed on Fri Jul 22 13:43:52 2011

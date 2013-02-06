@@ -7,6 +7,9 @@
 :syntax on
 ":10 sp
 
+"don't create swapfiles
+:set noswapfile
+
 "smart indent for python
 ":help smartindent
 ":help auto-setting embed in source for portability
