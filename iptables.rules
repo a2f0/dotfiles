@@ -1,7 +1,7 @@
 #Created by Dan Sullivan
 #This is an IPTables rule set that will log everything.
+#--log-prefix used for matching in syslog-ng.conf
 #It has example access lists in the RFC1918 address space
-#For conveinence.
 *filter
 :INPUT ACCEPT [0:0]
 :FORWARD ACCEPT [0:0]
