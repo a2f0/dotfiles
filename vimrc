@@ -1,4 +1,5 @@
 "Dan Sullivan
+"First commit August 13, 2012
 "~/.vimrc
 
 :set number
@@ -13,11 +14,16 @@
 "smart indent for python
 ":help smartindent
 ":help auto-setting embed in source for portability
-:set smartindent
+
+"disabled smartindent 8/4/2013
+":set smartindent
 :set tabstop=4
 :set shiftwidth=4
 :set expandtab
 :set list
+
+"enable search highlighting added 5/4/2013
+:set hlsearch
 
 "color scheme
 :set background=dark

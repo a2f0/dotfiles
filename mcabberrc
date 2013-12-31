@@ -5,7 +5,7 @@ set jid = dansully@im.uchicago.edu
 set server = im.uchicago.edu
 
 #removed the underscore from this to not display offline buddies
-#use /roster to change this at runtime
+#use /roster display mask = ofdna
 #set roster_display_filter = ofdna
 set roster_display_filter = ofdna_
 

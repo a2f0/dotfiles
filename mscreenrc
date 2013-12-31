@@ -1,0 +1,7 @@
+#Dan Sullivan
+#Nov 7, 2013
+#screenrc for UNIX mail
+#See bash function mail() in https://github.com/dsulli99/arch_x86_64_configs/blob/master/functions
+screen -t mail offlineimap -c ~/.offlineimaprc-nognome
+screen -t mutt mutt
+source $HOME/.screenrc

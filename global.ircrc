@@ -1,0 +1,6 @@
+#/load ~/anduril/anduril.irc
+/alias wnh { window new hide }
+/alias wl { window list }
+/alias wn { window next }
+/set autoaway off
+/set orignick dps
