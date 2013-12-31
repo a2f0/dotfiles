@@ -1,0 +1,7 @@
+#!/bin/sh
+#Belongs in /etc/cron.daily
+#Update the mirror list
+reflector -l 5 --sort rate --save /etc/pacman.d/mirrorlist
+#Update the pacman and yaourt databases
+sudo pacman -Syy
+sudo yaourt -Syy
