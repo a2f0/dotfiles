@@ -4,6 +4,53 @@
 #declare -F to list functions from bash 
 #test_function straight from bash to check it (exists in this file)
 
+echo "Unsetting old functions..."
+
+for function in `declare -F | awk '{ print $3 }' `; do unset $function; done
+
+echo "Sourcing functions..."
+
+acpi () {
+    vboxmanage controlvm $1 acpipowerbutton
+    if [[ $# -lt 1 ]]; then
+        echo "Usage: acpi <vmname>"
+        echo "Example: acpi OpenBSD"
+        return -1
+    fi
+}
+
+build_me () {
+    CWD=`pwd`
+    echo "Called build me function..."
+    cd ~/Dropbox/github/arch_x86_64_configs
+    ./build_me.sh
+    #source ~/.functions
+    #source ~/.functions-private
+    #echo "Unsetting and re-setting all aliases..."
+    #unalias -a
+    #source ~/.aliases
+    #source ~/.aliases-private
+    source ~/.bashrc
+    cd $CWD; unset CWD
+    echo "Finished build function..."
+}
+
+deploy_profile() {
+    #echo "Running deploy profile.."
+    if [[ $# -lt 1 ]]; then
+        echo "Usage: deploy_profile user@fqdn"
+        echo "Example: deploy_profile dansullivan@magicalhost.domain.com"
+        return -1
+    fi
+    CWD=`pwd`
+    cd ~/Dropbox/github/arch_x86_64_configs
+    echo "Removing remote ~/.vimrc..."
+    ssh $1 'if [ -e ~/.vimrc ]; then rm ~/.vimrc; echo deleted ~/.vimrc...; else echo ~/.vimrc not found; fi'
+    scp vimrc $1:~/.vimrc
+    echo "Uploaded ~/.vimrc..."
+    cd $CWD; unset CWD
+}
+
 cb () {
     xclip -out | xclip -selection clipboard
 }
@@ -13,7 +60,58 @@ ctrl_c () {
         echo "* Trapped CTRL-C *"
 }
 
-topdisk () {
+#this function will return 1 a named screen instance exists, 0 if it doesnt
+doesnamedscreenexist(){
+    if [[ $# -lt 1 ]]; then
+        echo "Usage: doesnamedscreenexist <name>"
+        echo "Example: doesnamedscreenexist mail"
+        return -1
+    fi
+    if [[ `screen -ls | grep $1 | wc -l` -eq '1' ]]; then
+        echo -n "1"
+    else
+        echo -n "0"
+    fi
+}
+
+freenode(){
+    if [[ `doesnamedscreenexist freenode` -eq '1' ]]; then
+        export IRCSERVER="irc.freenode.net"
+        screen -rd freenode
+    else
+        screen -S freenode epic -l ~/.freenode.ircrc
+    fi
+}
+
+#firefox(){
+#    firefox &
+#}
+
+efnet(){
+    if [[ `doesnamedscreenexist efnet` -eq '1' ]]; then
+        screen -rd efnet
+    else
+        screen -S efnet epic -l ~/.efnet.ircrc
+    fi
+}
+
+mail(){
+    if [[ `doesnamedscreenexist mail` -eq '1' ]]; then
+        screen -rd mail
+    else
+        screen -S mail -c ~/.mscreenrc
+    fi
+}
+
+jabber () {
+    if [ `screen -list | grep jabber | wc -l` == "1" ]; then
+        screen -rd jabber
+    else
+        screen -S jabber mcabber
+    fi
+}
+
+topdisk() {
     dstat -ta --top-bio
 }
 
@@ -37,6 +135,12 @@ snapxpucad () {
 #kill every open RDP session on my box.
 rdpkill () {
     for i in `ps -ef | grep rdesktop | grep -v grep | awk '{ print $2 }'`; do kill $i; done
+}
+
+resetclip () {
+    kill `pgrep autocutsel`; 
+    autocutsel -selection CLIPBOARD -fork; 
+    autocutsel -selection PRIMARY -fork
 }
 
 killrdp () {
@@ -89,6 +193,10 @@ compress_win7 () {
     vboxmanage modifyhd "~/VirtualBox VMs/Win7 (BSDAD)/Win7 (BSDAD).vdi" --compact
 }
 
+compress_win8() {
+    vboxmanage modifyhd /mnt/luksAuxiliary/Win8_Enterprise_x64/Win8_Enterprise_x64.vdi --compact
+}
+
 screenshot () {
     if [ -e /tmp/screenshot.jpg ]; then
            rm -rf /tmp/screenshot.jpg
@@ -123,32 +231,59 @@ whatismyip () {
     curl http://icanhazip.com/
 }
 
-irc () {
-    if [ `screen -list | grep epic | wc -l` == "1" ]; then
-        screen -rd epic 
-    else
-        screen -S epic
-    fi
-}
-
-jabber () {
-    if [ `screen -list | grep jabber | wc -l` == "1" ]; then
-        screen -rd jabber 
-    else
-        screen -S jabber  
-    fi
-}
-
 #my timestamp
 now () {
     echo `date +%m`-`date +%d`-`date +%y`.`date +%H`.`date +%M`.`date +%S`
 }
 
 #This appears to be compiled into OSX's bash? 1/21/2014.  Needs investigation.
-update_terminal_cwd () 
-{ 
-        local SEARCH=' ';
-        local REPLACE='%20';
-        local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}";
-        printf '\e]7;%s\a' "$PWD_URL"
+update_terminal_cwd () {
+    local SEARCH=' ';
+    local REPLACE='%20';
+    local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}";
+    printf '\e]7;%s\a' "$PWD_URL"
 }
+
+#virtualbox show vminfo
+vminfo () {
+    vboxmanage showvminfo $1
+}
+
+listdcs () {
+    dig any _kerberos._tcp.$1
+}
+
+nscreen() {
+    screen -S $1 
+}
+
+#for testing new versions of galaxy
+stubgalaxy() {
+    rm -rf ~/.galaxy-python
+    mkdir ~/.galaxy-python
+    ln -s /usr/bin/python2 ~/.galaxy-python/python
+    export  PATH=~/.galaxy-python:$PATH
+    cd /
+    rm -rf /tmp/galaxy
+    mkdir -p /tmp/galaxy
+    cd /tmp/galaxy
+    hg clone https://bitbucket.org/galaxy/galaxy-dist/
+    cd galaxy-dist
+    hg update stable
+    sh run.sh
+}
+
+if [ `uname` == Darwin ]; then
+    echo "Sourcing Darwin functions..."
+    #then we are sourcing darwin functions
+fi
+
+if [[ `uname -r` =~ ARCH ]]; then
+    echo "Sourcing Arch Linux functions..."
+    whatprovides () {
+        pkgfile $1
+    }
+    #then we are sourcing darwin functions
+else
+    :
+fi

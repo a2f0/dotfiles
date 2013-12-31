@@ -1,4 +1,6 @@
-#defscrollback 10000
+#Dan Sullivan
+#screenrc
+defscrollback 10000
 #disable the flashing visual bell
 vbell off
 #disable splash screen

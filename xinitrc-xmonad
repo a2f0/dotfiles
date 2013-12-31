@@ -1,10 +1,23 @@
+#autocutsel configuration 7/30/2013
+if [ -x /usr/bin/autocutsel ]; then
+    #this will keep the clipboard in sync
+    #with the primary buffer
+     autocutsel -selection CLIPBOARD -fork
+
+     #this will keep the primary in sync
+     #   with the clipboard buffer
+     autocutsel -selection PRIMARY -fork
+fi
+
 xset -dpms
 xset s off
 xsetroot -cursor_name -left_ptr
 #set the audible beep for X11
 xset -b
 #set the mouse tracking speed to fast
-xset m 7 10
+#xset m 7 10
+#this appears to work good for a Microsoft Mouse 4500
+xset m 100 1
 #set the keyboard delay and repeat rate
 xset r rate 200 100
 
