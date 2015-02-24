@@ -74,6 +74,10 @@ doesnamedscreenexist(){
     fi
 }
 
+dors(){
+    cd $HOME/Dropbox/github/dors
+}
+
 freenode(){
     if [[ `doesnamedscreenexist freenode` -eq '1' ]]; then
         export IRCSERVER="irc.freenode.net"
@@ -134,7 +138,9 @@ snapxpucad () {
 
 #kill every open RDP session on my box.
 rdpkill () {
-    for i in `ps -ef | grep rdesktop | grep -v grep | awk '{ print $2 }'`; do kill $i; done
+  for i in `ps -ef | grep rdesktop | grep -v grep | awk '{ print $2 }'`; do kill $i; done
+  #this one is for mac.
+  for i in `pgrep Microsoft Remote Desktop`; do kill $i; done
 }
 
 resetclip () {
@@ -182,6 +188,19 @@ pdf () {
 
 ldap () {
     ldapsearch -v -x -LLL -h ldap.uchicago.edu -p 389 -b dc=uchicago,dc=edu uid=$1
+}
+
+sldap () {
+  ldapsearch -v -x -LLL -W -H ldaps://ldap.uchicago.edu -b dc=uchicago,dc=edu \
+  '( & (eduPersonAffiliation=student)(sn=Smith) )' cn telephoneNumber -D \
+  "uid=dansully,ou=people,dc=uchicago,dc=edu"
+}
+
+getemail () {
+  for chicagoid in `cat /tmp/cnets.txt`; do
+    EMAIL=`ldapsearch -x -LLL -h ldap.uchicago.edu -p 389 -b dc=uchicago,dc=edu chicagoID=$chicagoid mail | grep -v "^filter" | grep -v "^dn:" | awk '{ print $2 }'`
+    echo "$chicagoid $EMAIL" 
+  done
 }
 
 #query google's dns servers
@@ -257,19 +276,30 @@ nscreen() {
     screen -S $1 
 }
 
+cwd() {
+  if [[ $# -lt 1 ]]; then
+      echo "Usage: cwd <dir>"
+      echo "Example: cwd ~/Documents"
+      return -1
+  fi
+  cd $1
+}
+
 #for testing new versions of galaxy
 stubgalaxy() {
-    rm -rf ~/.galaxy-python
+    sudo rm -rf ~/.galaxy-python
     mkdir ~/.galaxy-python
     ln -s /usr/bin/python2 ~/.galaxy-python/python
     export  PATH=~/.galaxy-python:$PATH
     cd /
-    rm -rf /tmp/galaxy
+    sudo rm -rf /tmp/galaxy
     mkdir -p /tmp/galaxy
     cd /tmp/galaxy
     hg clone https://bitbucket.org/galaxy/galaxy-dist/
     cd galaxy-dist
     hg update stable
+    #I don't think the line below really works
+    sed -i '0,/#admin_users =/s//admin_users = dansully@uchicago.edu/' universe_wsgi.ini
     sh run.sh
 }
 
