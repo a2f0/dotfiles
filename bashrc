@@ -20,6 +20,7 @@ if [ `uname` == Darwin ]; then
     #PATH=$PATH:/Users/`whoami`/Dropbox/scripts/adedit
     #PATH=$PATH:~/Dropbox/scripts
     PATH=$PATH:/opt/local/lib/mysql5/bin/
+    PATH=$PATH:/opt/mongodb/bin
 
     #stuff for perl cpan
     export PERL_LOCAL_LIB_ROOT="$PERL_LOCAL_LIB_ROOT:/home/`whoami`/perl5";
@@ -27,11 +28,15 @@ if [ `uname` == Darwin ]; then
     export PERL_MM_OPT="INSTALL_BASE=/home/`whoami`/perl5";
     export PERL5LIB="/home/`whoami`/perl5/lib/perl5:$PERL5LIB";
     export PATH="/home/`whoami`/perl5/bin:$PATH";
+    export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
 
 elif [ `uname` == Linux ]; then 
     echo "Linux box detected in bashrc"
+    #init volume to 20.
+    amixer sset Master 20
     PATH=$PATH:/opt/local/scripts
     PATH=$PATH:~/.cabal/bin
+    PATH=$PATH:/usr/local/heroku/bin
     #disable terminal beep
     setterm -blength 0
     if [ -z "${SSH_CONNECTION}" ]; then
@@ -63,11 +68,14 @@ for function in `declare -F | awk '{ print $3 }' `; do unset $function; done
 source ~/.functions
 source ~/.functions-private
 
+
 #call my bash_prompt funcion
 bash_prompt
 
 #set vi mode
-set -o vi
+#set -o vi
+#enable vi mode
+#set +o vi
 
 #see efnet/freenode bash shell functions in ~/functions
 #export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
@@ -126,10 +134,19 @@ if [ -e ~/.rvm/scripts/rvm ]; then
 fi
 #unload it immediately afterwards
 #added this 12/30/2013 for rbenv support to dev with Rails 4.
-__rvm_unload
+#__rvm_unload
 
 #add rbenv to the path
-if [ -d "$HOME/.rbenv/bin" ]; then
-    export PATH="$HOME/.rbenv/bin:$PATH"
+#if [ -d "$HOME/.rbenv/bin" ]; then
+#    export PATH="$HOME/.rbenv/bin:$PATH"
+#    eval "$(rbenv init -)"
+#fi
+
+if [ -e ~/.dotfiles-devopsrockstars/init ]; then
+  source ~/.dotfiles-devopsrockstars/init
 fi
-eval "$(rbenv init -)"
+
+eval $(ssh-agent)
+ssh-add
+
+awsbootstrap
