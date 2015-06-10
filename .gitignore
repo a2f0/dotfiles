@@ -5,3 +5,5 @@ functions-private
 fstab-private
 hosts-private
 iptables.rules-private
+ssh_config
+*private*
