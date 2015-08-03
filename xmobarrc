@@ -25,7 +25,7 @@ Config {
             , Run Com "echo" ["dps"] "echoInitials" 0 --0 means run only once
             , Run Com "date" [] "customClock" 10 --do it once per second (last parameter is tenths of second).
             , Run Com "echo" ["-e", "\"\\xb7\""] "fancyDot" 0
-            , Run Com "dropbox" ["status"] "dropboxStatus" 10
+            , Run Com "dropbox-cli" ["status"] "dropboxStatus" 10
        ]
        --The character to be used for indicating commands in the output template.
        , sepChar = "%"
