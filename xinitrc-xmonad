@@ -21,9 +21,12 @@ xset m 100 1
 #set the keyboard delay and repeat rate
 xset r rate 200 100
 
+#load ~/.Xresources 
+[[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
+
 #this configuration block is for running gnome-keyring without GNOME
 # Start a D-Bus session
-source /etc/X11/xinit/xinitrc.d/30-dbus
+#source /etc/X11/xinit/xinitrc.d/30-dbus
 # Start GNOME Keyring
 eval $(/usr/bin/gnome-keyring-daemon --start --components=gpg,pkcs11,secrets,ssh)
 # You probably need to do this too:
