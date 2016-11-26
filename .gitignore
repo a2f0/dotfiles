@@ -6,8 +6,8 @@ hosts-private
 iptables.rules-private
 ssh_config
 my.cnf
-*private*
 /keyrings/live/pubring.gpg~
 /keyrings/live/pubring.kbx~
 /keyrings/live/secring.gpg
 /aliases-private
+/salt-roster
