@@ -1,3 +1,4 @@
 aliases-private
 passwd-s3fs
+salt-minion
 salt-roster
