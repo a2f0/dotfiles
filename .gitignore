@@ -1,5 +1,4 @@
 .gitignore
-aliases-private
 syslog-ng.conf-private
 functions-private
 fstab-private
@@ -11,3 +10,4 @@ my.cnf
 /keyrings/live/pubring.gpg~
 /keyrings/live/pubring.kbx~
 /keyrings/live/secring.gpg
+/aliases-private
