@@ -1,1 +1,2 @@
 aliases-private
+salt-roster
