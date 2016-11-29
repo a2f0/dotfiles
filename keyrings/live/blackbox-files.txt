@@ -1,5 +1,6 @@
 aliases-private
 iptables.rules
+mcabberrc
 passwd-s3fs
 salt-minion
 salt-roster
