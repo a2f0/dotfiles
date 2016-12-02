@@ -2,7 +2,6 @@
 syslog-ng.conf-private
 functions-private
 fstab-private
-hosts-private
 iptables.rules-private
 ssh_config
 my.cnf
@@ -11,3 +10,8 @@ my.cnf
 /keyrings/live/secring.gpg
 /aliases-private
 /salt-roster
+/passwd-s3fs
+/salt-minion
+/iptables.rules
+/mcabberrc
+/hosts
