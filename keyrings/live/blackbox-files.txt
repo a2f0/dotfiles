@@ -4,5 +4,4 @@ iptables.rules
 mcabberrc
 my.cnf
 passwd-s3fs
-salt-minion
 salt-roster
