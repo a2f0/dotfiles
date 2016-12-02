@@ -17,9 +17,11 @@
 
 "disabled smartindent 8/4/2013
 ":set smartindent
-:set tabstop=4
-:set shiftwidth=4
+"set the number of spaces for a tab
+:set tabstop=2
+"expand tabs to spaces
 :set expandtab
+:set shiftwidth=2
 :set list
 
 "enable search highlighting added 5/4/2013

@@ -1,5 +1,3 @@
-#My public bash functions
-#Dan Sullivan
 #use source ~/.functions to load
 #declare -F to list functions from bash 
 #test_function straight from bash to check it (exists in this file)
@@ -22,7 +20,7 @@ acpi () {
 build_me () {
     CWD=`pwd`
     echo "Called build me function..."
-    cd ~/Dropbox/github/arch_x86_64_configs
+    cd ~/working/github/arch_x86_64_configs
     ./build_me.sh
     #source ~/.functions
     #source ~/.functions-private
@@ -43,7 +41,7 @@ deploy_profile() {
         return -1
     fi
     CWD=`pwd`
-    cd ~/Dropbox/github/arch_x86_64_configs
+    cd ~/working/github/arch_x86_64_configs
     echo "Removing remote ~/.vimrc..."
     ssh $1 'if [ -e ~/.vimrc ]; then rm ~/.vimrc; echo deleted ~/.vimrc...; else echo ~/.vimrc not found; fi'
     scp vimrc $1:~/.vimrc
@@ -52,12 +50,16 @@ deploy_profile() {
 }
 
 cb () {
-    xclip -out | xclip -selection clipboard
+  xclip -out | xclip -selection clipboard
 }
 
 #ctrl+c, trapped from bash
 ctrl_c () {
-        echo "* Trapped CTRL-C *"
+  echo "* Trapped CTRL-C *"
+}
+
+hangup () {
+  echo "* Trapped SIGHUP *"
 }
 
 #this function will return 1 a named screen instance exists, 0 if it doesnt
@@ -74,16 +76,12 @@ doesnamedscreenexist(){
     fi
 }
 
-dors(){
-    cd $HOME/Dropbox/github/dors
-}
-
 freenode(){
     if [[ `doesnamedscreenexist freenode` -eq '1' ]]; then
         export IRCSERVER="irc.freenode.net"
         screen -rd freenode
     else
-        screen -S freenode epic -l ~/.freenode.ircrc
+        screen -S freenode epic5 -l ~/.freenode.ircrc
     fi
 }
 
@@ -99,13 +97,13 @@ efnet(){
     fi
 }
 
-mail(){
-    if [[ `doesnamedscreenexist mail` -eq '1' ]]; then
-        screen -rd mail
-    else
-        screen -S mail -c ~/.mscreenrc
-    fi
-}
+#mail(){
+#    if [[ `doesnamedscreenexist mail` -eq '1' ]]; then
+#        screen -rd mail
+#    else
+#        screen -S mail -c ~/.mscreenrc
+#    fi
+#}
 
 jabber () {
     if [ `screen -list | grep jabber | wc -l` == "1" ]; then
@@ -114,6 +112,7 @@ jabber () {
         screen -S jabber mcabber
     fi
 }
+
 
 topdisk() {
     dstat -ta --top-bio
@@ -190,6 +189,10 @@ ldap () {
     ldapsearch -v -x -LLL -h ldap.uchicago.edu -p 389 -b dc=uchicago,dc=edu uid=$1
 }
 
+ldaplname () {
+    ldapsearch -v -x -LLL -h ldap.uchicago.edu -p 389 -b dc=uchicago,dc=edu sn=$1
+}
+
 sldap () {
   ldapsearch -v -x -LLL -W -H ldaps://ldap.uchicago.edu -b dc=uchicago,dc=edu \
   '( & (eduPersonAffiliation=student)(sn=Smith) )' cn telephoneNumber -D \
@@ -217,11 +220,8 @@ compress_win8() {
 }
 
 screenshot () {
-    if [ -e /tmp/screenshot.jpg ]; then
-           rm -rf /tmp/screenshot.jpg
-    fi
-    import /tmp/screenshot.jpg
-    echo "The screenshot can be picked up at /tmp/screenshot.jpg"
+    import ~/working/temp/screenshots/screenshot-`date +%m`.`date +%d`.`date +%y`.jpg 
+    echo "The screenshot can be picked up at ~/working/temp/screenshots"
 }
 
 show_swap_utilization () {
@@ -286,26 +286,72 @@ cwd() {
 }
 
 #for testing new versions of galaxy
-stubgalaxy() {
-    sudo rm -rf ~/.galaxy-python
-    mkdir ~/.galaxy-python
-    ln -s /usr/bin/python2 ~/.galaxy-python/python
-    export  PATH=~/.galaxy-python:$PATH
-    cd /
-    sudo rm -rf /tmp/galaxy
-    mkdir -p /tmp/galaxy
-    cd /tmp/galaxy
-    hg clone https://bitbucket.org/galaxy/galaxy-dist/
-    cd galaxy-dist
-    hg update stable
-    #I don't think the line below really works
-    sed -i '0,/#admin_users =/s//admin_users = dansully@uchicago.edu/' universe_wsgi.ini
-    sh run.sh
+#stubgalaxy() {
+#    cd /tmp
+#    sudo rm -rf ~/.galaxy-python
+#    mkdir ~/.galaxy-python
+#    ln -s /usr/bin/python2 ~/.galaxy-python/python
+#    export  PATH=~/.galaxy-python:$PATH
+#    cd /
+#    sudo rm -rf /tmp/galaxy
+#    mkdir -p /tmp/galaxy
+#    cd /tmp/galaxy
+#    #hg clone https://bitbucket.org/galaxy/galaxy-dist/
+#    hg clone https://bitbucket.org/galaxy/galaxy-dist/ -r 11247
+#    cd galaxy-dist
+#    #hg update stable
+#    cp universe_wsgi.ini.sample universe_wsgi.ini
+#    cp config/galaxy.ini.sample config/galaxy.ini
+#    sed -i 's\#admin_users = None\admin_users = dansully@uchicago.edu\g' universe_wsgi.ini
+#    sh run.sh
+#}
+
+
+installrvm() {
+  \curl -L https://get.rvm.io | bash -s stable --autolibs=enabled
+}
+
+loadrvm() {
+   if [ -e ~/.rvm/scripts/rvm ]; then
+      source ~/.rvm/scripts/rvm > /dev/null
+      #export PATH=$HOME/.rvm/bin:$PATH;
+      rvm list
+      echo "RVM Loaded."
+   else
+      echo "RVM Not installed."
+   fi
+}
+
+loadrbenv() {
+    #loadrvm / unloadrvm if issues, specifically in 'gem env'
+    if [ -d "$HOME/.rbenv/bin" ]; then
+      export PATH="$HOME/.rbenv/bin:$PATH"$
+      eval "$(rbenv init -)"
+      echo "rbenv loaded"
+      rbenv versions
+    else
+      echo "rbenv not installed"
+    fi
+}
+
+devops() {
+  cd ~/working/github/devopsrockstars
+}
+
+wk() {
+ #wkhtmltopdf --viewport-size 1440x900 --page-size "Letter"  --javascript-delay 4000 --grayscale --debug-javascript "$1" ./`date +%s`.pdf
+ wkhtmltopdf --page-size "Letter" --footer-font-size 8 --footer-left "[webpage]" --header-font-size 8 --header-left "[isodate] [time]"  \
+ --page-size "Letter"  --javascript-delay 4000 --grayscale --debug-javascript "$1" ./`date +%s`.pdf
 }
 
 if [ `uname` == Darwin ]; then
     echo "Sourcing Darwin functions..."
-    #then we are sourcing darwin functions
+    dock() {
+      echo "dock"
+      osascript -e 'quit app "Messages"'
+      killall Dock
+      osascript -e 'launch app "Messages"'
+    }
 fi
 
 if [[ `uname -r` =~ ARCH ]]; then
@@ -313,6 +359,22 @@ if [[ `uname -r` =~ ARCH ]]; then
     whatprovides () {
         pkgfile $1
     }
+   
+    p2 () {
+      sudo rm -rf ~/.galaxy-python
+      mkdir ~/.galaxy-python
+      ln -s /usr/bin/python2 ~/.galaxy-python/python
+      ln -s /usr/bin/pip2 ~/.galaxy-python/pip
+      ln -s /usr/bin/virtualenv-2.7 ~/.galaxy-python/virtualenv
+      export  PATH=~/.galaxy-python:$PATH
+    } 
+    p3 () {
+      sudo rm -rf ~/.galaxy-python
+      mkdir ~/.galaxy-python
+      ln -s /usr/bin/python ~/.galaxy-python/python
+      ln -s /usr/bin/pip ~/.galaxy-python/pip
+      export  PATH=~/.galaxy-python:$PATH
+    } 
     #then we are sourcing darwin functions
 else
     :
