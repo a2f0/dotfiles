@@ -5,3 +5,4 @@ mcabberrc
 my.cnf
 passwd-s3fs
 salt-roster
+yp.conf
