@@ -1,4 +1,5 @@
 aliases-private
+hosts
 iptables.rules
 mcabberrc
 passwd-s3fs
