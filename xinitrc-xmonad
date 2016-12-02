@@ -35,5 +35,7 @@ export GPG_AGENT_INFO
 export GNOME_KEYRING_CONTROL
 export GNOME_KEYRING_PID
 
-#start xmonad
-exec xmonad
+#dps start xmonad
+#exec xmonad
+#dps start xfce
+#exec startxfce4
