@@ -1,5 +1,6 @@
 aliases-private
 hosts
+id_rsa
 iptables.rules
 mcabberrc
 my.cnf
