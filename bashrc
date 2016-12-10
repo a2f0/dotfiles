@@ -40,8 +40,10 @@ if [ `uname` == Darwin ]; then
     #export PERL_MB_OPT="--install_base /home/`whoami`/perl5";
     #export PERL_MM_OPT="INSTALL_BASE=/home/`whoami`/perl5";
     #export PERL5LIB="/home/`whoami`/perl5/lib/perl5:$PERL5LIB";
-    export PATH="/home/`whoami`/perl5/bin:$PATH";
+    #export PATH="/home/`whoami`/perl5/bin:$PATH";
     export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
+    export GOPATH=~/working/github/go
+    PATH=$PATH:~/working/github/go/bin
 
 elif [ `uname` == Linux ]; then 
     echo "Linux box detected in bashrc"
@@ -170,5 +172,3 @@ fi
 
 eval $(ssh-agent)
 ssh-add
-
-awsbootstrap
