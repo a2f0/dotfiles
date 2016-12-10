@@ -18,3 +18,4 @@ ssh_config
 /resolv.conf
 /id_rsa
 /functions-private
+/offlineimaprc
