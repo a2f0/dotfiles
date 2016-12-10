@@ -5,6 +5,7 @@ id_rsa
 iptables.rules
 mcabberrc
 my.cnf
+offlineimaprc
 passwd-s3fs
 resolv.conf
 salt-roster
