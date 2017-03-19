@@ -159,7 +159,7 @@ fi
 #    eval "$(rbenv init -)"
 #    :
 #fi
-
+loadrbenv
 
 if [ -e ~/perl5/perlbrew/etc/bashrc ]; then
   echo "initializing perlbrew"

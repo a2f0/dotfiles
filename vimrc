@@ -52,6 +52,7 @@ if exists("syntax_on")
 "Set the color, for some reason these seem transposed.
 :set statusline+=[%P] 
 :hi StatusLine ctermbg=white ctermfg=black
+:set enc=utf-8
 
 function! FileSize()
     let bytes = getfsize(expand("%:p"))
