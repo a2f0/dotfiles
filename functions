@@ -172,7 +172,7 @@ bash_prompt () {
    
     FMAG="\[\033[35m\]"
     
-    PS1="--[\u@\h]-[\w]--\n> "
+    PS1="--[\u@\h]-[\w]-[$RAILS_ENV]-\n> "
     #colors must be surrounded with \[  \], this works.  Uncomment it.
     #PS1="--[\[$bldblu\]\u@\h]-[\w]--\n> "
 }
