@@ -172,10 +172,12 @@ bash_prompt () {
    
     FMAG="\[\033[35m\]"
     
-    PS1="--[\u@\h]-[\w]-[$RAILS_ENV]-\n> "
+    export PS1="--[\u@\h]-[\w]-[$RAILS_ENV]-\n> "
     #colors must be surrounded with \[  \], this works.  Uncomment it.
     #PS1="--[\[$bldblu\]\u@\h]-[\w]--\n> "
 }
+PROMPT_COMMAND="bash_prompt"
+
 
 killwin7rdp () {
     kill `ps -ef | grep rdesktop | grep -v grep | grep win7.bsd.uchicago.edu:3389 | awk '{ print $ 2 } '`
