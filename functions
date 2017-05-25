@@ -326,13 +326,11 @@ loadrvm() {
 
 loadrbenv() {
     #loadrvm / unloadrvm if issues, specifically in 'gem env'
-    if [ -d "$HOME/.rbenv/bin" ]; then
-      export PATH="$HOME/.rbenv/bin:$PATH"$
-      eval "$(rbenv init -)"
-      echo "rbenv loaded"
-      rbenv versions
+    if hash rbenv 2>/dev/null; then
+        echo "loading rbenv..."
+        eval "$(rbenv init -)"
     else
-      echo "rbenv not installed"
+        echo "rbenv not installed"
     fi
 }
 
