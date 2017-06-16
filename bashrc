@@ -170,5 +170,9 @@ if [ -e ~/.dotfiles-devopsrockstars/init ]; then
   source ~/.dotfiles-devopsrockstars/init
 fi
 
+if [ -e ~/working/github/arch_x86_64_configs/quick ]; then
+  source ~/working/github/arch_x86_64_configs/quick
+fi
+
 eval $(ssh-agent)
 ssh-add
