@@ -30,9 +30,10 @@ if [ `uname` == Darwin ]; then
     PATH=$PATH:/opt/local/lib/postgresql91/bin
     #PATH=$PATH:/Users/`whoami`/Dropbox/scripts/adedit
     #PATH=$PATH:~/Dropbox/scripts
-    PATH=$PATH:/opt/local/lib/mysql5/bin/
+    PATH=$PATH:/opt/local/lib/mysql5/bin
     PATH=$PATH:/opt/mongodb/bin
-    PATH=$PATH:/Applications/LibreOffice.app/Contents/MacOS/
+    PATH=$PATH:/Applications/LibreOffice.app/Contents/MacOS
+    PATH=$PATH:~/Library/Python/2.7/bin
 
     #stuff for perl cpan
     #don't use CPAN anymoe use perlbrew
