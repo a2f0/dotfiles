@@ -175,5 +175,5 @@ if [ -e ~/working/github/arch_x86_64_configs/quick ]; then
   source ~/working/github/arch_x86_64_configs/quick
 fi
 
-eval $(ssh-agent)
+#eval $(ssh-agent)
 ssh-add
