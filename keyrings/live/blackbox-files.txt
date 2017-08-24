@@ -9,4 +9,5 @@ offlineimaprc
 passwd-s3fs
 resolv.conf
 salt-roster
+ssh_config
 yp.conf
