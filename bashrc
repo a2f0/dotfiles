@@ -34,6 +34,7 @@ if [ `uname` == Darwin ]; then
     PATH=$PATH:/opt/mongodb/bin
     PATH=$PATH:/Applications/LibreOffice.app/Contents/MacOS
     PATH=$PATH:~/Library/Python/2.7/bin
+    PATH=$PATH:~/.platformio/penv/bin
 
     #stuff for perl cpan
     #don't use CPAN anymoe use perlbrew
@@ -45,6 +46,13 @@ if [ `uname` == Darwin ]; then
     export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
     export GOPATH=~/working/github/go
     PATH=$PATH:~/working/github/go/bin
+
+    #these two lines are for the Azure CLI
+    export PATH=$PATH:$HOME/bin
+    source "$HOME/lib/azure-cli/az.completion"
+    
+    #fastlane
+    export PATH="$HOME/.fastlane/bin:$PATH"
 
 elif [ `uname` == Linux ]; then 
     echo "Linux box detected in bashrc"
