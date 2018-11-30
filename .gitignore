@@ -19,3 +19,4 @@ ssh_config
 /id_rsa
 /functions-private
 /offlineimaprc
+/ssh_config
