@@ -24,17 +24,14 @@ NODE_PATH="$NPM_PACKAGES/lib/node_modules:$NODE_PATH"
 
 if [ `uname` == Darwin ]; then
     echo "Darwin detected in bashrc"
-    #PATH=$PATH:/usr/local/rvm/bin
     PATH=$PATH:/opt/local/bin
     PATH=$PATH:$HOME/scripts
-    PATH=$PATH:/opt/local/lib/postgresql91/bin
-    #PATH=$PATH:/Users/`whoami`/Dropbox/scripts/adedit
-    #PATH=$PATH:~/Dropbox/scripts
-    PATH=$PATH:/opt/local/lib/mysql5/bin
-    PATH=$PATH:/opt/mongodb/bin
-    PATH=$PATH:/Applications/LibreOffice.app/Contents/MacOS
-    PATH=$PATH:~/Library/Python/2.7/bin
     PATH=$PATH:~/.platformio/penv/bin
+
+    #Begin Brew Stuff
+    PATH="/usr/local/opt/node@8/bin:$PATH"
+    PATH="/usr/local/opt/terraform@0.11/bin:$PATH"
+    #End Brew Stuff
 
     #stuff for perl cpan
     #don't use CPAN anymoe use perlbrew
