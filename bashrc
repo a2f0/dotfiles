@@ -2,7 +2,16 @@
 #
 #   Dan Sullivan
 #   Universal ~/.bashrc
-#   First commit Jan 22, 2013
+
+#unset and resource all aliases
+unalias -a
+source ~/.aliases
+source ~/.aliases-private
+
+#unset all functions
+for function in `declare -F | awk '{ print $3 }' `; do unset $function; done
+source ~/.functions
+source ~/.functions-private
 
 #check in ~/.functions for cntrl_c function
 trap ctrl_c INT
@@ -12,21 +21,15 @@ trap hangup KILL
 #set the umask to prevent files from being created with access
 #to group members or others
 umask 0077
-
-NPM_PACKAGES="$HOME/.npm-packages"
-PATH="$NPM_PACKAGES/bin:$PATH"
-# Unset manpath so we can inherit from /etc/manpath via the `manpath` command
-unset MANPATH
-MANPATH="$NPM_PACKAGES/share/man:$(manpath)"
-
-#Tell Node about these packages
-NODE_PATH="$NPM_PACKAGES/lib/node_modules:$NODE_PATH"
-
 if [ `uname` == Darwin ]; then
     echo "Darwin detected in bashrc"
+    #use UTF-8 for everything.
+    export LC_ALL=en_US.UTF-8
+    
     PATH=$PATH:/opt/local/bin
     PATH=$PATH:$HOME/scripts
     PATH=$PATH:~/.platformio/penv/bin
+    PATH=$PATH:$HOME/Library/Python/3.7/bin #aws cli tools
 
     #Begin Brew Stuff
     PATH="/usr/local/opt/node@8/bin:$PATH"
@@ -50,6 +53,13 @@ if [ `uname` == Darwin ]; then
     
     #fastlane
     export PATH="$HOME/.fastlane/bin:$PATH"
+
+    if [ -f '/Users/dansullivan/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/Users/dansullivan/Downloads/google-cloud-sdk/path.bash.inc'; fi
+    if [ -f '/Users/dansullivan/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/dansullivan/Downloads/google-cloud-sdk/completion.bash.inc'; fi
+
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+    [ -s "/usr/local/opt/nvm/etc/bash_completion" ] && . "/usr/local/opt/nvm/etc/bash_completion"  # This loads nvm bash_completion
 
 elif [ `uname` == Linux ]; then 
     echo "Linux box detected in bashrc"
@@ -80,17 +90,6 @@ elif [ `uname` == Linux ]; then
 else
     echo "Unknown platform detected..."
 fi
-
-#unset and resource all aliases
-unalias -a
-source ~/.aliases
-source ~/.aliases-private
-
-#unset all functions
-for function in `declare -F | awk '{ print $3 }' `; do unset $function; done
-source ~/.functions
-source ~/.functions-private
-
 
 #call my bash_prompt funcion
 bash_prompt
