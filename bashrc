@@ -32,7 +32,6 @@ if [ `uname` == Darwin ]; then
     PATH=$PATH:$HOME/Library/Python/3.7/bin #aws cli tools
 
     #Begin Brew Stuff
-    PATH="/usr/local/opt/node@8/bin:$PATH"
     PATH="/usr/local/opt/terraform@0.11/bin:$PATH"
     #End Brew Stuff
 
