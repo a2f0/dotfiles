@@ -1,0 +1,3 @@
+unicode = false
+#commented out for nvm 8/14/2019 dps
+#prefix = ~/.npm-packages
