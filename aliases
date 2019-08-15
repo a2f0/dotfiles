@@ -89,11 +89,9 @@ alias log="cd /var/log/syslog-ng"
 alias unloadrvm="__rvm_unload"
 alias acpiwin8="vboxmanage controlvm Win8_Enterprise_x64 acpipowerbutton"
 alias db="lw; rake db:drop db:create db:migrate; rake db:fixtures:load RAILS_ENV=development;"
-alias l="ls -l"
 alias csr="openssl req -in $1 -noout -text"
 alias cvpn="sudo openconnect --script ~/working/github/arch_x86_64_configs/vpnc-script cvpn.uchicago.edu"
 alias epochtime='date +%s'
-alias iphone='/Applications/Xcode.app/Contents/Developer/Applications/Simulator.app/Contents/MacOS/Simulator -CurrentDeviceUDID 8FF45666-8CF0-4F02-A880-0861DC361517'
 
 #generate a 60 character password
 alias 60="< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-60};echo;"
