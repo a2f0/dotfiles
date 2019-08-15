@@ -53,12 +53,14 @@ if [ `uname` == Darwin ]; then
     #fastlane
     export PATH="$HOME/.fastlane/bin:$PATH"
 
-    if [ -f '/Users/dansullivan/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/Users/dansullivan/Downloads/google-cloud-sdk/path.bash.inc'; fi
-    if [ -f '/Users/dansullivan/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/dansullivan/Downloads/google-cloud-sdk/completion.bash.inc'; fi
+    #gcloud
+    if [ -f "$HOME/working/MacOS-Install/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/working/MacOS-Install/google-cloud-sdk/path.bash.inc"; fi
+    if [ -f "$HOME/working/MacOS-Install/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/working/MacOS-Install/google-cloud-sdk/path.bash.inc"; fi
 
     export NVM_DIR="$HOME/.nvm"
     [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
     [ -s "/usr/local/opt/nvm/etc/bash_completion" ] && . "/usr/local/opt/nvm/etc/bash_completion"  # This loads nvm bash_completion
+    alias cd='cdnvm'
 
 elif [ `uname` == Linux ]; then 
     echo "Linux box detected in bashrc"
