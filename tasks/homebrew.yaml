@@ -1,0 +1,32 @@
+- name: ensure homebrew is updated 
+  homebrew:
+    state: latest
+    update_homebrew: yes
+
+### Package Installation
+
+- name: vim 
+  homebrew:
+    name: vim 
+    state: latest
+
+- name: imagemagick 
+  homebrew:
+    name: vim 
+    state: latest
+
+- name: dos2unix 
+  homebrew:
+    name: dos2unix 
+    state: latest
+
+- name: postgresql 
+  homebrew:
+    name: postgresql 
+    state: latest
+
+- name: azure-cli 
+  homebrew:
+    name: azure-cli 
+    state: latest
+
