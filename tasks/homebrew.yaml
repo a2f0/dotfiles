@@ -5,14 +5,9 @@
 
 ### Package Installation
 
-- name: vim 
+- name: azure-cli 
   homebrew:
-    name: vim 
-    state: latest
-
-- name: imagemagick 
-  homebrew:
-    name: vim 
+    name: azure-cli 
     state: latest
 
 - name: dos2unix 
@@ -20,13 +15,22 @@
     name: dos2unix 
     state: latest
 
+- name: imagemagick 
+  homebrew:
+    name: vim 
+    state: latest
+
+- name: kubernetes-helm #added 9/20/2019
+  homebrew:
+    name: kubernetes-helm
+    state: latest
+
 - name: postgresql 
   homebrew:
     name: postgresql 
     state: latest
 
-- name: azure-cli 
+- name: vim 
   homebrew:
-    name: azure-cli 
+    name: vim 
     state: latest
-
