@@ -1,8 +1,3 @@
-#!/bin/sh
-#
-#   Dan Sullivan
-#   Universal ~/.bashrc
-
 #unset and resource all aliases
 unalias -a
 source ~/.aliases
@@ -46,14 +41,13 @@ if [ `uname` == Darwin ]; then
     export GOPATH=~/working/github/go
     PATH=$PATH:~/working/github/go/bin
 
-    #these two lines are for the Azure CLI
-    export PATH=$PATH:$HOME/bin
-    source "$HOME/lib/azure-cli/az.completion"
+    # brew Specific
+    source /usr/local/etc/bash_completion.d/az
     
-    #fastlane
+    # fastlane
     export PATH="$HOME/.fastlane/bin:$PATH"
 
-    #gcloud
+    # gcloud
     if [ -f "$HOME/working/MacOS-Install/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/working/MacOS-Install/google-cloud-sdk/path.bash.inc"; fi
     if [ -f "$HOME/working/MacOS-Install/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/working/MacOS-Install/google-cloud-sdk/path.bash.inc"; fi
 
@@ -179,6 +173,3 @@ fi
 if [ -e ~/working/github/arch_x86_64_configs/quick ]; then
   source ~/working/github/arch_x86_64_configs/quick
 fi
-
-#eval $(ssh-agent)
-ssh-add
