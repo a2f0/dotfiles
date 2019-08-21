@@ -1,21 +1,31 @@
-#unset and resource all aliases
+# unset and resource all aliases
 unalias -a
 source ~/.aliases
 source ~/.aliases-private
 
-#unset all functions
+# unset all functions
 for function in `declare -F | awk '{ print $3 }' `; do unset $function; done
 source ~/.functions
 source ~/.functions-private
 
-#check in ~/.functions for cntrl_c function
+# check in ~/.functions for cntrl_c function
 trap ctrl_c INT
 trap hangup HUP
 trap hangup KILL
 
+# enable vi mode (set +o vi to revert)
+set -o vi
+
+# set the editor
+export EDITOR="vim"
+
+# enable timestamping on bash_history (type history to see timestamps)
+export HISTTIMEFORMAT="%d.%m.%y %T "
+
 #set the umask to prevent files from being created with access
 #to group members or others
 umask 0077
+
 if [ `uname` == Darwin ]; then
     echo "Darwin detected in bashrc"
     #use UTF-8 for everything.
@@ -86,13 +96,8 @@ else
     echo "Unknown platform detected..."
 fi
 
-#call my bash_prompt funcion
+# from functions 
 bash_prompt
-
-#set vi mode
-#set -o vi
-#enable vi mode
-#set +o vi
 
 #see efnet/freenode bash shell functions in ~/functions
 #export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
@@ -125,11 +130,6 @@ else
     echo "This is an SSH session..."
 fi
 
-#Enable timestamping on bash_history (type history to see timestamps)
-export HISTTIMEFORMAT="%d.%m.%y %T "
-
-#Set the editor
-export EDITOR="vim"
 
 #wipe out old screens
 screen -wipe > /dev/null
@@ -142,24 +142,6 @@ if [ ! -d ~/.mcabber/otr ]; then
     mkdir -p ~/.mcabber/otr
     chmod -R 700 ~/.mcabber
 fi
-
-#load rvm if its installed
-#if [ -e ~/.rvm/scripts/rvm ]; then
-#    source ~/.rvm/scripts/rvm > /dev/null
-#    export PATH=$HOME/.rvm/bin:$PATH;
-    :
-#fi
-#unload it immediately afterwards
-#added this 12/30/2013 for rbenv support to dev with Rails 4.
-#__rvm_unload
-
-#load rbenv if it is installed
-#if [ -d "$HOME/.rbenv/bin" ]; then
-#    export PATH="$HOME/.rbenv/bin:$PATH"
-#    eval "$(rbenv init -)"
-#    :
-#fi
-loadrbenv
 
 if [ -e ~/perl5/perlbrew/etc/bashrc ]; then
   echo "initializing perlbrew"
