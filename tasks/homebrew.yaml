@@ -30,6 +30,11 @@
     name: postgresql 
     state: latest
 
+- name: rbenv 
+  homebrew:
+    name: rbenv 
+    state: latest
+
 - name: vim 
   homebrew:
     name: vim 
