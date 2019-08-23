@@ -98,6 +98,7 @@ fi
 
 # from functions 
 bash_prompt
+loadrbenv
 
 #see efnet/freenode bash shell functions in ~/functions
 #export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
