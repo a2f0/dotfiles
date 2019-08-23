@@ -35,6 +35,11 @@
     name: rbenv 
     state: latest
 
+- name: packer #added 9/23/2019
+  homebrew:
+    name: packer
+    state: latest
+
 - name: vim 
   homebrew:
     name: vim 
