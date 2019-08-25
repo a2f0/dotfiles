@@ -4,7 +4,7 @@
 
 echo "Unsetting old functions..."
 
-for function in `declare -F | awk '{ print $3 }' `; do unset $function; done
+for function in `declare -F | awk '{ print $3 }' `; do unset -f $function; done
 
 echo "Sourcing functions..."
 
