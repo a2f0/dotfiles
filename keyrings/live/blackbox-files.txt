@@ -1,5 +1,6 @@
 aliases-private
 aws.config
+aws.credentials
 functions-private
 hosts
 id_rsa
