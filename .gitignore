@@ -21,3 +21,4 @@ ssh_config
 /offlineimaprc
 /ssh_config
 /aws.config
+/aws.credentials
