@@ -4,7 +4,7 @@ source ~/.aliases
 source ~/.aliases-private
 
 # unset all functions
-for function in `declare -F | awk '{ print $3 }' `; do unset $function; done
+for function in `declare -F | awk '{ print $3 }' `; do unset -f  "$function"; done
 source ~/.functions
 source ~/.functions-private
 
@@ -156,3 +156,5 @@ fi
 if [ -e ~/working/github/arch_x86_64_configs/quick ]; then
   source ~/working/github/arch_x86_64_configs/quick
 fi
+
+cd ~/working/github
