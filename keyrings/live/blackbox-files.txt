@@ -1,4 +1,5 @@
 aliases-private
+aws.config
 functions-private
 hosts
 id_rsa
