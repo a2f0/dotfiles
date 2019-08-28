@@ -20,6 +20,16 @@
     name: vim 
     state: latest
 
+- name: jenv #added 9/23/2019
+  homebrew:
+    name: jenv
+    state: latest
+
+- name: jq #added 9/28/2019
+  homebrew:
+    name: jq
+    state: latest
+
 - name: kubernetes-helm #added 9/20/2019
   homebrew:
     name: kubernetes-helm
