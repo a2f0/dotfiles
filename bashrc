@@ -47,6 +47,7 @@ if [ `uname` == Darwin ]; then
     #export PERL_MM_OPT="INSTALL_BASE=/home/`whoami`/perl5";
     #export PERL5LIB="/home/`whoami`/perl5/lib/perl5:$PERL5LIB";
     #export PATH="/home/`whoami`/perl5/bin:$PATH";
+    export ANDROID_HOME=$HOME/Library/Android
     export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
     export GOPATH=~/working/github/go
     PATH=$PATH:~/working/github/go/bin
@@ -68,7 +69,7 @@ if [ `uname` == Darwin ]; then
 
 elif [ `uname` == Linux ]; then 
     echo "Linux box detected in bashrc"
-    #init volume to 20.
+    # init volume to 20.
     amixer sset Master 67% 
     PATH=$PATH:/opt/local/scripts
     PATH=$PATH:~/.cabal/bin
@@ -132,7 +133,7 @@ else
 fi
 
 
-#wipe out old screens
+# wipe out old screens
 screen -wipe > /dev/null
 screen -list
 
