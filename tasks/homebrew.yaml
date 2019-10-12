@@ -15,6 +15,11 @@
     name: dos2unix 
     state: latest
 
+- name: git #for gitk 9/2/2019
+  homebrew:
+    name: git 
+    state: latest
+
 - name: imagemagick 
   homebrew:
     name: vim 
