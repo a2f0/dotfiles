@@ -8,54 +8,74 @@
 - name: azure-cli 
   homebrew:
     name: azure-cli 
-    state: latest
+    state: present
 
 - name: dos2unix 
   homebrew:
     name: dos2unix 
-    state: latest
+    state: present
 
-- name: git #for gitk 9/2/2019
+- name: git # for gitk 9/2/2019
   homebrew:
     name: git 
-    state: latest
+    state: present
 
 - name: imagemagick 
   homebrew:
     name: vim 
-    state: latest
+    state: present
 
-- name: jenv #added 9/23/2019
+- name: jenv
   homebrew:
     name: jenv
-    state: latest
+    state: present
 
-- name: jq #added 9/28/2019
+- name: jq
   homebrew:
     name: jq
-    state: latest
+    state: present
 
-- name: kubernetes-helm #added 9/20/2019
+- name: kubernetes-helm
   homebrew:
     name: kubernetes-helm
-    state: latest
+    state: present
+
+- name: nmap
+  homebrew:
+    name: nmap
+    state: present
+
+- name: packer
+  homebrew:
+    name: packer
+    state: present
 
 - name: postgresql 
   homebrew:
     name: postgresql 
-    state: latest
+    state: present
+
+- name: tflint 
+  homebrew:
+    name: tflint 
+    state: present
+
+- name: wget
+  homebrew:
+    name: wget 
+    state: present
 
 - name: rbenv 
   homebrew:
     name: rbenv 
-    state: latest
+    state: present
 
-- name: packer #added 9/23/2019
+- name: telnet 
   homebrew:
-    name: packer
-    state: latest
+    name: telnet 
+    state: present
 
 - name: vim 
   homebrew:
     name: vim 
-    state: latest
+    state: present
