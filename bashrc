@@ -39,14 +39,7 @@ if [ `uname` == Darwin ]; then
     #Begin Brew Stuff
     PATH="/usr/local/opt/terraform@0.11/bin:$PATH"
     #End Brew Stuff
-
-    #stuff for perl cpan
-    #don't use CPAN anymoe use perlbrew
-    #export PERL_LOCAL_LIB_ROOT="$PERL_LOCAL_LIB_ROOT:/home/`whoami`/perl5";
-    #export PERL_MB_OPT="--install_base /home/`whoami`/perl5";
-    #export PERL_MM_OPT="INSTALL_BASE=/home/`whoami`/perl5";
-    #export PERL5LIB="/home/`whoami`/perl5/lib/perl5:$PERL5LIB";
-    #export PATH="/home/`whoami`/perl5/bin:$PATH";
+    
     export ANDROID_HOME=$HOME/Library/Android
     export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
     export GOPATH=~/working/github/go
