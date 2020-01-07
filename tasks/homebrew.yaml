@@ -40,6 +40,11 @@
     name: kubernetes-helm
     state: present
 
+- name: mitmproxy
+  homebrew:
+    name: mitmproxy
+    state: present
+
 - name: nmap
   homebrew:
     name: nmap
