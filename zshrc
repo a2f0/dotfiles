@@ -9,7 +9,7 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
 [ -s "/usr/local/opt/nvm/etc/bash_completion" ] && . "/usr/local/opt/nvm/etc/bash_completion"  # This loads nvm bash_completion
 
-# place this after nvm initialization!
+# nvm automatially change version when entering a directory with .nvmrc
 autoload -U add-zsh-hook
 load-nvmrc() {
   local node_version="$(nvm version)"
@@ -30,3 +30,11 @@ load-nvmrc() {
 }
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
+
+# rbenv
+if hash rbenv 2>/dev/null; then
+  echo "loading rbenv..."
+    eval "$(rbenv init -)"
+  else
+    echo "rbenv not installed"
+fi
