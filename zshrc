@@ -1,4 +1,5 @@
 source ~/working/github/dotfiles/quick
+source ~/.aliases-private
 
 # gcloud
 if [ -f "$HOME/working/MacOS-Install/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/working/MacOS-Install/google-cloud-sdk/path.zsh.inc"; fi
