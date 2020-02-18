@@ -39,3 +39,7 @@ if hash rbenv 2>/dev/null; then
   else
     echo "rbenv not installed"
 fi
+
+# android studio
+export ANDROID_HOME=$HOME/Library/Android
+export PATH=$PATH:$HOME/Library/Android/sdk/emulator
