@@ -44,3 +44,14 @@ fi
 export ANDROID_HOME=$HOME/Library/Android
 export PATH=$PATH:$HOME/Library/Android/sdk/emulator
 export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
+
+# rust
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# make sure some other program is not messing with the environment
+if [ -e  ~/.zprofile ]; then
+  echo "deleting ~/.zprofile:"
+  cat ~/.zprofile
+  rm -rf ~/.zprofile
+  echo "done deleting ~/.zprofile.."
+fi
