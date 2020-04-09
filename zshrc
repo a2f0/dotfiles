@@ -1,6 +1,10 @@
 source ~/working/github/dotfiles/quick
 source ~/.aliases-private
 
+# ohmyzsh
+export ZSH="$HOME/.oh-my-zsh"
+ZSH_THEME="robbyrussell"
+
 # gcloud
 if [ -f "$HOME/working/MacOS-Install/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/working/MacOS-Install/google-cloud-sdk/path.zsh.inc"; fi
 if [ -f "$HOME/working/MacOS-Install/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/working/MacOS-Install/google-cloud-sdk/path.zsh.inc"; fi
@@ -56,8 +60,9 @@ if [ -e  ~/.zprofile ]; then
   echo "done deleting ~/.zprofile.."
 fi
 
-# zsh plugins
-plugins=(git-prompt)
+# ohmyzsh plugins
+plugins=(git)
+source $ZSH/oh-my-zsh.sh
 
 # set the locale
 export LC_ALL=en_US.UTF-8
