@@ -55,3 +55,9 @@ if [ -e  ~/.zprofile ]; then
   rm -rf ~/.zprofile
   echo "done deleting ~/.zprofile.."
 fi
+
+# zsh plugins
+plugins=(git-prompt)
+
+# set the locale
+export LC_ALL=en_US.UTF-8
