@@ -1,0 +1,8 @@
+{
+    "files.autoSave": "onFocusChange",
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.renderWhitespace": "all",
+    "html.trace.server": "messages",
+    "editor.renderControlCharacters": true,
+    "window.zoomLevel": 0
+}
