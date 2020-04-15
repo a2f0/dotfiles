@@ -4,5 +4,6 @@
     "editor.renderWhitespace": "all",
     "html.trace.server": "messages",
     "editor.renderControlCharacters": true,
-    "window.zoomLevel": 0
+    "window.zoomLevel": 0,
+    "terminal.integrated.scrollback": 100000
 }
