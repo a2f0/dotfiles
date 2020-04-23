@@ -89,3 +89,9 @@
   homebrew:
     name: vim 
     state: present
+
+- name: epic5
+  homebrew:
+    name: epic5 
+    state: present
+  
