@@ -9,6 +9,7 @@ mcabberrc
 my.cnf
 offlineimaprc
 passwd-s3fs
+pgpass
 resolv.conf
 salt-roster
 ssh_config
