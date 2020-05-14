@@ -22,3 +22,4 @@ ssh_config
 /ssh_config
 /aws.config
 /aws.credentials
+/pgpass
