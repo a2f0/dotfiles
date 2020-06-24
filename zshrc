@@ -60,6 +60,9 @@ if [ -e  ~/.zprofile ]; then
   echo "done deleting ~/.zprofile.."
 fi
 
+# MacOS Python Binaries
+export PATH=$PATH:$HOME/Library/Python/3.7/bin
+
 # ohmyzsh plugins
 plugins=(git)
 source $ZSH/oh-my-zsh.sh
