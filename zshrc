@@ -69,3 +69,6 @@ source $ZSH/oh-my-zsh.sh
 
 # set the locale
 export LC_ALL=en_US.UTF-8
+
+# aws cli tools
+export AWS_PAGER=""
