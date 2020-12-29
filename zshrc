@@ -44,6 +44,11 @@ if hash rbenv 2>/dev/null; then
     echo "rbenv not installed"
 fi
 
+# pyenv
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
 # android studio
 export ANDROID_HOME=$HOME/Library/Android
 export PATH=$PATH:$HOME/Library/Android/sdk/emulator
