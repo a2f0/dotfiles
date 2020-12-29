@@ -95,3 +95,12 @@
     name: epic5 
     state: present
   
+- name: pyenv
+  homebrew:
+    name: pyenv 
+    state: present
+
+- name: zlib
+  homebrew:
+    name: zlib 
+    state: present
