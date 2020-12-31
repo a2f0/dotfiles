@@ -1,30 +1,15 @@
-"Dan Sullivan
-"First commit August 13, 2012
-"~/.vimrc
-
 :set number
 :set ruler
 :set ignorecase
+:set backspace=indent,eol,start
 :syntax on
-":10 sp
-
-"don't create swapfiles
 :set noswapfile
-
-"smart indent for python
-":help smartindent
-":help auto-setting embed in source for portability
-
-"disabled smartindent 8/4/2013
-":set smartindent
-"set the number of spaces for a tab
 :set tabstop=2
 "expand tabs to spaces
 :set expandtab
 :set shiftwidth=2
 :set list
-
-"enable search highlighting added 5/4/2013
+"enable search highlighting
 :set hlsearch
 
 "color scheme
