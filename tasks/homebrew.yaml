@@ -104,3 +104,8 @@
   homebrew:
     name: zlib 
     state: present
+
+- name: bzip2
+  homebrew:
+    name: bzip2 
+    state: present
