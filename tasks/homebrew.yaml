@@ -15,7 +15,7 @@
     name: dos2unix 
     state: present
 
-- name: git # for gitk 9/2/2019
+- name: git # for gitk
   homebrew:
     name: git 
     state: present
@@ -108,4 +108,9 @@
 - name: bzip2
   homebrew:
     name: bzip2 
+    state: present
+
+- name: shellcheck
+  homebrew: 
+    name: shellcheck
     state: present
