@@ -10,6 +10,11 @@
     name: azure-cli 
     state: present
 
+- name: bfg
+  homebrew:
+    name: bfg
+    state: present
+
 - name: dos2unix 
   homebrew:
     name: dos2unix 
