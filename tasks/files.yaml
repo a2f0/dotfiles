@@ -1,5 +1,5 @@
 - name: ~/.vimrc
-  copy:
-    src: ../files/vimrc
+  file:
+    src: "{{playbook_dir}}/files/vimrc"
     dest: ~/.vimrc
-    mode: 0600
+    state: link
