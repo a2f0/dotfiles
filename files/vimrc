@@ -4,15 +4,18 @@
 :set backspace=indent,eol,start
 :syntax on
 :set noswapfile
+
+" indentation / tabbing
 :set tabstop=2
-"expand tabs to spaces
 :set expandtab
 :set shiftwidth=2
 :set list
-"enable search highlighting
+
+" enable search highlighting
+
 :set hlsearch
 
-"color scheme
+" color scheme
 :set background=dark
 :hi clear
 if exists("syntax_on")
