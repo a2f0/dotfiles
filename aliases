@@ -1,5 +1,3 @@
-#Dan Sullivan aliases file
-#load this file with 'source aliases'
 alias 256="~/working/github/misc_scripts/256_color.pl -w"
 alias a="alias"
 #alias acpi="vboxmanage controlvm $1 acpipowerbutton"
@@ -39,7 +37,6 @@ alias lscreen="screen -ls"
 #alias mccabber="mcabber"
 alias random_hex="cat /dev/urandom | hexdump -C | grep \"ca fe\""
 alias lynx="lynx --accept_all_cookies"
-#mail sceren
 alias mscreen="screen -S mail -c ~/.mscreenrc"
 #alias offlineimap="if [ `pgrep offlineimap | wc -l` -eq 0 ]; then /usr/bin/offlineimap; fi"
 #alias offlineimap="if [ `pgrep offlineimap | wc -l` -eq 0 ]; then /usr/bin/offlineimap; else echo "Already running..."; fi"
@@ -71,7 +68,6 @@ alias stoprhelheadless="vboxmanage controlvm RHEL5.5 poweroff"
 #alias stopxpucad="vboxmanage controlvm \"XP (UCAD)\" poweroff"
 #alias stopxpucad="vboxmanage controlvm "xpucad" poweroff"
 alias stopxp="vboxmanage controlvm {024b812d-89c3-4143-870d-96b9e5419281} poweroff"
-#alias thunderbird="thunderbird &"
 alias updatepacmandatabase="sudo pacman -Syy; sudo yaourt -Syy"
 alias unlockluks="sudo cryptsetup luksOpen /dev/sdb luksAuxiliary; sudo mount /dev/mapper/luksAuxiliary /mnt/luksAuxiliary"
 alias unlocktruecrypt="sudo mkdir -p /mnt/archtc; sudo modprobe loop; truecrypt -t ~/working/TrueCrypt/Arch.tc /mnt/archtc"
