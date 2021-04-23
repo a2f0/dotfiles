@@ -1,3 +1,10 @@
+- name: ~/.aspell.en.pws
+  file:
+    src: "{{playbook_dir}}/files/aspell.en.pws"
+    dest: ~/.aspell.en.pws
+    state: link
+    force: yes
+
 - name: ~/.inputrc
   file:
     src: "{{playbook_dir}}/files/inputrc"
