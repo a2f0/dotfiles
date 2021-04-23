@@ -5,6 +5,20 @@
     state: link
     force: yes
 
+- name: ~/.profile
+  file:
+    src: "{{playbook_dir}}/files/profile"
+    dest: ~/.profile
+    state: link
+    force: yes
+
+- name: ~/.mailcap
+  file:
+    src: "{{playbook_dir}}/files/mailcap"
+    dest: ~/.mailcap
+    state: link
+    force: yes
+
 - name: ~/.vimrc
   file:
     src: "{{playbook_dir}}/files/vimrc"
@@ -19,9 +33,3 @@
     state: link
     force: yes
 
-- name: ~/.profile
-  file:
-    src: "{{playbook_dir}}/files/profile"
-    dest: ~/.profile
-    state: link
-    force: yes
