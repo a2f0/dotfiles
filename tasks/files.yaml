@@ -3,9 +3,18 @@
     src: "{{playbook_dir}}/files/vimrc"
     dest: ~/.vimrc
     state: link
+    force: yes
 
 - name: ~/Library/ApplicationSupport/Code/User/settings.json
   file:
     src: "{{playbook_dir}}/files/visual-studio-code-settings.json"
     dest: ~/Library/ApplicationSupport/Code/User/settings.json
     state: link
+    force: yes
+
+- name: ~/.profile
+  file:
+    src: "{{playbook_dir}}/files/profile"
+    dest: ~/.profile
+    state: link
+    force: yes
