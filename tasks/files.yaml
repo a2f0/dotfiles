@@ -1,3 +1,10 @@
+- name: ~/.inputrc
+  file:
+    src: "{{playbook_dir}}/files/inputrc"
+    dest: ~/.inputrc
+    state: link
+    force: yes
+
 - name: ~/.vimrc
   file:
     src: "{{playbook_dir}}/files/vimrc"
