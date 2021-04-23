@@ -1,0 +1,5 @@
+- name: ~/.vimrc
+  copy:
+    src: ../files/vimrc
+    dest: ~/.vimrc
+    mode: 0600

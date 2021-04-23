@@ -12,13 +12,7 @@ Configure via Ansible (dry run)
 
     ansible-playbook -i inventory.yaml playbook-macos.yaml --check -l 127.0.0.1
 
-# Installation
-
-Clone the repo 
-
-    cd /tmp
-    git clone git@github.com:dsulli99/arch_x86_64_configs.git
-    cd arch_x86_64_configs
+## Installation
 
 Build the system
 
