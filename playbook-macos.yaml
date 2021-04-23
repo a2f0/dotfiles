@@ -3,4 +3,6 @@
   connection: local
   become: no
   tasks:
-    - include: tasks/homebrew.yaml
+    - include: tasks/install-homebrew.yaml
+    - include: tasks/install-homebrew-packages.yaml
+    
