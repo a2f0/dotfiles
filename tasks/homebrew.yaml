@@ -119,3 +119,8 @@
   homebrew: 
     name: shellcheck
     state: present
+
+- name: youtube-dl
+  homebrew: 
+    name: youtube-dl
+    state: present
