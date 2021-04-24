@@ -287,32 +287,6 @@ cwd() {
   cd $1
 }
 
-#for testing new versions of galaxy
-#stubgalaxy() {
-#    cd /tmp
-#    sudo rm -rf ~/.galaxy-python
-#    mkdir ~/.galaxy-python
-#    ln -s /usr/bin/python2 ~/.galaxy-python/python
-#    export  PATH=~/.galaxy-python:$PATH
-#    cd /
-#    sudo rm -rf /tmp/galaxy
-#    mkdir -p /tmp/galaxy
-#    cd /tmp/galaxy
-#    #hg clone https://bitbucket.org/galaxy/galaxy-dist/
-#    hg clone https://bitbucket.org/galaxy/galaxy-dist/ -r 11247
-#    cd galaxy-dist
-#    #hg update stable
-#    cp universe_wsgi.ini.sample universe_wsgi.ini
-#    cp config/galaxy.ini.sample config/galaxy.ini
-#    sed -i 's\#admin_users = None\admin_users = dansully@uchicago.edu\g' universe_wsgi.ini
-#    sh run.sh
-#}
-
-
-installrvm() {
-  \curl -L https://get.rvm.io | bash -s stable --autolibs=enabled
-}
-
 loadrvm() {
    if [ -e ~/.rvm/scripts/rvm ]; then
       source ~/.rvm/scripts/rvm > /dev/null

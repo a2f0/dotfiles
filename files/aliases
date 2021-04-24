@@ -1,5 +1,4 @@
 alias 256="~/working/github/misc_scripts/256_color.pl -w"
-alias a="alias"
 #alias acpi="vboxmanage controlvm $1 acpipowerbutton"
 alias asap="cd ~/working/UofC/AAA/git-working/asap/"
 alias lw="cd $HOME/working/github/lytewate"
@@ -20,11 +19,8 @@ alias certs="cd ~/working/certs"
 alias console_win7="rdesktop -K localhost:3340 &"
 alias console_xp="rdesktop -K localhost:3343 &"
 alias console_openbsd="rdesktop -K localhost:3341 &"
-#alias ff="/usr/bin/firefox $1 &"
-#alias firefox="firefox $1 &2>/dev/null"
 alias function="declare -F"
 alias functions="function"
-#alias jabber="mcabber"
 alias imapfilter="imapfilter -c ~/.imapfilter/config-experimental.lua"
 alias kb="/usr/bin/firefox \"uhmya.com/wiki/doku.php?id=keyboard_shortcuts\""
 alias keepass="keepassx &"
@@ -34,7 +30,6 @@ alias listrunning="vboxmanage list runningvms"
 alias listvms="vboxmanage list vms"
 alias logout='xfce4-session-logout -l'
 alias lscreen="screen -ls"
-#alias mccabber="mcabber"
 alias random_hex="cat /dev/urandom | hexdump -C | grep \"ca fe\""
 alias lynx="lynx --accept_all_cookies"
 alias mscreen="screen -S mail -c ~/.mscreenrc"
@@ -87,7 +82,6 @@ alias acpiwin8="vboxmanage controlvm Win8_Enterprise_x64 acpipowerbutton"
 alias db="lw; rake db:drop db:create db:migrate; rake db:fixtures:load RAILS_ENV=development;"
 alias csr="openssl req -in $1 -noout -text"
 alias cvpn="sudo openconnect --script ~/working/github/arch_x86_64_configs/vpnc-script cvpn.uchicago.edu"
-alias epochtime='date +%s'
 
 #generate a 60 character password
 alias 60="< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-60};echo;"
@@ -115,7 +109,6 @@ if [[ `uname -a` =~ Darwin ]]; then
     alias md5sum="md5"
     alias resetwireless="sudo ifconfig en0 down;sudo ifconfig en0 up"
     alias lsusb="system_profiler SPUSBDataType"
-    alias homebrew="brew"
     alias finder='sudo killall Finder'
     alias lock='open -a /System/Library/Frameworks/ScreenSaver.framework/Versions/A/Resources/ScreenSaverEngine.app'
     #alias dock='osascript -e \'quit app \"Messages\"\'; killall Dock'
