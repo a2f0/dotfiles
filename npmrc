@@ -1,3 +1,0 @@
-unicode = false
-#the prefix configuration option is incompatible with nvm (8/14/2019 dps)
-#prefix = ~/.npm-packages

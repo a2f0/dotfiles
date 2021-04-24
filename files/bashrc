@@ -28,7 +28,7 @@ umask 0077
 
 if [ `uname` == Darwin ]; then
     echo "Darwin detected in bashrc"
-    #use UTF-8 for everything.
+    # use UTF-8 for everything.
     export LC_ALL=en_US.UTF-8
     
     PATH=$PATH:/opt/local/bin
