@@ -24,7 +24,7 @@ myBar = "xmobar"
 
 -- Custom PP, configure it as you like. It determines what is being written to the bar.
 --myPP = xmobarPP {
---     ppCurrent = xmobarColor "#429942" "" . wrap "<" ">" 
+--     ppCurrent = xmobarColor "#429942" "" . wrap "<" ">"
 --}
 main :: IO ()
 main = xmonad $ ewmh xfceConfig

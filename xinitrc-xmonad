@@ -21,7 +21,7 @@ xset m 100 1
 #set the keyboard delay and repeat rate
 xset r rate 200 100
 
-#load ~/.Xresources 
+#load ~/.Xresources
 [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
 
 #this configuration block is for running gnome-keyring without GNOME

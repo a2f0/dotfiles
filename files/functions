@@ -1,6 +1,4 @@
-#use source ~/.functions to load
-#declare -F to list functions from bash 
-#test_function straight from bash to check it (exists in this file)
+# use source ~/.functions to load
 
 echo "Unsetting old functions..."
 
@@ -85,10 +83,6 @@ freenode(){
     fi
 }
 
-#firefox(){
-#    firefox &
-#}
-
 efnet(){
     if [[ `doesnamedscreenexist efnet` -eq '1' ]]; then
         screen -rd efnet
@@ -113,18 +107,9 @@ jabber () {
     fi
 }
 
-
 topdisk() {
     dstat -ta --top-bio
 }
-
-show_date () {
-    echo `date +%m`.`date +%d`.`date +%y`
-}
-
-test_function () {
-    echo "whatever"
-} 
 
 #Take a time-stamped snapshot of my Win7 virtualbox instantiation.
 snapwin7 () {
@@ -143,8 +128,8 @@ rdpkill () {
 }
 
 resetclip () {
-    kill `pgrep autocutsel`; 
-    autocutsel -selection CLIPBOARD -fork; 
+    kill `pgrep autocutsel`;
+    autocutsel -selection CLIPBOARD -fork;
     autocutsel -selection PRIMARY -fork
 }
 
@@ -169,9 +154,7 @@ bash_prompt () {
     local bldpur='\e[1;35m' # Purple
     local bldcyn='\e[1;36m' # Cyan
     local bldwht='\e[1;37m' # White
-   
     FMAG="\[\033[35m\]"
-    
     export PS1="--[\u@\h]-[\w]-[$RAILS_ENV]-\n> "
     #colors must be surrounded with \[  \], this works.  Uncomment it.
     #PS1="--[\[$bldblu\]\u@\h]-[\w]--\n> "
@@ -187,14 +170,6 @@ pdf () {
     evince $1 &
 }
 
-ldap () {
-    ldapsearch -v -x -LLL -h ldap.uchicago.edu -p 389 -b dc=uchicago,dc=edu uid=$1
-}
-
-ldaplname () {
-    ldapsearch -v -x -LLL -h ldap.uchicago.edu -p 389 -b dc=uchicago,dc=edu sn=$1
-}
-
 sldap () {
   ldapsearch -v -x -LLL -W -H ldaps://ldap.uchicago.edu -b dc=uchicago,dc=edu \
   '( & (eduPersonAffiliation=student)(sn=Smith) )' cn telephoneNumber -D \
@@ -204,7 +179,7 @@ sldap () {
 getemail () {
   for chicagoid in `cat /tmp/cnets.txt`; do
     EMAIL=`ldapsearch -x -LLL -h ldap.uchicago.edu -p 389 -b dc=uchicago,dc=edu chicagoID=$chicagoid mail | grep -v "^filter" | grep -v "^dn:" | awk '{ print $2 }'`
-    echo "$chicagoid $EMAIL" 
+    echo "$chicagoid $EMAIL"
   done
 }
 
@@ -222,12 +197,12 @@ compress_win8() {
 }
 
 screenshot () {
-    import ~/working/temp/screenshots/screenshot-`date +%m`.`date +%d`.`date +%y`.jpg 
+    import ~/working/temp/screenshots/screenshot-`date +%m`.`date +%d`.`date +%y`.jpg
     echo "The screenshot can be picked up at ~/working/temp/screenshots"
 }
 
 show_swap_utilization () {
-    swapon -s 
+    swapon -s
 }
 
 rdp () {
@@ -240,7 +215,7 @@ short () {
     if [ `uname` == Darwin ]; then
         echo -n $QUERY_RESULT | pbcopy
     elif [ `uname` == Linux ]; then
-        echo -n $QUERY_RESULT | xclip 
+        echo -n $QUERY_RESULT | xclip
         xclip -out | xclip -selection clipboard
     else
         echo -n "Unknown platform"
@@ -274,10 +249,6 @@ listdcs () {
     dig any _kerberos._tcp.$1
 }
 
-nscreen() {
-    screen -S $1 
-}
-
 cwd() {
   if [[ $# -lt 1 ]]; then
       echo "Usage: cwd <dir>"
@@ -302,20 +273,11 @@ loadrbenv() {
     #loadrvm / unloadrvm if issues, specifically in 'gem env'
     if hash rbenv 2>/dev/null; then
         echo "loading rbenv..."
+
         eval "$(rbenv init -)"
     else
         echo "rbenv not installed"
     fi
-}
-
-devops() {
-  cd ~/working/github/devopsrockstars
-}
-
-wk() {
- #wkhtmltopdf --viewport-size 1440x900 --page-size "Letter"  --javascript-delay 4000 --grayscale --debug-javascript "$1" ./`date +%s`.pdf
- wkhtmltopdf --page-size "Letter" --footer-font-size 8 --footer-left "[webpage]" --header-font-size 8 --header-left "[isodate] [time]"  \
- --page-size "Letter"  --javascript-delay 4000 --grayscale --debug-javascript "$1" ./`date +%s`.pdf
 }
 
 if [ `uname` == Darwin ]; then
@@ -333,23 +295,6 @@ if [[ `uname -r` =~ ARCH ]]; then
     whatprovides () {
         pkgfile $1
     }
-   
-    p2 () {
-      sudo rm -rf ~/.galaxy-python
-      mkdir ~/.galaxy-python
-      ln -s /usr/bin/python2 ~/.galaxy-python/python
-      ln -s /usr/bin/pip2 ~/.galaxy-python/pip
-      ln -s /usr/bin/virtualenv-2.7 ~/.galaxy-python/virtualenv
-      export  PATH=~/.galaxy-python:$PATH
-    } 
-    p3 () {
-      sudo rm -rf ~/.galaxy-python
-      mkdir ~/.galaxy-python
-      ln -s /usr/bin/python ~/.galaxy-python/python
-      ln -s /usr/bin/pip ~/.galaxy-python/pip
-      export  PATH=~/.galaxy-python:$PATH
-    } 
-    #then we are sourcing darwin functions
 else
     :
 fi
@@ -408,5 +353,3 @@ cdnvm(){
 }
 
 # End nvm
-
-

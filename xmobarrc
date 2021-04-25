@@ -3,7 +3,7 @@
 --Started 12/28/2012
 --Running
 
-Config { 
+Config {
        --font = "-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*"
        --This appears to work with any from xfontsel 12/28/2012
        font = "-nil-profont-medium-r-normal--12-120-72-72-c-60-iso8859-1"

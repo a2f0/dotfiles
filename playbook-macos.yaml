@@ -4,6 +4,7 @@
   become: no
   tasks:
     - include: tasks/files.yaml
+      tags:
+         - files
     - include: tasks/install-homebrew.yaml
     - include: tasks/install-homebrew-packages.yaml
-    

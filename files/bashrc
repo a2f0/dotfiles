@@ -22,19 +22,23 @@ export EDITOR="vim"
 # enable timestamping on bash_history (type history to see timestamps)
 export HISTTIMEFORMAT="%d.%m.%y %T "
 
-#set the umask to prevent files from being created with access
-#to group members or others
+# set the umask to prevent files from being created with access
+# to group members or others
 umask 0077
 
 if [ `uname` == Darwin ]; then
+    # suppress deprecation warning
+    export BASH_SILENCE_DEPRECATION_WARNING=1
+
     echo "Darwin detected in bashrc"
-    # use UTF-8 for everything.
+    # use UTF-8.
     export LC_ALL=en_US.UTF-8
-    
+
     PATH=$PATH:/opt/local/bin
     PATH=$PATH:$HOME/scripts
     PATH=$PATH:~/.platformio/penv/bin
     PATH=$PATH:$HOME/Library/Python/3.7/bin #aws cli tools
+
 
     #Begin Brew Stuff
     PATH="/usr/local/opt/terraform@0.11/bin:$PATH"
@@ -45,9 +49,9 @@ if [ `uname` == Darwin ]; then
     export GOPATH=~/working/github/go
     PATH=$PATH:~/working/github/go/bin
 
-    # brew Specific
+    # brew
     source /usr/local/etc/bash_completion.d/az
-    
+
     # fastlane
     export PATH="$HOME/.fastlane/bin:$PATH"
 
@@ -60,10 +64,10 @@ if [ `uname` == Darwin ]; then
     [ -s "/usr/local/opt/nvm/etc/bash_completion" ] && . "/usr/local/opt/nvm/etc/bash_completion"  # This loads nvm bash_completion
     alias cd='cdnvm'
 
-elif [ `uname` == Linux ]; then 
+elif [ `uname` == Linux ]; then
     echo "Linux box detected in bashrc"
     # init volume to 20.
-    amixer sset Master 67% 
+    amixer sset Master 67%
     PATH=$PATH:/opt/local/scripts
     PATH=$PATH:~/.cabal/bin
     PATH=$PATH:/usr/local/heroku/bin
@@ -90,36 +94,38 @@ else
     echo "Unknown platform detected..."
 fi
 
-# from functions 
+
+# from functions
 bash_prompt
 loadrbenv
 
-#see efnet/freenode bash shell functions in ~/functions
-#export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
+# also see efnet/freenode functions in ~/.functions
+export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
 export IRCNICK="dps"
 export IRCNAME="dan sullivan"
 
-#Set CVS remote shell
+# Set CVS remote shell
 export CVS_RSH=ssh
 
-#exempt commands that start with spaces from ~/.bash_history
+# exempt commands that start with spaces from ~/.bash_history
 export HISTCONTROL=ignorespace
 
-#if [[ $TERM == xterm || $TERM == "rxvt-unicode-256color" ]]; then
+#if [[ $TERM == xterm || $TERM == "rxvt-unicode-256color" || $TERM == "xterm-256color"]]; then
 if [[ -z "$SSH_TTY" && `uname -a` =~ ARCH ]]; then
-    #we know we are not logged in via ssh i.e. we are at the console
+    # then it is a console (not ssh session)
     echo "This looks like an xsession, running xset..."
-    #disable audible beep for X11
-    xset -b 
-    #set the mouse tracking speed to fast
+    # disable audible beep for X11
+    xset -b
+    # set the mouse tracking speed to fast
     xset m 7 10
     # set the keyboard repeat rate, karabiner 200, 10
     xset r rate 200 100
-    
-    #re-hash this with every load
+
+    # re-hash this with every load
     xrdb -load ~/.Xresources
-    
-    #verify settings
+
+    # verify settings
+
     #xrdb -query
 else
     echo "This is an SSH session..."
@@ -131,8 +137,11 @@ screen -wipe > /dev/null
 screen -list
 
 if [ ! -d ~/.mcabber/otr ]; then
+    # Mcabber is configured to automatically generate OTR keys
+
     #Mcabber is configured to automatically generate OTR keys.
     #https://github.com/dsulli99/arch_x86_64_configs/blob/master/mcabberrc
+
     echo "Configuring directory for mcabber OTR keys..."
     mkdir -p ~/.mcabber/otr
     chmod -R 700 ~/.mcabber
@@ -150,5 +159,3 @@ fi
 if [ -e ~/working/github/arch_x86_64_configs/quick ]; then
   source ~/working/github/arch_x86_64_configs/quick
 fi
-
-cd ~/working/github
