@@ -1,6 +1,11 @@
-- name: azure-cli 
+- name: azure-cli
   homebrew:
-    name: azure-cli 
+    name: azure-cli
+    state: present
+
+- name: bitchx
+  homebrew:
+    name: bitchx
     state: present
 
 - name: bfg
@@ -8,19 +13,19 @@
     name: bfg
     state: present
 
-- name: dos2unix 
+- name: dos2unix
   homebrew:
-    name: dos2unix 
+    name: dos2unix
     state: present
 
 - name: git # for gitk
   homebrew:
-    name: git 
+    name: git
     state: present
 
-- name: imagemagick 
+- name: imagemagick
   homebrew:
-    name: vim 
+    name: vim
     state: present
 
 - name: jenv
@@ -53,67 +58,72 @@
     name: packer
     state: present
 
-- name: postgresql 
+- name: postgresql
   homebrew:
-    name: postgresql 
+    name: postgresql
     state: present
 
-- name: tflint 
+- name: pre-commit
   homebrew:
-    name: tflint 
+    name: pre-commit
+    state: present
+
+- name: tflint
+  homebrew:
+    name: tflint
     state: present
 
 - name: watchman
   homebrew:
     name: watchman
     state: present
-    
+
 - name: wget
   homebrew:
-    name: wget 
+    name: wget
     state: present
 
-- name: rbenv 
+- name: rbenv
   homebrew:
-    name: rbenv 
+    name: rbenv
     state: present
 
-- name: telnet 
+- name: telnet
   homebrew:
-    name: telnet 
+    name: telnet
     state: present
 
-- name: vim 
+- name: vim
   homebrew:
-    name: vim 
+    name: vim
     state: present
 
 - name: epic5
   homebrew:
-    name: epic5 
+    name: epic5
     state: present
-  
+
 - name: pyenv
   homebrew:
-    name: pyenv 
+    name: pyenv
     state: present
 
 - name: zlib
   homebrew:
-    name: zlib 
+    name: zlib
     state: present
 
 - name: bzip2
   homebrew:
-    name: bzip2 
+    name: bzip2
     state: present
 
 - name: shellcheck
-  homebrew: 
+  homebrew:
     name: shellcheck
     state: present
 
 - name: youtube-dl
-  homebrew: 
+  homebrew:
     name: youtube-dl
     state: present

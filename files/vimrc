@@ -30,7 +30,7 @@ if exists("syntax_on")
 
 "http://got-ravings.blogspot.com/2008/08/vim-pr0n-making-statuslines-that-own.html
 :set laststatus=2
-:set statusline= 
+:set statusline=
 :set statusline+=--[%F]-
 :set statusline+=[%c,%l/%L]-
 :set statusline+=[%{strlen(&fenc)?&fenc:'none'}]-
@@ -38,7 +38,7 @@ if exists("syntax_on")
 ":set statusline+=[%03.b]
 :set statusline+=[%03.b]-
 "Set the color, for some reason these seem transposed.
-:set statusline+=[%P] 
+:set statusline+=[%P]
 :hi StatusLine ctermbg=white ctermfg=black
 :set enc=utf-8
 
