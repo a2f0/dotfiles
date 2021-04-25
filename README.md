@@ -1,7 +1,5 @@
 # Overview
 
-System bootstrapper for MacOS and Arch Linux.
-
 ## MacOS
 
 Configure via Ansible
@@ -16,8 +14,8 @@ Run specific tags in the playbook
 
     ansible-playbook -i inventory.yaml playbook-macos.yaml  -l 127.0.0.1 --tags 'files'
 
-## Installation
+## Developing
 
-Build the system
+Install pre-commit to lint files
 
-    ./build_me.sh
+1. run `pre-commit install` to configure pre-commit hook.
