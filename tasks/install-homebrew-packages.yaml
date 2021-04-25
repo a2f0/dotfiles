@@ -18,6 +18,11 @@
     name: dos2unix
     state: present
 
+- name: gcc
+  homebrew:
+    name: gcc
+    state: present
+
 - name: git # for gitk
   homebrew:
     name: git
