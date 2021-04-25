@@ -3,19 +3,29 @@
     name: azure-cli
     state: present
 
-- name: bitchx
-  homebrew:
-    name: bitchx
-    state: present
-
 - name: bfg
   homebrew:
     name: bfg
     state: present
 
+- name: bitchx
+  homebrew:
+    name: bitchx
+    state: present
+
+- name: bzip2
+  homebrew:
+    name: bzip2
+    state: present
+
 - name: dos2unix
   homebrew:
     name: dos2unix
+    state: present
+
+- name: epic5
+  homebrew:
+    name: epic5
     state: present
 
 - name: gcc
@@ -73,9 +83,34 @@
     name: pre-commit
     state: present
 
+- name: pyenv
+  homebrew:
+    name: pyenv
+    state: present
+
+- name: rbenv
+  homebrew:
+    name: rbenv
+    state: present
+
+- name: shellcheck
+  homebrew:
+    name: shellcheck
+    state: present
+
+- name: telnet
+  homebrew:
+    name: telnet
+    state: present
+
 - name: tflint
   homebrew:
     name: tflint
+    state: present
+
+- name: vim
+  homebrew:
+    name: vim
     state: present
 
 - name: watchman
@@ -88,47 +123,12 @@
     name: wget
     state: present
 
-- name: rbenv
+- name: youtube-dl
   homebrew:
-    name: rbenv
-    state: present
-
-- name: telnet
-  homebrew:
-    name: telnet
-    state: present
-
-- name: vim
-  homebrew:
-    name: vim
-    state: present
-
-- name: epic5
-  homebrew:
-    name: epic5
-    state: present
-
-- name: pyenv
-  homebrew:
-    name: pyenv
+    name: youtube-dl
     state: present
 
 - name: zlib
   homebrew:
     name: zlib
-    state: present
-
-- name: bzip2
-  homebrew:
-    name: bzip2
-    state: present
-
-- name: shellcheck
-  homebrew:
-    name: shellcheck
-    state: present
-
-- name: youtube-dl
-  homebrew:
-    name: youtube-dl
     state: present

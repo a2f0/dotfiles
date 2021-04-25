@@ -1,6 +1,6 @@
 /join #oBk
 /join #Cheeze_Out
-#/load ~/anduril/anduril.irc
+/load ~/anduril/anduril.irc
 /load ~/.global.ircrc
 #/skin pretty
 /set autoaway off
