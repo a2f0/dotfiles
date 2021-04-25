@@ -1,4 +1,4 @@
-- name: ensure homebrew is updated 
+- name: ensure homebrew is updated
   homebrew:
     state: latest
     update_homebrew: yes

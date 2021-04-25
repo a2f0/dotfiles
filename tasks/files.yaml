@@ -11,6 +11,13 @@
     dest: ~/.aspell.en.pws
     state: link
     force: yes
+    
+- name: ~/.bash_profile
+  file:
+    src: "{{playbook_dir}}/files/bash_profile"
+    dest: ~/.bash_profile
+    state: link
+    force: yes
 
 - name: ~/.bashrc
   file:
@@ -65,6 +72,13 @@
   file:
     src: "{{playbook_dir}}/files/muttrc"
     dest: ~/.muttrc
+    state: link
+    force: yes
+
+- name: ~/.muttrc-imap
+  file:
+    src: "{{playbook_dir}}/files/muttrc-imap"
+    dest: ~/.muttrc-imap
     state: link
     force: yes
 
