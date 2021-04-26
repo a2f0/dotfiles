@@ -1,4 +1,4 @@
-source ~/working/github/dotfiles/quick
+source ~/.quick
 source ~/.aliases
 source ~/.aliases-private
 
@@ -54,10 +54,10 @@ export PATH="$HOME/.cargo/bin:$PATH"
 
 # make sure some other program is not messing with the environment
 if [ -e  ~/.zprofile ]; then
-  echo "deleting ~/.zprofile:"
+  echo "deleting ~/.zprofile"
   cat ~/.zprofile
   rm -rf ~/.zprofile
-  echo "done deleting ~/.zprofile.."
+  echo "done deleting ~/.zprofile"
 fi
 
 # MacOS Python Binaries
