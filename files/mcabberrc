@@ -1,0 +1,27 @@
+set ssl_ignore_checks = 0
+set port = 5223
+
+set jid = dansully@im.uchicago.edu
+set server = im.uchicago.edu
+
+# remove the underscore from this to not display offline buddies
+#use /roster display mask = ofdna
+#set roster_display_filter = ofdna
+set roster_display_filter = ofdna_
+
+alias exit = quit
+alias q = quit
+
+set color_roster = white
+set color_bgstatus = black
+set color_status = black
+
+alias quit = exit
+alias q = exit
+
+# enable otr (this will automatically generate a key if one doesn't already exist)
+set otr = 1
+
+# automatically start otr conversations
+otrpolicy default opportunistic
+

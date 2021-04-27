@@ -1,0 +1,65 @@
+# Offline IMAP Configuration File.
+# run this with offlineimap  -c ~/.offlineimaprc
+
+[general]
+# comma-delimited list of active accounts, i.e. gmail, bsdad
+accounts = bsdad
+
+# This supplies the functions get_username and get_password.
+pythonfile = /opt/local/scripts/offline_imap.py
+
+[Account bsdad]
+localrepository = bsdad-local
+remoterepository = bsdad-remote
+
+[Account gmail]
+localrepository = gmail-local
+remoterepository = gmail-remote
+
+[Repository bsdad-local]
+type = Maildir
+localfolders = ~/Mail/bsdad
+nametrans = lambda folder: re.sub('trash', 'Deleted Items',
+                           re.sub('drafts', 'Drafts',
+                           re.sub('sent', 'Sent Items', folder)))
+
+[Repository bsdad-remote]
+type = IMAP
+remoteport = 993
+remotehost = mail.uchospitals.edu
+remoteusereval = get_username("mail.bsd.uchicago.edu")
+remotepasseval = get_password("mail.bsd.uchicago.edu")
+nametrans = lambda folder: re.sub('.*Deleted Items$', 'trash',
+                           re.sub('.*Drafts$', 'drafts',
+                           re.sub('.*Sent Items$', 'sent', folder)))
+
+[Repository gmail-local]
+type = Maildir
+localfolders = ~/Mail/gmail
+nametrans = lambda folder: re.sub('spam', '[Gmail].Spam',
+                           re.sub('drafts', '[Gmail].Drafts',
+                           re.sub('sent', '[Gmail].Sent Mail',
+                           re.sub('flagged', '[Gmail].Starred',
+                           re.sub('trash', '[Gmail].Trash',
+                           re.sub('important', '[Gmail].Important',
+                           re.sub('archive', '[Gmail].All Mail', folder)))))))
+
+[Repository gmail-remote]
+type = Gmail
+remoteusereval = get_username("imap.gmail.com")
+remotepasseval = get_password("imap.gmail.com")
+sep = .
+nametrans = lambda folder: re.sub('.*Spam$', 'spam', 
+                           re.sub('.*Drafts$', 'drafts', 
+                           re.sub('.*Sent Mail$', 'sent', 
+                           re.sub('.*Starred$', 'flagged', 
+                           re.sub('.*Trash$', 'trash', 
+                           re.sub('.*Important$', 'important', 
+                           re.sub('.*All Mail$', 'archive', folder)))))))
+
+folderfilter = lambda foldername: foldername not in ['[Gmail]/All Mail','[Gmail]/Important','[Gmail]/Spam']
+# This is not required when sslcacertfile is specified
+#cert_fingerprint = f3043dd689a2e7dddfbef82703a6c65ea9b634c1
+
+# this requires the ca-certificates package in Arch Linux
+sslcacertfile = /usr/share/ca-certificates/mozilla/Equifax_Secure_CA.crt
