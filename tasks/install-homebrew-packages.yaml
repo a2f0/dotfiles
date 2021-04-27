@@ -33,7 +33,7 @@
     name: gcc
     state: present
 
-- name: git # for gitk
+- name: git
   homebrew:
     name: git
     state: present
