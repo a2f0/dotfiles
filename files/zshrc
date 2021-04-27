@@ -2,6 +2,10 @@ source ~/.quick
 source ~/.aliases
 source ~/.aliases-private
 
+# set the umask to prevent files from being created with access
+# to group members or others
+umask 0077
+
 # gcloud
 if [ -f "$HOME/working/MacOS-Install/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/working/MacOS-Install/google-cloud-sdk/path.zsh.inc"; fi
 if [ -f "$HOME/working/MacOS-Install/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/working/MacOS-Install/google-cloud-sdk/path.zsh.inc"; fi
