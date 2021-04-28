@@ -6,5 +6,8 @@
     - include: tasks/files.yaml
       tags:
          - files
+    - include: tasks/macos/files.yaml
+      tags:
+         - files
     - include: tasks/macos/install-homebrew.yaml
     - include: tasks/macos/install-homebrew-packages.yaml
