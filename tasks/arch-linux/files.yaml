@@ -1,0 +1,6 @@
+- name: ~/.xinitrc
+  file:
+    src: "{{playbook_dir}}/files/xinitrc"
+    dest: ~/.xinitrc
+    state: link
+    force: yes

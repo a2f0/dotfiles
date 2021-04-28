@@ -1,4 +1,5 @@
 .gitignore
+.vagrant/
 /aliases-private
 /aws.config
 /aws.credentials
