@@ -157,4 +157,3 @@ fi
 if [ -e ~/.dotfiles-devopsrockstars/init ]; then
   source ~/.dotfiles-devopsrockstars/init
 fi
-
