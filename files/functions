@@ -1,19 +1,8 @@
-# use source ~/.functions to load
-
 echo "Unsetting old functions..."
 
 for function in `declare -F | awk '{ print $3 }' `; do unset -f $function; done
 
 echo "Sourcing functions..."
-
-acpi () {
-    vboxmanage controlvm $1 acpipowerbutton
-    if [[ $# -lt 1 ]]; then
-        echo "Usage: acpi <vmname>"
-        echo "Example: acpi OpenBSD"
-        return -1
-    fi
-}
 
 build_me () {
     CWD=`pwd`
@@ -31,27 +20,10 @@ build_me () {
     echo "Finished build function..."
 }
 
-deploy_profile() {
-    #echo "Running deploy profile.."
-    if [[ $# -lt 1 ]]; then
-        echo "Usage: deploy_profile user@fqdn"
-        echo "Example: deploy_profile dansullivan@magicalhost.domain.com"
-        return -1
-    fi
-    CWD=`pwd`
-    cd ~/working/github/arch_x86_64_configs
-    echo "Removing remote ~/.vimrc..."
-    ssh $1 'if [ -e ~/.vimrc ]; then rm ~/.vimrc; echo deleted ~/.vimrc...; else echo ~/.vimrc not found; fi'
-    scp vimrc $1:~/.vimrc
-    echo "Uploaded ~/.vimrc..."
-    cd $CWD; unset CWD
-}
-
 cb () {
   xclip -out | xclip -selection clipboard
 }
 
-#ctrl+c, trapped from bash
 ctrl_c () {
   echo "* Trapped CTRL-C *"
 }
@@ -60,7 +32,7 @@ hangup () {
   echo "* Trapped SIGHUP *"
 }
 
-#this function will return 1 a named screen instance exists, 0 if it doesnt
+# this function will return 1 a named screen instance exists, 0 if it doesnt
 doesnamedscreenexist(){
     if [[ $# -lt 1 ]]; then
         echo "Usage: doesnamedscreenexist <name>"
@@ -91,14 +63,6 @@ efnet(){
     fi
 }
 
-#mail(){
-#    if [[ `doesnamedscreenexist mail` -eq '1' ]]; then
-#        screen -rd mail
-#    else
-#        screen -S mail -c ~/.mscreenrc
-#    fi
-#}
-
 jabber () {
     if [ `screen -list | grep jabber | wc -l` == "1" ]; then
         screen -rd jabber
@@ -111,7 +75,7 @@ topdisk() {
     dstat -ta --top-bio
 }
 
-#Take a time-stamped snapshot of my Win7 virtualbox instantiation.
+# take a time-stamped snapshot of my Win7 virtualbox instantiation.
 snapwin7 () {
     vboxmanage snapshot Win7 take function.`date +%m`.`date +%d`.`date +%y`
 }
@@ -120,7 +84,7 @@ snapxpucad () {
     vboxmanage snapshot "XP (UCAD)" take function.`date +%m`.`date +%d`.`date +%y`
 }
 
-#kill every open RDP session on my box.
+# kill every open RDP session on my box.
 rdpkill () {
   for i in `ps -ef | grep rdesktop | grep -v grep | awk '{ print $2 }'`; do kill $i; done
   #this one is for mac.
@@ -161,15 +125,6 @@ bash_prompt () {
 }
 PROMPT_COMMAND="bash_prompt"
 
-
-killwin7rdp () {
-    kill `ps -ef | grep rdesktop | grep -v grep | grep win7.bsd.uchicago.edu:3389 | awk '{ print $ 2 } '`
-}
-
-pdf () {
-    evince $1 &
-}
-
 sldap () {
   ldapsearch -v -x -LLL -W -H ldaps://ldap.uchicago.edu -b dc=uchicago,dc=edu \
   '( & (eduPersonAffiliation=student)(sn=Smith) )' cn telephoneNumber -D \
@@ -183,26 +138,14 @@ getemail () {
   done
 }
 
-#query google's dns servers
+# query google's dns servers
 qg () {
     dig @8.8.8.8 $1
-}
-
-compress_win7 () {
-    vboxmanage modifyhd "~/VirtualBox VMs/Win7 (BSDAD)/Win7 (BSDAD).vdi" --compact
-}
-
-compress_win8() {
-    vboxmanage modifyhd /mnt/luksAuxiliary/Win8_Enterprise_x64/Win8_Enterprise_x64.vdi --compact
 }
 
 screenshot () {
     import ~/working/temp/screenshots/screenshot-`date +%m`.`date +%d`.`date +%y`.jpg
     echo "The screenshot can be picked up at ~/working/temp/screenshots"
-}
-
-show_swap_utilization () {
-    swapon -s
 }
 
 rdp () {
@@ -227,20 +170,11 @@ whatismyip () {
     curl http://icanhazip.com/
 }
 
-#my timestamp
 now () {
     echo `date +%m`-`date +%d`-`date +%y`.`date +%H`.`date +%M`.`date +%S`
 }
 
-#This appears to be compiled into OSX's bash? 1/21/2014.  Needs investigation.
-update_terminal_cwd () {
-    local SEARCH=' ';
-    local REPLACE='%20';
-    local PWD_URL="file://$HOSTNAME${PWD//$SEARCH/$REPLACE}";
-    printf '\e]7;%s\a' "$PWD_URL"
-}
-
-#virtualbox show vminfo
+# virtualbox show vminfo
 vminfo () {
     vboxmanage showvminfo $1
 }
@@ -270,7 +204,7 @@ loadrvm() {
 }
 
 loadrbenv() {
-    #loadrvm / unloadrvm if issues, specifically in 'gem env'
+    # loadrvm / unloadrvm if issues, specifically in 'gem env'
     if hash rbenv 2>/dev/null; then
         echo "loading rbenv..."
 

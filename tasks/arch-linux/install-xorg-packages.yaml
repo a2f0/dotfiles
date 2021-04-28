@@ -3,6 +3,11 @@
     name: chromium
     state: present
 
+- name: code
+  community.general.pacman:
+    name: code
+    state: present
+
 - name: firefox
   community.general.pacman:
     name: firefox
@@ -91,4 +96,9 @@
 - name: xorg-xwininfo
   community.general.pacman:
     name: xorg-xwininfo
+    state: present
+
+- name: xterm
+  community.general.pacman:
+    name: xterm
     state: present

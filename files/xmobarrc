@@ -1,7 +1,4 @@
 --xmobar config
---Dan Sullivan
---Started 12/28/2012
---Running
 
 Config {
        --font = "-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*"
