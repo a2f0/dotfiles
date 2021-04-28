@@ -42,9 +42,9 @@ if [ `uname` == Darwin ]; then
     PATH=$PATH:$HOME/Library/Python/3.7/bin #aws cli tools
 
 
-    #Begin Brew Stuff
+    # begin brew Stuff
     PATH="/usr/local/opt/terraform@0.11/bin:$PATH"
-    #End Brew Stuff
+    # end brew Stuff
 
     export ANDROID_HOME=$HOME/Library/Android
     export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
@@ -106,7 +106,7 @@ export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
 export IRCNICK="dps"
 export IRCNAME="dan sullivan"
 
-# Set CVS remote shell
+# set cvs remote shell
 export CVS_RSH=ssh
 
 # exempt commands that start with spaces from ~/.bash_history
@@ -139,11 +139,6 @@ screen -wipe > /dev/null
 screen -list
 
 if [ ! -d ~/.mcabber/otr ]; then
-    # Mcabber is configured to automatically generate OTR keys
-
-    #Mcabber is configured to automatically generate OTR keys.
-    #https://github.com/dsulli99/arch_x86_64_configs/blob/master/mcabberrc
-
     echo "Configuring directory for mcabber OTR keys..."
     mkdir -p ~/.mcabber/otr
     chmod -R 700 ~/.mcabber
