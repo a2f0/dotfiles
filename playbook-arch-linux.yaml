@@ -1,0 +1,9 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  become: no
+  tasks:
+    - include: tasks/arch-linux/update-pacman-database.yaml
+      become: yes
+    - include: tasks/arch-linux/install-packages.yaml
+      become: yes
