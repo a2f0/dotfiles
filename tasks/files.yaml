@@ -130,10 +130,3 @@
     dest: ~/.zshrc
     state: link
     force: yes
-
-- name: ~/Library/ApplicationSupport/Code/User/settings.json
-  file:
-    src: "{{playbook_dir}}/files/visual-studio-code-settings.json"
-    dest: ~/Library/ApplicationSupport/Code/User/settings.json
-    state: link
-    force: yes

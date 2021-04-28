@@ -1,0 +1,4 @@
+- name: xorg-server
+  community.general.pacman:
+    name: xorg-server
+    state: present

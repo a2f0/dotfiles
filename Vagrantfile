@@ -1,0 +1,9 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "archlinux/archlinux"
+  config.vm.provider 'virtualbox' do |v|
+    v.gui = true
+  end
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "playbook-arch-linux.yaml"
+  end
+end
