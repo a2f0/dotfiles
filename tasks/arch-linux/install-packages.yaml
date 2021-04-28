@@ -1,0 +1,24 @@
+- name: lynx
+  community.general.pacman:
+    name: lynx
+    state: present
+
+- name: xmobar
+  community.general.pacman:
+    name: xmobar
+    state: present
+
+- name: ascii
+  community.general.pacman:
+    name: xmobar
+    state: present
+
+- name: flex
+  community.general.pacman:
+    name: flex
+    state: present
+
+- name: bison
+  community.general.pacman:
+    name: bison
+    state: present

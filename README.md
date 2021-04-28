@@ -14,6 +14,12 @@ Run specific tags in the playbook
 
     ansible-playbook -i inventory.yaml playbook-macos.yaml  -l 127.0.0.1 --tags 'files'
 
+## Arch Linux
+
+Configure via Ansible
+
+    ansible-playbook -i inventory.yaml playbook-arch-linux.yaml  -l 127.0.0.1
+
 ## Developing
 
 Install pre-commit to lint files
