@@ -11,9 +11,11 @@
 
 - hosts: all
   tasks:
-    - include: tasks/arch-linux/install-xorg-virtualbox-guest-utils.yaml
-      become: yes
     - include: tasks/arch-linux/update-pacman-database.yaml
+      become: yes
+    - include: tasks/arch-linux/uninstall-default-vagrant-packages.yaml
+      become: yes
+    - include: tasks/arch-linux/install-xorg-virtualbox-guest-utils.yaml
       become: yes
     - include: tasks/arch-linux/install-xorg-server.yaml
       become: yes

@@ -1,0 +1,4 @@
+- name: virtualbox-guest-utils-nox
+  community.general.pacman:
+    name: virtualbox-guest-utils-nox
+    state: absent

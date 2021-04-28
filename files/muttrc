@@ -1,7 +1,7 @@
 set mbox_type = Maildir
 #set sendmail = /usr/bin/msmtp
 
-#this will set the correct "from" address depending on folder
+# set the correct "from" address depending on folder
 folder-hook gmail set from="dansullivan@gmail.com"
 folder-hook bsdad set from="dsullivan2@bsd.uchicago.edu"
 
@@ -20,31 +20,31 @@ mailboxes +INBOX
 
 set my_name = "Dan Sullivan"
 
-#some authenticated smtp server
+# authenticated smtp server
 #set smtp_url=smtps://$imap_user:$imap_pass@smtp.domain.tld
-#non-authenticated smtp server
+# non-authenticated smtp server
 set smtp_url=smtp://smtp.uchicago.edu
 
-#view html formatted email, look at ~/.mailcap for program launcher, added 12/27/2012 dps
+# view html formatted email, look at ~/.mailcap for program launcher, added 12/27/2012 dps
 auto_view text/html
 
-#Disable printing so messages cannot be printed directly from the inbox.  Added 12/30/2012
+# disable printing so messages cannot be printed directly from the inbox.  Added 12/30/2012
 set print=no
 
-#Do not bring up postponed messages Added 12/30/2012
+# do not bring up postponed messages Added 12/30/2012
 set recall=no
 
-#Save a copy of messages I send to the location specified in the record variable
+# save a copy of messages I send to the location specified in the record variable
 set copy=yes
 
-#The location to save a copy of sent messages
+# the location to save a copy of sent messages
 set record="~/Mail/bsdad/sent"
 
-#Do not confirm when appending messages to an existing mailbox.
+# do not confirm when appending messages to an existing mailbox.
 set confirmappend=no
 
-#macro functions are listed here
-#http://www.mutt.org/doc/manual/manual-6.html
+# macro functions are listed here
+# http://www.mutt.org/doc/manual/manual-6.html
 
 macro index d "<save-message>+bsdad/trash<enter><sync-mailbox>" "copy message to the trash"
 macro pager d "<save-message>+bsdad/trash<enter><sync-mailbox>" "copy message to the trash"
@@ -55,5 +55,5 @@ macro index q "<sync-mailbox>" "null out quit"
 macro index x "<sync-mailbox>" "null out quit"
 macro index u "l(~N|~O)\n" "show all new and old unread messages"
 
-#do not confirm delete of purged messages when synchronizing mailboxes
+# do not confirm delete of purged messages when synchronizing mailboxes
 set delete=yes
