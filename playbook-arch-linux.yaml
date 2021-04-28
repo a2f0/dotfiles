@@ -1,5 +1,6 @@
----
-- hosts: all
+- hosts: 127.0.0.1
+  connection: local
+  become: no
   tasks:
     - include: tasks/files.yaml
       tags:
@@ -7,6 +8,11 @@
     - include: tasks/arch-linux/files.yaml
       tags:
          - files
+
+- hosts: all
+  tasks:
+    - include: tasks/arch-linux/install-xorg-virtualbox-guest-utils.yaml
+      become: yes
     - include: tasks/arch-linux/update-pacman-database.yaml
       become: yes
     - include: tasks/arch-linux/install-xorg-server.yaml

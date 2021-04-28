@@ -49,12 +49,12 @@ type = Gmail
 remoteusereval = get_username("imap.gmail.com")
 remotepasseval = get_password("imap.gmail.com")
 sep = .
-nametrans = lambda folder: re.sub('.*Spam$', 'spam', 
-                           re.sub('.*Drafts$', 'drafts', 
-                           re.sub('.*Sent Mail$', 'sent', 
-                           re.sub('.*Starred$', 'flagged', 
-                           re.sub('.*Trash$', 'trash', 
-                           re.sub('.*Important$', 'important', 
+nametrans = lambda folder: re.sub('.*Spam$', 'spam',
+                           re.sub('.*Drafts$', 'drafts',
+                           re.sub('.*Sent Mail$', 'sent',
+                           re.sub('.*Starred$', 'flagged',
+                           re.sub('.*Trash$', 'trash',
+                           re.sub('.*Important$', 'important',
                            re.sub('.*All Mail$', 'archive', folder)))))))
 
 folderfilter = lambda foldername: foldername not in ['[Gmail]/All Mail','[Gmail]/Important','[Gmail]/Spam']
