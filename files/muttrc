@@ -25,13 +25,13 @@ set my_name = "Dan Sullivan"
 # non-authenticated smtp server
 set smtp_url=smtp://smtp.uchicago.edu
 
-# view html formatted email, look at ~/.mailcap for program launcher, added 12/27/2012 dps
+# view html formatted email, look at ~/.mailcap for program launcher
 auto_view text/html
 
-# disable printing so messages cannot be printed directly from the inbox.  Added 12/30/2012
+# disable printing so messages cannot be printed directly from the inbox
 set print=no
 
-# do not bring up postponed messages Added 12/30/2012
+# do not bring up postponed messages
 set recall=no
 
 # save a copy of messages I send to the location specified in the record variable

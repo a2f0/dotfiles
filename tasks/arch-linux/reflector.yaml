@@ -1,0 +1,7 @@
+- name: reflector - install
+  community.general.pacman:
+    name: reflector
+    state: present
+
+- name: reflector - run
+  ansible.builtin.command:  reflector --verbose --latest 5 --sort rate --save /etc/pacman.d/mirrorlist

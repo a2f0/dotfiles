@@ -20,6 +20,10 @@ Configure via Ansible
 
     ansible-playbook -i inventory.yaml playbook-arch-linux.yaml  -l 127.0.0.1
 
+Run specific tags in the playbook
+
+    ansible-playbook -i inventory.yaml playbook-arch-linux.yaml -l 127.0.0.1 --tags 'files'
+
 ## Developing
 
 Install pre-commit to lint files

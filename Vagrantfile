@@ -1,4 +1,5 @@
 Vagrant.configure("2") do |config|
+  config.vbguest.auto_update = false
   config.vm.box = "archlinux/archlinux"
   config.vm.provider 'virtualbox' do |v|
     v.gui = true
