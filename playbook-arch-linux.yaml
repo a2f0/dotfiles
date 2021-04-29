@@ -13,6 +13,12 @@
   tasks:
     - include: tasks/arch-linux/update-pacman-database.yaml
       become: yes
+    - include: tasks/arch-linux/reflector.yaml
+      become: yes
+    - include: tasks/arch-linux/update-pacman-database.yaml
+      become: yes
+    - include: tasks/arch-linux/update-the-entire-system.yaml
+      become: yes
     - include: tasks/arch-linux/uninstall-default-vagrant-packages.yaml
       become: yes
     - include: tasks/arch-linux/install-xorg-virtualbox-guest-utils.yaml
@@ -22,4 +28,6 @@
     - include: tasks/arch-linux/install-xorg-packages.yaml
       become: yes
     - include: tasks/arch-linux/install-console-packages.yaml
+      become: yes
+    - include: tasks/arch-linux/reboot.yaml
       become: yes
