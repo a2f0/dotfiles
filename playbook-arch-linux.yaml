@@ -1,16 +1,8 @@
-- hosts: 127.0.0.1
-  connection: local
-  become: no
-  tasks:
-    - include: tasks/files.yaml
-      tags:
-         - files
-    - include: tasks/arch-linux/files.yaml
-      tags:
-         - files
-
 - hosts: all
+  vars:
+    dotfiles_dir: ~/dotfiles
   tasks:
+    - include: tasks/clone-dotfiles-into-home.yaml
     - include: tasks/arch-linux/update-pacman-database.yaml
       become: yes
     - include: tasks/arch-linux/reflector.yaml
@@ -29,5 +21,11 @@
       become: yes
     - include: tasks/arch-linux/install-console-packages.yaml
       become: yes
+    - include: tasks/files.yaml
+      tags:
+         - files
+    - include: tasks/arch-linux/files.yaml
+      tags:
+         - files
     - include: tasks/arch-linux/reboot.yaml
       become: yes

@@ -1,0 +1,4 @@
+- name: Clone dotfiles into home
+  ansible.builtin.git:
+    repo: 'https://github.com/deepeeess/dotfiles.git'
+    dest: ~/dotfiles
