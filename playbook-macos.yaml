@@ -2,12 +2,14 @@
 - hosts: 127.0.0.1
   connection: local
   become: no
+  vars:
+    dotfiles_dir: "{{ playbook_dir }}"
   tasks:
     - include: tasks/macos/install-homebrew.yaml
     - include: tasks/macos/install-homebrew-packages.yaml
     - include: tasks/files.yaml
       tags:
-         - files
+        - files
     - include: tasks/macos/files.yaml
       tags:
-         - files
+        - files
