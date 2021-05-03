@@ -348,6 +348,11 @@
     name: unzip
     state: present
 
+- name: vim
+  community.general.pacman:
+    name: vim
+    state: present
+
 - name: whois
   community.general.pacman:
     name: whois
