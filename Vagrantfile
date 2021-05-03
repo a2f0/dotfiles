@@ -6,6 +6,7 @@ Vagrant.configure("2") do |config|
     v.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
     v.customize ["modifyvm", :id, "--vram", "64"]
     v.customize ["modifyvm", :id, "--vrde", "off"]
+    v.customize ['modifyvm', :id, '--clipboard', 'bidirectional']     
   end
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "playbook-arch-linux.yaml"
