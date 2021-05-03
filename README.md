@@ -1,5 +1,9 @@
 # Overview
 
+Dotfiles and Ansible tasks for package installaton / system configuration.
+
+Arch Linux system is provisionable via `vagrant up`.
+
 ## MacOS
 
 Configure via Ansible
@@ -23,6 +27,12 @@ Configure via Ansible
 Run specific tags in the playbook
 
     ansible-playbook -i inventory.yaml playbook-arch-linux.yaml -l 127.0.0.1 --tags 'files'
+
+### Vagrant
+
+Start a Virtualbox VM
+
+    vagrant up
 
 Start rsyncing Vagrant files
 

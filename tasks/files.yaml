@@ -1,132 +1,132 @@
 - name: ~/.aliases
   file:
-    src: "{{playbook_dir}}/files/aliases"
+    src: "{{dotfiles_dir}}/files/aliases"
     dest: ~/.aliases
     state: link
     force: yes
 
 - name: ~/.aspell.en.pws
   file:
-    src: "{{playbook_dir}}/files/aspell.en.pws"
+    src: "{{dotfiles_dir}}/files/aspell.en.pws"
     dest: ~/.aspell.en.pws
     state: link
     force: yes
 
 - name: ~/.bash_profile
   file:
-    src: "{{playbook_dir}}/files/bash_profile"
+    src: "{{dotfiles_dir}}/files/bash_profile"
     dest: ~/.bash_profile
     state: link
     force: yes
 
 - name: ~/.bashrc
   file:
-    src: "{{playbook_dir}}/files/bashrc"
+    src: "{{dotfiles_dir}}/files/bashrc"
     dest: ~/.bashrc
     state: link
     force: yes
 
 - name: ~/.efnet.ircrc
   file:
-    src: "{{playbook_dir}}/files/efnet.ircrc"
+    src: "{{dotfiles_dir}}/files/efnet.ircrc"
     dest:  ~/.efnet.ircrc
     state: link
     force: yes
 
 - name: ~/.freenode.ircrc
   file:
-    src: "{{playbook_dir}}/files/freenode.ircrc"
+    src: "{{dotfiles_dir}}/files/freenode.ircrc"
     dest: ~/.freenode.ircrc
     state: link
     force: yes
 
 - name: ~/.functions
   file:
-    src: "{{playbook_dir}}/files/functions"
+    src: "{{dotfiles_dir}}/files/functions"
     dest: ~/.functions
     state: link
     force: yes
 
 - name: ~/.gemrc
   file:
-    src: "{{playbook_dir}}/files/gemrc"
+    src: "{{dotfiles_dir}}/files/gemrc"
     dest: ~/.gemrc
     state: link
     force: yes
 
 - name: ~/.global.ircrc
   file:
-    src: "{{playbook_dir}}/files/global.ircrc"
+    src: "{{dotfiles_dir}}/files/global.ircrc"
     dest: ~/.global.ircrc
     state: link
     force: yes
 
 - name: ~/.inputrc
   file:
-    src: "{{playbook_dir}}/files/inputrc"
+    src: "{{dotfiles_dir}}/files/inputrc"
     dest: ~/.inputrc
     state: link
     force: yes
 
 - name: ~/.mailcap
   file:
-    src: "{{playbook_dir}}/files/mailcap"
+    src: "{{dotfiles_dir}}/files/mailcap"
     dest: ~/.mailcap
     state: link
     force: yes
 
 - name: ~/.muttrc
   file:
-    src: "{{playbook_dir}}/files/muttrc"
+    src: "{{dotfiles_dir}}/files/muttrc"
     dest: ~/.muttrc
     state: link
     force: yes
 
 - name: ~/.muttrc-imap
   file:
-    src: "{{playbook_dir}}/files/muttrc-imap"
+    src: "{{dotfiles_dir}}/files/muttrc-imap"
     dest: ~/.muttrc-imap
     state: link
     force: yes
 
 - name: ~/.npmrc
   file:
-    src: "{{playbook_dir}}/files/npmrc"
+    src: "{{dotfiles_dir}}/files/npmrc"
     dest: ~/.npmrc
     state: link
     force: yes
 
 - name: ~/.pinerc
   file:
-    src: "{{playbook_dir}}/files/pinerc"
+    src: "{{dotfiles_dir}}/files/pinerc"
     dest: ~/.pinerc
     state: link
     force: yes
 
 - name: ~/.profile
   file:
-    src: "{{playbook_dir}}/files/profile"
+    src: "{{dotfiles_dir}}/files/profile"
     dest: ~/.profile
     state: link
     force: yes
 
 - name: ~/.screenrc
   file:
-    src: "{{playbook_dir}}/files/screenrc"
+    src: "{{dotfiles_dir}}/files/screenrc"
     dest: ~/.screenrc
     state: link
     force: yes
 
 - name: ~/.vimrc
   file:
-    src: "{{playbook_dir}}/files/vimrc"
+    src: "{{dotfiles_dir}}/files/vimrc"
     dest: ~/.vimrc
     state: link
     force: yes
 
 - name: ~/.zshrc
   file:
-    src: "{{playbook_dir}}/files/zshrc"
+    src: "{{dotfiles_dir}}/files/zshrc"
     dest: ~/.zshrc
     state: link
     force: yes
