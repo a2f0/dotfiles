@@ -1,3 +1,4 @@
 - hosts: all
   tasks:
+    - include: tasks/copy-dotfiles-to-home-directory.yaml
     - include: tasks/copy-ssh-keys-from-host-to-guest.yaml
