@@ -5,5 +5,3 @@ repos:
     -   id: check-yaml
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
-    -   id: sort-simple-yaml
-        files: \.yaml$
