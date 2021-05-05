@@ -24,3 +24,4 @@ functions-private
 iptables.rules-private
 ssh_config
 syslog-ng.conf-private
+.DS_Store
