@@ -1,73 +1,42 @@
+#!/bin/bash
 alias 256="~/working/github/misc_scripts/256_color.pl -w"
-alias cal="cal -y"
 #alias chrome="chromium --user-data-dir=~/.chromium-user-data/&"
 #alias chromium="chromium --user-data-dir=~/.chromium-user-data/&"
-alias c="cd ~/working/github/arch_x86_64_configs"
 alias imapfilter="imapfilter -c ~/.imapfilter/config-experimental.lua"
-alias kb="/usr/bin/firefox \"uhmya.com/wiki/doku.php?id=keyboard_shortcuts\""
 alias keepass="keepassx &"
 alias keepass-x="keepassx &"
-alias kp="perl $HOME/working/Crypted/kpcli-3.0.pl --readonly --kdb=$HOME/working/Crypted/my_keepass.kdb"
 alias listrunning="vboxmanage list runningvms"
 alias listvms="vboxmanage list vms"
-alias logout='xfce4-session-logout -l'
 alias lscreen="screen -ls"
-alias random_hex="cat /dev/urandom | hexdump -C | grep \"ca fe\""
 alias lynx="lynx --accept_all_cookies"
 alias mscreen="screen -S mail -c ~/.mscreenrc"
 #alias offlineimap="if [ `pgrep offlineimap | wc -l` -eq 0 ]; then /usr/bin/offlineimap; fi"
 #alias offlineimap="if [ `pgrep offlineimap | wc -l` -eq 0 ]; then /usr/bin/offlineimap; else echo "Already running..."; fi"
 alias offlineimap-nognome="offlineimap -c ~/.offlineimaprc-nognome"
 alias offlineimap="offlineimap-nognome"
-alias reflector="reflector -l 5 --sort rate --save /etc/pacman.d/mirrorlist"
 alias resetxp="vboxmanage controlvm {e89cb637-d666-427b-826f-8f05d35076b3} reset"
 #alias resetclip="kill `pgrep auto`; autocutsel -selection CLIPBOARD -fork; autocutsel -selection PRIMARY -fork"
-alias sc="declare -F; alias"
-alias services="systemctl -a --no-pager"
-alias shortcuts="declare -F; alias"
 alias showrunning="vboxmanage list runningvms"
 alias showvminfo="vboxmanage metrics list"
-alias shutdown="echo Shut down your VMs first, or full qualify the path to this command."
-alias updatepacmandatabase="sudo pacman -Syy; sudo yaourt -Syy"
 alias unlockluks="sudo cryptsetup luksOpen /dev/sdb luksAuxiliary; sudo mount /dev/mapper/luksAuxiliary /mnt/luksAuxiliary"
 alias unlocktruecrypt="sudo mkdir -p /mnt/archtc; sudo modprobe loop; truecrypt -t ~/working/TrueCrypt/Arch.tc /mnt/archtc"
 alias virtualbox="virtualbox &"
 alias vi="vim"
-alias vimc="vim -u '/dev/null'"
-alias xlock="xlock -mode laser"
-alias acpixp="vboxmanage controlvm {024b812d-89c3-4143-870d-96b9e5419281} acpipowerbutton"
-alias windows="xwininfo -root -children"
+
 #alias screenshot="import screenshot.jpg"
-alias xfce4-terminal="xfce4-terminal&"
-alias lwindow="xwininfo -root -children"
-alias cri="cd $HOME/working/UofC/CRI"
-alias log="cd /var/log/syslog-ng"
-alias unloadrvm="__rvm_unload"
-alias acpiwin8="vboxmanage controlvm Win8_Enterprise_x64 acpipowerbutton"
-alias db="lw; rake db:drop db:create db:migrate; rake db:fixtures:load RAILS_ENV=development;"
-alias csr="openssl req -in $1 -noout -text"
-alias epic="epic5"
-
-#generate a 60 character password
-alias 60="< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-60};echo;"
-
-if [[ `uname -a`  =~ ARCH ]]; then
-    #libreoffice writer
-    alias word="lowriter $1 &"
-    alias libreoffice="libreoffice $1 &"
-    #libreoffice calc
-    alias excel="localc $1 & "
-    alias calc="localc $1 & "
+if [[ $(uname -a)  =~ ARCH ]]; then
     #copy whatever was selected into the actual clipboard
     alias clipboard="xclip -out | xclip -selection clipboard"
+    alias lock="xlock -mode laser"
+    alias windows="xwininfo -root -children"
+    alias random_hex="cat /dev/urandom | hexdump -C | grep \"ca fe\""
 fi
 
-if [[ `uname -a` =~ Darwin ]]; then
+if [[ $(uname -a) =~ Darwin ]]; then
     alias md5sum="md5"
     alias resetwireless="sudo ifconfig en0 down;sudo ifconfig en0 up"
     alias lsusb="system_profiler SPUSBDataType"
     alias finder='sudo killall Finder'
     alias lock='open -a /System/Library/Frameworks/ScreenSaver.framework/Versions/A/Resources/ScreenSaverEngine.app'
     #alias dock='osascript -e \'quit app \"Messages\"\'; killall Dock'
-    #ssh-copy-id for mac
 fi

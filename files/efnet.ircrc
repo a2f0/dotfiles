@@ -2,7 +2,7 @@
 /join #Cheeze_Out
 /load ~/anduril/anduril.irc
 /load ~/.global.ircrc
-#/skin pretty
+/skin pretty
 /set autoaway off
 /set orignick dps
 /nick dps
