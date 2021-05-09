@@ -1,14 +1,14 @@
-source ~/.quick
-
 # unset and resource all aliases
 unalias -a
 source ~/.aliases
-source ~/.aliases-private
+
+if [ -f "~/.aliases-private" ]; then . "source ~/.aliases-private"; fi
+if [ -f "~/.quick" ]; then . "source ~/.quick"; fi
 
 # unset all functions
 for function in `declare -F | awk '{ print $3 }' `; do unset -f  "$function"; done
 source ~/.functions
-source ~/.functions-private
+if [ -f "~/.functions-private" ]; then . "source ~/.functions-private"; fi
 
 # check in ~/.functions for cntrl_c function
 trap ctrl_c INT
@@ -31,8 +31,6 @@ umask 0077
 if [ `uname` == Darwin ]; then
     # suppress deprecation warning
     export BASH_SILENCE_DEPRECATION_WARNING=1
-
-    echo "Darwin detected in bashrc"
     # use UTF-8.
     export LC_ALL=en_US.UTF-8
 
@@ -67,33 +65,21 @@ if [ `uname` == Darwin ]; then
     alias cd='cdnvm'
 
 elif [ `uname` == Linux ]; then
-    echo "Linux box detected in bashrc"
     # init volume to 20.
-    amixer sset Master 67%
+    #amixer sset Master 67%
     PATH=$PATH:/opt/local/scripts
     PATH=$PATH:~/.cabal/bin
     PATH=$PATH:/usr/local/heroku/bin
-    #vendor perl, for perlbrew
+    # vendor perl, for perlbrew
     PATH=$PATH:/usr/bin/vendor_perl
     #disable terminal beep
-    setterm -blength 0
-    if [ -z "${SSH_CONNECTION}" ]; then
-        if [[ $TERMCAP =~ screen ]]; then
-            echo "GNU screen is running..."
-        else
-            echo "GNU screen is not running..."
-        fi
-    else
-        echo "This is not an SSH session..."
-    fi
-    #X Desktop Group Configuration Paths
+    # setterm -blength 0
+    # X Desktop Group Configuration Paths
     export XDG_CONFIG_HOME=$HOME/.config
     export XDG_CACHE_HOME=$HOME/.cache
-    #use the default POSIX/C locale, print only standard ASCII characters.
+    # use the default POSIX/C locale, print only standard ASCII characters.
     export LC_ALL=C
     export JAVA_HOME=/opt/local/jdk1.7.0_45
-else
-    echo "Unknown platform detected..."
 fi
 
 
@@ -129,14 +115,7 @@ if [[ -z "$SSH_TTY" && `uname -a` =~ ARCH ]]; then
     # verify settings
 
     #xrdb -query
-else
-    echo "This is an SSH session..."
 fi
-
-
-# wipe out old screens
-screen -wipe > /dev/null
-screen -list
 
 if [ ! -d ~/.mcabber/otr ]; then
     echo "Configuring directory for mcabber OTR keys..."
@@ -147,8 +126,4 @@ fi
 if [ -e ~/perl5/perlbrew/etc/bashrc ]; then
   echo "initializing perlbrew"
   source ~/perl5/perlbrew/etc/bashrc
-fi
-
-if [ -e ~/.dotfiles-devopsrockstars/init ]; then
-  source ~/.dotfiles-devopsrockstars/init
 fi

@@ -1,3 +1,8 @@
 - hosts: cs
+  vars:
+    dotfiles_dir: ~/dotfiles
   tasks:
     - include: tasks/rsync-dotfiles-to-home-directory.yaml
+    - include: tasks/files.yaml
+      tags:
+         - files

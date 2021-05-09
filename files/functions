@@ -1,8 +1,5 @@
-echo "Unsetting old functions..."
-
+# unset currently set functions
 for function in `declare -F | awk '{ print $3 }' `; do unset -f $function; done
-
-echo "Sourcing functions..."
 
 build_me () {
     CWD=`pwd`
@@ -204,18 +201,12 @@ loadrvm() {
 }
 
 loadrbenv() {
-    # loadrvm / unloadrvm if issues, specifically in 'gem env'
     if hash rbenv 2>/dev/null; then
-        echo "loading rbenv..."
-
         eval "$(rbenv init -)"
-    else
-        echo "rbenv not installed"
     fi
 }
 
 if [ `uname` == Darwin ]; then
-    echo "Sourcing Darwin functions..."
     dock() {
       echo "dock"
       osascript -e 'quit app "Messages"'
@@ -225,16 +216,12 @@ if [ `uname` == Darwin ]; then
 fi
 
 if [[ `uname -r` =~ ARCH ]]; then
-    echo "Sourcing Arch Linux functions..."
     whatprovides () {
         pkgfile $1
     }
-else
-    :
 fi
 
 # Begin nvm
-
 find-up () {
     path=$(pwd)
     while [[ "$path" != "" && ! -e "$path/$1" ]]; do
