@@ -1,4 +1,2 @@
-/load ~/anduril/anduril.irc
-/skin pretty
 /load ~/.global.ircrc
 /server irc.freenode.net

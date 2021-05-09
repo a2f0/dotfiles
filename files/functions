@@ -1,22 +1,6 @@
 # unset currently set functions
 for function in `declare -F | awk '{ print $3 }' `; do unset -f $function; done
 
-build_me () {
-    CWD=`pwd`
-    echo "Called build me function..."
-    cd ~/working/github/arch_x86_64_configs
-    ./build_me.sh
-    #source ~/.functions
-    #source ~/.functions-private
-    #echo "Unsetting and re-setting all aliases..."
-    #unalias -a
-    #source ~/.aliases
-    #source ~/.aliases-private
-    source ~/.bashrc
-    cd $CWD; unset CWD
-    echo "Finished build function..."
-}
-
 cb () {
   xclip -out | xclip -selection clipboard
 }
@@ -48,7 +32,7 @@ freenode(){
         export IRCSERVER="irc.freenode.net"
         screen -rd freenode
     else
-        screen -S freenode epic5 -l ~/.freenode.ircrc
+        screen -S freenode epic -l ~/.freenode.ircrc
     fi
 }
 
@@ -72,14 +56,6 @@ topdisk() {
     dstat -ta --top-bio
 }
 
-# take a time-stamped snapshot of my Win7 virtualbox instantiation.
-snapwin7 () {
-    vboxmanage snapshot Win7 take function.`date +%m`.`date +%d`.`date +%y`
-}
-
-snapxpucad () {
-    vboxmanage snapshot "XP (UCAD)" take function.`date +%m`.`date +%d`.`date +%y`
-}
 
 # kill every open RDP session on my box.
 rdpkill () {
@@ -178,15 +154,6 @@ vminfo () {
 
 listdcs () {
     dig any _kerberos._tcp.$1
-}
-
-cwd() {
-  if [[ $# -lt 1 ]]; then
-      echo "Usage: cwd <dir>"
-      echo "Example: cwd ~/Documents"
-      return -1
-  fi
-  cd $1
 }
 
 loadrvm() {

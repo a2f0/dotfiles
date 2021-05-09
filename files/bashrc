@@ -28,6 +28,9 @@ export HISTTIMEFORMAT="%d.%m.%y %T "
 # to group members or others
 umask 0077
 
+# custom compiled software (./configure --prefix=~/install)
+PATH=$PATH:~/install/bin
+
 if [ `uname` == Darwin ]; then
     # suppress deprecation warning
     export BASH_SILENCE_DEPRECATION_WARNING=1
@@ -35,21 +38,18 @@ if [ `uname` == Darwin ]; then
     export LC_ALL=en_US.UTF-8
 
     PATH=$PATH:/opt/local/bin
-    PATH=$PATH:$HOME/scripts
-    PATH=$PATH:~/.platformio/penv/bin
-    PATH=$PATH:$HOME/Library/Python/3.7/bin #aws cli tools
 
-
-    # begin brew Stuff
+    # terraform
     PATH="/usr/local/opt/terraform@0.11/bin:$PATH"
-    # end brew Stuff
 
     export ANDROID_HOME=$HOME/Library/Android
     export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
+
+    # go
     export GOPATH=~/working/github/go
     PATH=$PATH:~/working/github/go/bin
 
-    # brew
+    # az cli, installed via brew
     source /usr/local/etc/bash_completion.d/az
 
     # fastlane
@@ -90,7 +90,7 @@ loadrbenv
 # also see efnet/freenode functions in ~/.functions
 export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
 export IRCNICK="dps"
-export IRCNAME="dan sullivan"
+export IRCNAME="dps"
 
 # set cvs remote shell
 export CVS_RSH=ssh
@@ -123,7 +123,6 @@ if [ ! -d ~/.mcabber/otr ]; then
     chmod -R 700 ~/.mcabber
 fi
 
-if [ -e ~/perl5/perlbrew/etc/bashrc ]; then
-  echo "initializing perlbrew"
-  source ~/perl5/perlbrew/etc/bashrc
-fi
+# Use bash completion, if it exists - linux.cs.uchicago.edu
+[[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && \
+    . /usr/share/bash-completion/bash_completion

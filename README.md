@@ -30,6 +30,8 @@ Run specific tags in the playbook
 
 ## CS
 
+Configure via Ansible
+
     ansible-playbook -i inventory.yaml playbook-cs.yaml -l linux.cs.uchicago.edu
 
 ### Vagrant

@@ -73,6 +73,9 @@ export LC_ALL=en_US.UTF-8
 # aws cli tools
 export AWS_PAGER=""|
 
+# custom compiled software (./configure --prefix=~/install)
+export PATH=$PATH:~/install/bin
+
 # don't share history
 setopt no_share_history
 unsetopt share_history
