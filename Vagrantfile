@@ -6,13 +6,14 @@ Vagrant.configure("2") do |config|
     v.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
     v.customize ["modifyvm", :id, "--vram", "64"]
     v.customize ["modifyvm", :id, "--vrde", "off"]
-    v.customize ['modifyvm', :id, '--clipboard', 'bidirectional']
-  end
-  config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "playbook-arch-linux.yaml"
+    v.customize ['modifyvm', :id, "--clipboard", "bidirectional"]
+    v.customize ['modifyvm', :id, "--audio", "none"]
   end
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "playbook-arch-linux-vm.yaml"
+  end
+  config.vm.provision "ansible" do |ansible|
+    ansible.playbook = "playbook-arch-linux.yaml"
   end
   config.vm.synced_folder ".", "/vagrant", type: "rsync"
 end

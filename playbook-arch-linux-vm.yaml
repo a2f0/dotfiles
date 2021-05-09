@@ -1,4 +1,6 @@
 - hosts: all
+  vars:
+    dotfiles_dir: ~/dotfiles
+    ansible_python_interpreter: /usr/bin/python3
   tasks:
-    - include: tasks/rsync-dotfiles-to-home-directory.yaml
     - include: tasks/copy-ssh-keys-from-host-to-guest.yaml
