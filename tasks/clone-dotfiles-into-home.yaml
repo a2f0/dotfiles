@@ -2,3 +2,4 @@
   ansible.builtin.git:
     repo: 'https://github.com/deepeeess/dotfiles.git'
     dest: ~/dotfiles
+    force: no
