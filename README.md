@@ -28,6 +28,10 @@ Run specific tags in the playbook
 
     ansible-playbook -i inventory.yaml playbook-arch-linux.yaml -l 127.0.0.1 --tags 'files'
 
+## CS
+
+    ansible-playbook -i inventory.yaml playbook-cs.yaml -l linux.cs.uchicago.edu
+
 ### Vagrant
 
 Start a Virtualbox VM
