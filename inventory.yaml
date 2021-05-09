@@ -6,3 +6,4 @@ cs:
   hosts:
     linux.cs.uchicago.edu:
       ansible_user: dansully
+      ansible_python_interpreter: /usr/bin/python3
