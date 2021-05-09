@@ -1,0 +1,8 @@
+- name: Copy this repository to the target
+  synchronize:
+    src: "{{ playbook_dir }}"
+    dest: ~/
+    rsync_opts:
+      - "--no-motd"
+      - "--exclude=.vagrant"
+      - "--exclude=.DS_Store"

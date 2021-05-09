@@ -1,7 +1,8 @@
 localhost:
   hosts:
     127.0.0.1:
-      ansible_connection=local
+      ansible_connection: local
 cs:
   hosts:
     linux.cs.uchicago.edu:
+      ansible_user: dansully
