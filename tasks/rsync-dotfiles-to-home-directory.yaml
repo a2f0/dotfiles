@@ -1,4 +1,4 @@
-- name: Copy this repository to the target
+- name: Rsync this repository to the target
   synchronize:
     src: "{{ playbook_dir }}"
     dest: ~/
