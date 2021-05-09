@@ -42,6 +42,10 @@ Start rsyncing Vagrant files
 
    vagrant rsync-auto
 
+Run provisioners on the running instance
+
+    vagrant provision
+
 ## Developing
 
 Install pre-commit to lint files
