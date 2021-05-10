@@ -1,13 +1,13 @@
 # unset and resource all aliases
 unalias -a
-source ~/.aliases
 
+if [ -f "~/.aliases" ]; then . "source ~/.aliases"; fi
 if [ -f "~/.aliases-private" ]; then . "source ~/.aliases-private"; fi
 if [ -f "~/.quick" ]; then . "source ~/.quick"; fi
 
 # unset all functions
 for function in `declare -F | awk '{ print $3 }' `; do unset -f  "$function"; done
-source ~/.functions
+if [ -f "~/.functions" ]; then . "source ~/.functions"; fi
 if [ -f "~/.functions-private" ]; then . "source ~/.functions-private"; fi
 
 # check in ~/.functions for cntrl_c function
@@ -81,7 +81,6 @@ elif [ `uname` == Linux ]; then
     export LC_ALL=C
     export JAVA_HOME=/opt/local/jdk1.7.0_45
 fi
-
 
 # from functions
 bash_prompt
