@@ -76,6 +76,11 @@ export AWS_PAGER=""|
 # custom compiled software (./configure --prefix=~/install)
 export PATH=$PATH:~/install/bin
 
+# also see efnet/freenode functions in ~/.functions
+export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
+export IRCNICK="dps"
+export IRCNAME="dps"
+
 # don't share history
 setopt no_share_history
 unsetopt share_history
