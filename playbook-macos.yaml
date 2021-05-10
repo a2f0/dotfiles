@@ -7,6 +7,7 @@
     ansible_python_interpreter: /usr/bin/python3
   tasks:
     - include: tasks/macos/install-homebrew.yaml
+    - include: tasks/clone-anduril-into-home.yaml
     - include: tasks/macos/install-homebrew-packages.yaml
     - include: tasks/build-epic-4.yaml
     - include: tasks/files.yaml
