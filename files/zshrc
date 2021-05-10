@@ -37,10 +37,7 @@ load-nvmrc() {
 
 # rbenv
 if hash rbenv 2>/dev/null; then
-  echo "Loading rbenv..."
   eval "$(rbenv init -)"
-else
-  echo "rbenv not installed"
 fi
 
 # pyenv
