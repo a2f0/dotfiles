@@ -1,6 +1,7 @@
-source ~/.quick
 source ~/.aliases
 source ~/.aliases-private
+source ~/.functions-zsh
+source ~/.quick
 
 # set the umask to prevent files from being created with access
 # to group members or others
