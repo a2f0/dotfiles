@@ -16,3 +16,5 @@
         pager = cat
 [branch]
         autosetupmerge = always
+[init]
+	defaultBranch = main
