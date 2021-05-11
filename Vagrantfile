@@ -8,6 +8,8 @@ Vagrant.configure("2") do |config|
     v.customize ["modifyvm", :id, "--vrde", "off"]
     v.customize ['modifyvm', :id, "--clipboard", "bidirectional"]
     v.customize ['modifyvm', :id, "--audio", "none"]
+    v.memory = 8192
+    v.cpus = 2
   end
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "playbook-arch-linux-vm.yaml"
