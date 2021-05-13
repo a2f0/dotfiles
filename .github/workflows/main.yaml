@@ -23,3 +23,11 @@ jobs:
         python-version: '3.7'
         # Optional - x64 or x86 architecture, defaults to x64
         architecture: 'x64'
+
+    - name: install and configure python dependencies
+      run: pip install -r ./requirements.txt
+
+    - name: Run pre-commit
+      run: |
+        pre-commit install
+        pre-commit run --all-files
