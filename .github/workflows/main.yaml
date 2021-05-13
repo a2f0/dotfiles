@@ -1,0 +1,33 @@
+name: Github Actions
+
+on:
+  push:
+    branches: '**'
+  pull_request:
+    branches: '**'
+
+jobs:
+
+  code-quality:
+    runs-on: ubuntu-latest
+    continue-on-error: false
+
+    steps:
+       # Checks-out the repository into $GITHUB_WORKSPACE.
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        # Semantic version range syntax or exact version of a Python version
+        python-version: '3.7'
+        # Optional - x64 or x86 architecture, defaults to x64
+        architecture: 'x64'
+
+    - name: install and configure python dependencies
+      run: pip install -r ./requirements.txt
+
+    - name: Run pre-commit
+      run: |
+        pre-commit install
+        pre-commit run --all-files
