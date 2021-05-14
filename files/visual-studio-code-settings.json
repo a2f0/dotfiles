@@ -6,5 +6,6 @@
     "editor.renderControlCharacters": true,
     "window.zoomLevel": 0,
     "terminal.integrated.scrollback": 100000,
-    "editor.defaultFormatter": "vscode.typescript-language-features"
+    "editor.defaultFormatter": "vscode.typescript-language-features",
+    "window.restoreWindows": "none"
 }
