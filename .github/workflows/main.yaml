@@ -34,5 +34,6 @@ jobs:
 
     - name: Run vagrant up
       run: |
+        pip3 install ansible
         vagrant plugin install vagrant-vbguest
         vagrant up
