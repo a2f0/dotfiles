@@ -9,7 +9,7 @@ on:
 jobs:
 
   code-quality:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     continue-on-error: false
 
     steps:
