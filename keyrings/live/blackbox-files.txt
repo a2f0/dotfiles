@@ -13,4 +13,5 @@ pgpass
 resolv.conf
 salt-roster
 ssh_config
+terraform/main.tfvars
 yp.conf
