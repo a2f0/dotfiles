@@ -34,7 +34,7 @@ jobs:
 
     - name: Run vagrant up
       run: |
-        ssh-keygen -b 2048 -t rsa -q -N ""
+        ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
         python -m pip install ansible
         vagrant plugin install vagrant-vbguest
         vagrant up
