@@ -39,3 +39,4 @@ override.tf.json
 .terraformrc
 terraform.rc
 /terraform/main.tfvars
+/terraform/terraform.backend
