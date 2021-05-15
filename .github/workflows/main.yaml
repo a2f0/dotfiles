@@ -40,3 +40,13 @@ jobs:
         python -m pip install ansible
         vagrant plugin install vagrant-vbguest
         vagrant up
+
+    - name: Post to slack
+      uses: 8398a7/action-slack@v3
+      #if: ${{ failure() }}
+      with:
+        status: ${{ job.status }}
+        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
