@@ -25,3 +25,18 @@ iptables.rules-private
 ssh_config
 syslog-ng.conf-private
 .DS_Store
+
+# terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+/terraform/main.tfvars
+/terraform/terraform.backend
