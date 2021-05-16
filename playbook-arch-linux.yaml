@@ -31,4 +31,6 @@
     - include: tasks/arch-linux/reboot.yaml
       become: yes
     - include: tasks/clone-anduril-into-home.yaml
-    - include: tasks/build-epic-4.yaml
+    - include: tasks/arch-linux/configure-xfce4.yaml
+      tags:
+         - files
