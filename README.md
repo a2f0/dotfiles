@@ -4,6 +4,12 @@ Dotfiles and Ansible tasks for package installaton / system configuration.
 
 Arch Linux system is provisionable via `vagrant up`.
 
+## Developing
+
+Install pre-commit to lint files
+
+    run `pre-commit install` to configure pre-commit hook.
+
 ## MacOS
 
 Configure via Ansible
@@ -47,9 +53,3 @@ Start rsyncing Vagrant files
 Run provisioners on the running instance
 
     vagrant provision
-
-## Developing
-
-Install pre-commit to lint files
-
-1. run `pre-commit install` to configure pre-commit hook.
