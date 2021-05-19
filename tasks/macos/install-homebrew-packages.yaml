@@ -103,6 +103,11 @@
     name: telnet
     state: present
 
+- name: tfenv
+  homebrew:
+    name: tfenv
+    state: present
+
 - name: tflint
   homebrew:
     name: tflint
