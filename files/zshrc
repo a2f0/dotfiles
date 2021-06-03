@@ -54,9 +54,6 @@ export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
 # rust
 export PATH="$HOME/.cargo/bin:$PATH"
 
-# MacOS Python Binaries
-export PATH=$PATH:$HOME/Library/Python/3.7/bin
-
 # set the locale
 export LC_ALL=en_US.UTF-8
 
