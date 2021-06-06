@@ -7,40 +7,28 @@ on:
     branches: '**'
   schedule:
   - cron: "0 0 * * *"
-
 jobs:
-
   code-quality:
     runs-on: macos-latest
     continue-on-error: false
-
     steps:
-       # Checks-out the repository into $GITHUB_WORKSPACE.
     - uses: actions/checkout@v2
-
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        # Semantic version range syntax or exact version of a Python version
-        python-version: '3.7'
-        # Optional - x64 or x86 architecture, defaults to x64
+        python-version: '3.8'
         architecture: 'x64'
-
     - name: install and configure python dependencies
       run: pip install -r ./requirements.txt
-
     - name: Run pre-commit
       run: |
         pre-commit install
         pre-commit run --all-files
-
     - name: Run vagrant up
       run: |
         ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
-        python -m pip install ansible
         vagrant plugin install vagrant-vbguest
         vagrant up
-
     - name: Post to slack
       uses: 8398a7/action-slack@v3
       if: ${{ failure() }}
