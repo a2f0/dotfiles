@@ -48,7 +48,7 @@ Start a Virtualbox VM
 
 Start rsyncing Vagrant files
 
-   vagrant rsync-auto
+    vagrant rsync-auto
 
 Run provisioners on the running instance
 
