@@ -1,1 +1,2 @@
-pre-commit==2.9.3   # pre-commit git hook
+ansible==4.0.0
+pre-commit==2.9.3
