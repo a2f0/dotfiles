@@ -98,6 +98,11 @@
     name: rbenv
     state: present
 
+- name: rust
+  homebrew:
+    name: rust
+    state: present
+
 - name: shellcheck
   homebrew:
     name: shellcheck
