@@ -51,9 +51,6 @@ export ANDROID_HOME=$HOME/Library/Android
 export PATH=$PATH:$HOME/Library/Android/sdk/emulator
 export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
 
-# rust
-export PATH="$HOME/.cargo/bin:$PATH"
-
 # set the locale
 export LC_ALL=en_US.UTF-8
 
