@@ -56,8 +56,8 @@ if [ `uname` == Darwin ]; then
     export PATH="$HOME/.fastlane/bin:$PATH"
 
     # gcloud
-    if [ -f "$HOME/working/MacOS-Install/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/working/MacOS-Install/google-cloud-sdk/path.bash.inc"; fi
-    if [ -f "$HOME/working/MacOS-Install/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/working/MacOS-Install/google-cloud-sdk/path.bash.inc"; fi
+    if [ -f "$HOME/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/google-cloud-sdk/path.bash.inc"; fi
+    if [ -f "$HOME/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/google-cloud-sdk/path.bash.inc"; fi
 
     export NVM_DIR="$HOME/.nvm"
     [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
