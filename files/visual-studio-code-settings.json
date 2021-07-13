@@ -11,5 +11,6 @@
     "python.defaultInterpreterPath": "~/.pyenv/shims/python",
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook"
-    }
+    },
+    "workbench.startupEditor": "none"
 }
