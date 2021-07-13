@@ -8,5 +8,8 @@
     "terminal.integrated.scrollback": 100000,
     "editor.defaultFormatter": "vscode.typescript-language-features",
     "window.restoreWindows": "none",
-    "python.defaultInterpreterPath": "~/.pyenv/shims/python"
+    "python.defaultInterpreterPath": "~/.pyenv/shims/python",
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter-notebook"
+    }
 }
