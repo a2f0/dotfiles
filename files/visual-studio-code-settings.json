@@ -12,5 +12,6 @@
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook"
     },
-    "workbench.startupEditor": "none"
+    "workbench.startupEditor": "none",
+    "python.showStartPage": false
 }
