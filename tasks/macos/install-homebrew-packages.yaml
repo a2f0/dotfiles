@@ -43,6 +43,11 @@
     name: git
     state: present
 
+- name: haskell-stack
+  homebrew:
+    name: haskell-stack
+    state: present
+
 - name: imagemagick
   homebrew:
     name: vim
