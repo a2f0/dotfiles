@@ -1,15 +1,11 @@
 #!/bin/bash
-alias 256="~/working/github/misc_scripts/256_color.pl -w"
-#alias chrome="chromium --user-data-dir=~/.chromium-user-data/&"
-#alias chromium="chromium --user-data-dir=~/.chromium-user-data/&"
+alias 256="~/github/misc_scripts/256_color.pl -w"
 alias imapfilter="imapfilter -c ~/.imapfilter/config-experimental.lua"
-alias keepass="keepassx &"
-alias keepass-x="keepassx &"
 alias listrunning="vboxmanage list runningvms"
 alias listvms="vboxmanage list vms"
 alias lscreen="screen -ls"
-alias lynx="lynx --accept_all_cookies"
 alias mscreen="screen -S mail -c ~/.mscreenrc"
+alias npatch='npm version patch --git-tag-version=false'
 #alias offlineimap="if [ `pgrep offlineimap | wc -l` -eq 0 ]; then /usr/bin/offlineimap; fi"
 #alias offlineimap="if [ `pgrep offlineimap | wc -l` -eq 0 ]; then /usr/bin/offlineimap; else echo "Already running..."; fi"
 alias offlineimap-nognome="offlineimap -c ~/.offlineimaprc-nognome"
@@ -23,13 +19,13 @@ alias unlocktruecrypt="sudo mkdir -p /mnt/archtc; sudo modprobe loop; truecrypt 
 alias virtualbox="virtualbox &"
 alias vi="vim"
 
-#alias screenshot="import screenshot.jpg"
 if [[ $(uname -a)  =~ ARCH ]]; then
     #copy whatever was selected into the actual clipboard
     alias clipboard="xclip -out | xclip -selection clipboard"
     alias lock="xlock -mode laser"
     alias windows="xwininfo -root -children"
     alias random_hex="cat /dev/urandom | hexdump -C | grep \"ca fe\""
+    alias screenshot="import screenshot.jpg"
 fi
 
 if [[ $(uname -a) =~ Darwin ]]; then
@@ -38,5 +34,4 @@ if [[ $(uname -a) =~ Darwin ]]; then
     alias lsusb="system_profiler SPUSBDataType"
     alias finder='sudo killall Finder'
     alias lock='open -a /System/Library/Frameworks/ScreenSaver.framework/Versions/A/Resources/ScreenSaverEngine.app'
-    #alias dock='osascript -e \'quit app \"Messages\"\'; killall Dock'
 fi
