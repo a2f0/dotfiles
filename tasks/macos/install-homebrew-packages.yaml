@@ -78,6 +78,11 @@
     name: nmap
     state: present
 
+- name: nvm
+  homebrew:
+    name: nvm
+    state: present
+
 - name: packer
   homebrew:
     name: packer
