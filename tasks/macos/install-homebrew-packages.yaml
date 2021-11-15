@@ -3,6 +3,11 @@
     name: act
     state: present
 
+- name: aspell
+  homebrew:
+    name: aspell
+    state: present
+
 - name: azure-cli
   homebrew:
     name: azure-cli
