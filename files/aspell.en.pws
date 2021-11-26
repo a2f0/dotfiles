@@ -1,4 +1,4 @@
-personal_ws-1.1 en 99
+personal_ws-1.1 en 103
 ACL
 AMI
 APIs
@@ -19,6 +19,7 @@ ECS
 EF
 ELB
 ETL
+Exif
 FC
 FWSM
 FreeIPA
@@ -38,6 +39,9 @@ Informatics
 IoT
 Isilon
 LDAP
+LTE
+NIST
+NMEA
 Nimbleink
 OAuth
 OneFS
