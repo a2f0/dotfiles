@@ -7,10 +7,12 @@
     "window.zoomLevel": 0,
     "terminal.integrated.scrollback": 100000,
     "editor.defaultFormatter": "vscode.typescript-language-features",
+    "python.showStartPage": false,
+    "terminal.integrated.persistentSessionReviveProcess": "never",
+    "terminal.integrated.enablePersistentSessions": false,
     "window.restoreWindows": "none",
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook"
     },
-    "workbench.startupEditor": "none",
-    "python.showStartPage": false
+    "workbench.startupEditor": "none"
 }
