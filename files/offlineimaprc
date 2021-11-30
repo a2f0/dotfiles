@@ -1,6 +1,4 @@
-# Offline IMAP Configuration File.
-# run this with offlineimap  -c ~/.offlineimaprc
-
+# with offlineimap -c ~/.offlineimaprc
 [general]
 # comma-delimited list of active accounts, i.e. gmail, bsdad
 accounts = bsdad

@@ -1,16 +1,18 @@
-# unset and resource all aliases
+# unset all aliases
 unalias -a
 
+# re-source aliases
 if [ -f "~/.aliases" ]; then . "source ~/.aliases"; fi
 if [ -f "~/.aliases-private" ]; then . "source ~/.aliases-private"; fi
 if [ -f "~/.quick" ]; then . "source ~/.quick"; fi
 
 # unset all functions
 for function in `declare -F | awk '{ print $3 }' `; do unset -f  "$function"; done
+
 if [ -f "~/.functions" ]; then . "source ~/.functions"; fi
 if [ -f "~/.functions-private" ]; then . "source ~/.functions-private"; fi
 
-# check in ~/.functions for cntrl_c function
+# ~/.functions
 trap ctrl_c INT
 trap hangup HUP
 trap hangup KILL
@@ -21,7 +23,7 @@ set -o vi
 # set the editor
 export EDITOR="vim"
 
-# enable timestamping on bash_history (type history to see timestamps)
+# enable timestamp on bash_history
 export HISTTIMEFORMAT="%d.%m.%y %T "
 
 # set the umask to prevent files from being created with access
@@ -72,7 +74,7 @@ elif [ `uname` == Linux ]; then
     PATH=$PATH:/usr/local/heroku/bin
     # vendor perl, for perlbrew
     PATH=$PATH:/usr/bin/vendor_perl
-    #disable terminal beep
+    # disable terminal beep
     # setterm -blength 0
     # X Desktop Group Configuration Paths
     export XDG_CONFIG_HOME=$HOME/.config

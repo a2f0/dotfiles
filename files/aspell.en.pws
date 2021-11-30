@@ -1,4 +1,4 @@
-personal_ws-1.1 en 103
+personal_ws-1.1 en 105
 ACL
 AMI
 APIs
@@ -24,6 +24,7 @@ FC
 FWSM
 FreeIPA
 GID
+GPIO
 Ghostscript
 Github
 GnuPGP
@@ -53,6 +54,7 @@ Phusion
 PostgreSQL
 Prototyped
 RDS
+SBC
 SCM
 SRX
 SSIS
