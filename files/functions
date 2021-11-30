@@ -57,11 +57,11 @@ topdisk() {
 }
 
 
-# kill every open RDP session on my box.
+# Kill every open RDP session
 rdpkill () {
-  for i in `ps -ef | grep rdesktop | grep -v grep | awk '{ print $2 }'`; do kill $i; done
-  #this one is for mac.
-  for i in `pgrep Microsoft Remote Desktop`; do kill $i; done
+    for i in `ps -ef | grep rdesktop | grep -v grep | awk '{ print $2 }'`; do kill $i; done
+    # MacOS
+    for i in `pgrep Microsoft Remote Desktop`; do kill $i; done
 }
 
 resetclip () {
@@ -93,7 +93,7 @@ bash_prompt () {
     local bldwht='\e[1;37m' # White
     FMAG="\[\033[35m\]"
     export PS1="--[\u@\h]-[\w]-[$RAILS_ENV]-\n> "
-    #colors must be surrounded with \[  \], this works.  Uncomment it.
+    # colors must be surrounded with \[  \]
     #PS1="--[\[$bldblu\]\u@\h]-[\w]--\n> "
 }
 PROMPT_COMMAND="bash_prompt"

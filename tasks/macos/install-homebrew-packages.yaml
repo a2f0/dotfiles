@@ -78,6 +78,11 @@
     name: mitmproxy
     state: present
 
+- name: mutt
+  homebrew:
+    name: mutt
+    state: present
+
 - name: nmap
   homebrew:
     name: nmap
@@ -86,6 +91,11 @@
 - name: nvm
   homebrew:
     name: nvm
+    state: present
+
+- name: offlineimap
+  homebrew:
+    name: offlineimap
     state: present
 
 - name: packer
