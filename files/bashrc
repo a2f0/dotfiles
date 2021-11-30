@@ -42,9 +42,6 @@ if [ `uname` == Darwin ]; then
 
     PATH=$PATH:/opt/local/bin
 
-    # terraform
-    PATH="/usr/local/opt/terraform@0.11/bin:$PATH"
-
     export ANDROID_HOME=$HOME/Library/Android
     export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
 
