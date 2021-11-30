@@ -2,15 +2,16 @@
 unalias -a
 
 # re-source aliases
-if [ -f "~/.aliases" ]; then . "source ~/.aliases"; fi
-if [ -f "~/.aliases-private" ]; then . "source ~/.aliases-private"; fi
-if [ -f "~/.quick" ]; then . "source ~/.quick"; fi
+[ -e ~/.aliases ] && source ~/.aliases
+[ -e ~/.aliases-private ] && source ~/.aliases-private
+[ -e ~/.functions ] && source ~/.functions
+[ -e ~/.quick ] && source ~/.quick
 
 # unset all functions
 for function in `declare -F | awk '{ print $3 }' `; do unset -f  "$function"; done
 
-if [ -f "~/.functions" ]; then . "source ~/.functions"; fi
-if [ -f "~/.functions-private" ]; then . "source ~/.functions-private"; fi
+[ -e ~/.functions ] && source ~/.functions
+[ -e ~/.functions-private ] && source ~/.functions-private
 
 # ~/.functions
 trap ctrl_c INT
