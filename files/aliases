@@ -1,26 +1,19 @@
-#!/bin/bash
 alias 256="~/github/misc_scripts/256_color.pl -w"
-alias imapfilter="imapfilter -c ~/.imapfilter/config-experimental.lua"
 alias listrunning="vboxmanage list runningvms"
 alias listvms="vboxmanage list vms"
 alias lscreen="screen -ls"
 alias mscreen="screen -S mail -c ~/.mscreenrc"
 alias npatch='npm version patch --git-tag-version=false'
-#alias offlineimap="if [ `pgrep offlineimap | wc -l` -eq 0 ]; then /usr/bin/offlineimap; fi"
-#alias offlineimap="if [ `pgrep offlineimap | wc -l` -eq 0 ]; then /usr/bin/offlineimap; else echo "Already running..."; fi"
 alias offlineimap-nognome="offlineimap -c ~/.offlineimaprc-nognome"
 alias offlineimap="offlineimap-nognome"
-alias resetxp="vboxmanage controlvm {e89cb637-d666-427b-826f-8f05d35076b3} reset"
-#alias resetclip="kill `pgrep auto`; autocutsel -selection CLIPBOARD -fork; autocutsel -selection PRIMARY -fork"
 alias showrunning="vboxmanage list runningvms"
 alias showvminfo="vboxmanage metrics list"
 alias unlockluks="sudo cryptsetup luksOpen /dev/sdb luksAuxiliary; sudo mount /dev/mapper/luksAuxiliary /mnt/luksAuxiliary"
 alias unlocktruecrypt="sudo mkdir -p /mnt/archtc; sudo modprobe loop; truecrypt -t ~/working/TrueCrypt/Arch.tc /mnt/archtc"
-alias virtualbox="virtualbox &"
 alias vi="vim"
 
 if [[ $(uname -a)  =~ ARCH ]]; then
-    #copy whatever was selected into the actual clipboard
+    # copy whatever was selected into the actual clipboard
     alias clipboard="xclip -out | xclip -selection clipboard"
     alias lock="xlock -mode laser"
     alias windows="xwininfo -root -children"
