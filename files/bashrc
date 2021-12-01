@@ -40,8 +40,7 @@ if [ `uname` == Darwin ]; then
     # use UTF-8.
     export LC_ALL=en_US.UTF-8
 
-    PATH=$PATH:/opt/local/bin
-
+    # android development
     export ANDROID_HOME=$HOME/Library/Android
     export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
 
@@ -82,7 +81,7 @@ elif [ `uname` == Linux ]; then
     export JAVA_HOME=/opt/local/jdk1.7.0_45
 fi
 
-# from functions
+# from ~/.functions
 bash_prompt
 loadrbenv
 
@@ -97,29 +96,18 @@ export CVS_RSH=ssh
 # exempt commands that start with spaces from ~/.bash_history
 export HISTCONTROL=ignorespace
 
-#if [[ $TERM == xterm || $TERM == "rxvt-unicode-256color" || $TERM == "xterm-256color"]]; then
 if [[ -z "$SSH_TTY" && `uname -a` =~ ARCH ]]; then
     # then it is a console (not ssh session)
-    echo "This looks like an xsession, running xset..."
     # disable audible beep for X11
     xset -b
     # set the mouse tracking speed to fast
     xset m 7 10
     # set the keyboard repeat rate, karabiner 200, 10
     xset r rate 200 100
-
     # re-hash this with every load
     xrdb -load ~/.Xresources
-
     # verify settings
-
     #xrdb -query
-fi
-
-if [ ! -d ~/.mcabber/otr ]; then
-    echo "Configuring directory for mcabber OTR keys..."
-    mkdir -p ~/.mcabber/otr
-    chmod -R 700 ~/.mcabber
 fi
 
 # Use bash completion, if it exists - linux.cs.uchicago.edu
