@@ -30,6 +30,9 @@
     - include: tasks/arch-linux/files.yaml
       tags:
          - files
+    - include: tasks/mcabber.yaml
+      tags:
+        - files
     - include: tasks/arch-linux/reboot.yaml
       become: yes
     - include: tasks/clone-anduril-into-home.yaml
