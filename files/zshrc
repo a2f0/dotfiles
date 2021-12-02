@@ -46,10 +46,16 @@ if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
 
-# android studio
-export ANDROID_HOME=$HOME/Library/Android
-export PATH=$PATH:$HOME/Library/Android/sdk/emulator
-export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
+if [[ `uname` == Darwin ]]; then
+  # android studio
+  export ANDROID_HOME=$HOME/Library/Android
+  export PATH=$PATH:$HOME/Library/Android/sdk/emulator
+  export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
+
+  # go, installed via brew
+  export GOPATH=$HOME/go
+  export PATH="$PATH:${GOPATH}/bin"
+fi
 
 # set the locale
 export LC_ALL=en_US.UTF-8

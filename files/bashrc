@@ -44,9 +44,9 @@ if [ `uname` == Darwin ]; then
     export ANDROID_HOME=$HOME/Library/Android
     export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
 
-    # go
-    export GOPATH=~/working/github/go
-    PATH=$PATH:~/working/github/go/bin
+    # go, installed via brew
+    export GOPATH=$HOME/go
+    export PATH="$PATH:${GOPATH}/bin"
 
     # az cli, installed via brew
     source /usr/local/etc/bash_completion.d/az
@@ -58,6 +58,7 @@ if [ `uname` == Darwin ]; then
     if [ -f "$HOME/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/google-cloud-sdk/path.bash.inc"; fi
     if [ -f "$HOME/google-cloud-sdk/completion.bash.inc" ]; then . "$HOME/google-cloud-sdk/path.bash.inc"; fi
 
+    # nvm, installed via brew
     export NVM_DIR="$HOME/.nvm"
     [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
     [ -s "/usr/local/opt/nvm/etc/bash_completion" ] && . "/usr/local/opt/nvm/etc/bash_completion"  # This loads nvm bash_completion
@@ -95,20 +96,6 @@ export CVS_RSH=ssh
 
 # exempt commands that start with spaces from ~/.bash_history
 export HISTCONTROL=ignorespace
-
-if [[ -z "$SSH_TTY" && `uname -a` =~ ARCH ]]; then
-    # then it is a console (not ssh session)
-    # disable audible beep for X11
-    xset -b
-    # set the mouse tracking speed to fast
-    xset m 7 10
-    # set the keyboard repeat rate, karabiner 200, 10
-    xset r rate 200 100
-    # re-hash this with every load
-    xrdb -load ~/.Xresources
-    # verify settings
-    #xrdb -query
-fi
 
 # Use bash completion, if it exists - linux.cs.uchicago.edu
 [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && \
