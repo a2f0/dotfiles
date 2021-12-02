@@ -1,3 +1,10 @@
+- name: ~/.config/Code - OSS/User/settings.json
+  file:
+    src: "{{dotfiles_dir}}/files/visual-studio-code-settings.json"
+    dest: ~/.config/Code - OSS/User/settings.json
+    state: link
+    force: yes
+
 - name: ~/.xinitrc
   file:
     src: "{{dotfiles_dir}}/files/xinitrc"
