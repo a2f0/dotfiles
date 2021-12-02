@@ -3,4 +3,4 @@
     dotfiles_dir: ~/dotfiles
     ansible_python_interpreter: /usr/bin/python3
   tasks:
-    - include: tasks/copy-ssh-keys-from-host-to-guest.yaml
+    - import_tasks: tasks/copy-ssh-keys-from-host-to-guest.yaml
