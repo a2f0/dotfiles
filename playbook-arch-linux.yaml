@@ -3,36 +3,36 @@
     dotfiles_dir: ~/dotfiles
     ansible_python_interpreter: /usr/bin/python3
   tasks:
-    - include: tasks/arch-linux/update-pacman-database.yaml
+    - import_tasks: tasks/arch-linux/update-pacman-database.yaml
       become: yes
-    - include: tasks/arch-linux/reflector.yaml
+    - import_tasks: tasks/arch-linux/reflector.yaml
       become: yes
-    - include: tasks/arch-linux/update-pacman-database.yaml
+    - import_tasks: tasks/arch-linux/update-pacman-database.yaml
       become: yes
-    - include: tasks/arch-linux/update-the-entire-system.yaml
+    - import_tasks: tasks/arch-linux/update-the-entire-system.yaml
       become: yes
-    - include: tasks/arch-linux/reboot.yaml
+    - import_tasks: tasks/arch-linux/reboot.yaml
       become: yes
-    - include: tasks/arch-linux/uninstall-default-vagrant-packages.yaml
+    - import_tasks: tasks/arch-linux/uninstall-default-vagrant-packages.yaml
       become: yes
-    - include: tasks/arch-linux/install-xorg-virtualbox-guest-utils.yaml
+    - import_tasks: tasks/arch-linux/install-xorg-virtualbox-guest-utils.yaml
       become: yes
-    - include: tasks/arch-linux/install-xorg-server.yaml
+    - import_tasks: tasks/arch-linux/install-xorg-server.yaml
       become: yes
-    - include: tasks/arch-linux/install-xorg-packages.yaml
+    - import_tasks: tasks/arch-linux/install-xorg-packages.yaml
       become: yes
-    - include: tasks/arch-linux/install-console-packages.yaml
+    - import_tasks: tasks/arch-linux/install-console-packages.yaml
       become: yes
-    - include: tasks/clone-dotfiles-into-home.yaml
-    - include: tasks/files.yaml
+    - import_tasks: tasks/clone-dotfiles-into-home.yaml
+    - import_tasks: tasks/files.yaml
       tags:
          - files
-    - include: tasks/arch-linux/files.yaml
+    - import_tasks: tasks/arch-linux/files.yaml
       tags:
          - files
-    - include: tasks/mcabber.yaml
+    - import_tasks: tasks/mcabber.yaml
       tags:
         - files
-    - include: tasks/arch-linux/reboot.yaml
+    - import_tasks: tasks/arch-linux/reboot.yaml
       become: yes
-    - include: tasks/clone-anduril-into-home.yaml
+    - import_tasks: tasks/clone-anduril-into-home.yaml
