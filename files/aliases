@@ -4,12 +4,9 @@ alias listvms="vboxmanage list vms"
 alias lscreen="screen -ls"
 alias mscreen="screen -S mail -c ~/.mscreenrc"
 alias npatch='npm version patch --git-tag-version=false'
-alias offlineimap-nognome="offlineimap -c ~/.offlineimaprc-nognome"
-alias offlineimap="offlineimap-nognome"
+alias offlineimap="offlineimap -c ~/.offlineimaprc-nognome"
 alias showrunning="vboxmanage list runningvms"
 alias showvminfo="vboxmanage metrics list"
-alias unlockluks="sudo cryptsetup luksOpen /dev/sdb luksAuxiliary; sudo mount /dev/mapper/luksAuxiliary /mnt/luksAuxiliary"
-alias unlocktruecrypt="sudo mkdir -p /mnt/archtc; sudo modprobe loop; truecrypt -t ~/working/TrueCrypt/Arch.tc /mnt/archtc"
 alias vi="vim"
 
 if [[ $(uname -a)  =~ ARCH ]]; then
@@ -19,6 +16,8 @@ if [[ $(uname -a)  =~ ARCH ]]; then
     alias windows="xwininfo -root -children"
     alias random_hex="cat /dev/urandom | hexdump -C | grep \"ca fe\""
     alias screenshot="import screenshot.jpg"
+    alias unlockluks="sudo cryptsetup luksOpen /dev/sdb luksAuxiliary; sudo mount /dev/mapper/luksAuxiliary /mnt/luksAuxiliary"
+    alias unlocktruecrypt="sudo mkdir -p /mnt/archtc; sudo modprobe loop; truecrypt -t ~/working/TrueCrypt/Arch.tc /mnt/archtc"
 fi
 
 if [[ $(uname -a) =~ Darwin ]]; then

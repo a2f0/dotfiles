@@ -1,4 +1,4 @@
-!The syntax of this file can be verified with  xrdb -load ~/.Xresources
+! The syntax of this file can be verified with  xrdb -load ~/.Xresources
 
 !dzen2.font:             -*-fixed-*-*-*-*-*-*-*-*-*-*-*-*
 dzen2.font:             -nil-profont-medium-r-normal--12-120-72-72-c-60-iso8859-1
@@ -7,19 +7,21 @@ dzen2.background:       black
 
 xterm*background:       black
 xterm*foreground:       white
-!proof that settings here can be arbitrary
-xterm*arbitrary:        dan
 xterm*font:             -nil-profont-medium-r-normal--12-120-72-72-c-60-iso8859-1
 xterm*boldFont:         -nil-profont-medium-r-normal--12-120-72-72-c-60-iso8859-1
 !xterm*font:             fixed
 !xterm*boldFont:         fixed
-!disable bold colors
+
+! Disable bold colors
 xterm*boldMode:         false
-!Make sure locate settings are correct for UTF-8
+
+! Make sure locate settings are correct for UTF-8
 xterm*locale:           true
-!Scrollback buffer, added 1/8/2014
+
+! Scrollback buffer
 xterm*saveLines:        9999
-!Set login shell, process /etc/profile* and ~/profile 6/10/2014 dps
+
+! Set login shell, process /etc/profile* and ~/profile
 xterm*loginShell:       true
 
 URxvt.scrollBar:        false
@@ -27,5 +29,5 @@ URxvt.foreground:       #ffffff
 URxvt.background:       #000000
 URxvt*font:             -nil-profont-medium-r-normal--12-120-72-72-c-60-iso8859-1
 URxvt*boldFont:         -nil-profont-medium-r-normal--12-120-72-72-c-60-iso8859-1
-!Set the term declaration to override the default of rxvt-unicode-256color 1/3/2012
+! Set the term declaration to override the default of rxvt-unicode-256color
 URrxvt*termName:        rxvt-256color
