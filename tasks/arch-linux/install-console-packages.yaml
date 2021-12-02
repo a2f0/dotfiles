@@ -113,6 +113,11 @@
     name: gnuplot
     state: present
 
+- name: go
+  community.general.pacman:
+    name: go
+    state: present
+
 - name: hdparm
   community.general.pacman:
     name: hdparm

@@ -1,25 +1,22 @@
-# autocutsel configuration
-if [ -x /usr/bin/autocutsel ]; then
-    # this will keep the clipboard in sync
-    # with the primary buffer
-    autocutsel -selection CLIPBOARD -fork
+# keep the clipboard in sync with the primary buffer
+autocutsel -selection CLIPBOARD -fork
 
-    # this will keep the primary in sync
-    # with the clipboard buffer
-    autocutsel -selection PRIMARY -fork
-fi
+# keep the primary in sync with the clipboard buffer
+autocutsel -selection PRIMARY -fork
 
+# disable power saving of capabilities of monitors (when not in use)
 xset -dpms
+
+# disable the screen saver function
 xset s off
+
+# change the pointer cursor
 xsetroot -cursor_name -left_ptr
 
 # set the audible beep for X11
 xset -b
 
 # set the mouse tracking speed to fast
-#xset m 7 10
-
-# this appears to work good for a Microsoft Mouse 4500
 xset m 100 1
 
 # set the keyboard delay and repeat rate
@@ -28,7 +25,5 @@ xset r rate 200 100
 # load ~/.Xresources
 [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
 
-# start xmonad
 #exec xmonad
-# start xfce
 exec startxfce4
