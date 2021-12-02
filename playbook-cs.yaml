@@ -2,8 +2,8 @@
   vars:
     dotfiles_dir: ~/dotfiles
   tasks:
-    - include: tasks/rsync-dotfiles-to-home-directory.yaml
-    - include: tasks/build-epic-4.yaml
-    - include: tasks/files.yaml
+    - import_tasks: tasks/rsync-dotfiles-to-home-directory.yaml
+    - import_tasks: tasks/build-epic-4.yaml
+    - import_tasks: tasks/files.yaml
       tags:
          - files
