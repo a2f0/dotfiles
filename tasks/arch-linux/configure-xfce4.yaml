@@ -1,6 +1,6 @@
 - name: Clone xfce-panel configuration into home
   ansible.builtin.git:
-    repo: 'git@github.com:deepeeess/xfce4-panel.git'
+    repo: 'git@github.com:a2f0/xfce4-panel.git'
     dest: ~/xfce4-panel
     force: no
     update: no
