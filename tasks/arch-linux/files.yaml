@@ -4,3 +4,10 @@
     dest: ~/.xinitrc
     state: link
     force: yes
+
+- name: ~/.Xresources
+  file:
+    src: "{{dotfiles_dir}}/files/.Xresources"
+    dest: ~/.Xresources
+    state: link
+    force: yes
