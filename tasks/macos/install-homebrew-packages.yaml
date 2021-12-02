@@ -48,6 +48,11 @@
     name: git
     state: present
 
+- name: golang
+  homebrew:
+    name: golang
+    state: present
+
 - name: haskell-stack
   homebrew:
     name: haskell-stack
