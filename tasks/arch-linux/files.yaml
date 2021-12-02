@@ -7,7 +7,7 @@
 
 - name: ~/.Xresources
   file:
-    src: "{{dotfiles_dir}}/files/.Xresources"
+    src: "{{dotfiles_dir}}/files/Xresources"
     dest: ~/.Xresources
     state: link
     force: yes
