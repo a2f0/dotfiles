@@ -1,6 +1,6 @@
 - name: Clone anduril into home
   ansible.builtin.git:
-    repo: 'https://github.com/deepeeess/anduril.git'
+    repo: 'https://github.com/a2f0/anduril.git'
     dest: ~/anduril
     force: no
     update: no
