@@ -1,4 +1,3 @@
---xmobar config
 
 Config {
        --font = "-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*"
