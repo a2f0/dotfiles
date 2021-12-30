@@ -48,7 +48,7 @@ fi
 
 if [[ `uname` == Darwin ]]; then
   # android studio
-  export ANDROID_HOME=$HOME/Library/Android
+  export ANDROID_SDK=$HOME/Library/Android/sdk
   export PATH=$PATH:$HOME/Library/Android/sdk/emulator
   export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
 
