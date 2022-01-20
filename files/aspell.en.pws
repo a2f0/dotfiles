@@ -1,4 +1,4 @@
-personal_ws-1.1 en 105
+personal_ws-1.1 en 111
 ACL
 AMI
 APIs
@@ -10,6 +10,7 @@ CFR
 Centrify
 Certbot
 CloudFront
+Cloudflare
 Compellent
 DSL
 DevOps
@@ -41,6 +42,8 @@ IoT
 Isilon
 LDAP
 LTE
+Linode
+MUI
 NIST
 NMEA
 Nimbleink
@@ -68,14 +71,17 @@ TMEP
 TTAB
 Tearleads
 Terraform
+TypeScript
 UI
 UID
 VBA
 VMWare
 VPCs
+Vercel
 WorkSpaces
 backend
 bioinformatics
+fastlane
 filesystem
 geolocated
 highstate
