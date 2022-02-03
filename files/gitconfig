@@ -1,6 +1,7 @@
 [user]
         name = Dan Sullivan
         email = dansullivan@gmail.com
+
 [pull]
         rebase = true
 [filter "lfs"]
@@ -18,3 +19,6 @@
         autosetupmerge = always
 [init]
 	defaultBranch = main
+
+[includeIf "gitdir:github-thinkspan/"]
+  path = .gitconfig-thinkspan

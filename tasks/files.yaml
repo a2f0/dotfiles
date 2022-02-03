@@ -68,6 +68,20 @@
     state: link
     force: yes
 
+- name: ~/.gitconfig-personal
+  file:
+    src: "{{dotfiles_dir}}/files/gitconfig-personal"
+    dest: ~/.gitconfig-personal
+    state: link
+    force: yes
+
+- name: ~/.gitconfig-thinkspan
+  file:
+    src: "{{dotfiles_dir}}/files/gitconfig-thinkspan"
+    dest: ~/.gitconfig-thinkspan
+    state: link
+    force: yes
+
 - name: ~/.global.ircrc
   file:
     src: "{{dotfiles_dir}}/files/global.ircrc"
