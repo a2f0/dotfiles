@@ -1,6 +1,8 @@
 [user]
         name = Dan Sullivan
         email = dansullivan@gmail.com
+        signingkey = 827B8379F39A31F0
+        gpgsign = true
 
 [pull]
         rebase = true
