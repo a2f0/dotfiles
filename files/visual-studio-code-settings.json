@@ -1,4 +1,6 @@
 {
+    "flow.pathToFlow": "flow",
+    "flow.useNPMPackagedFlow": true,
     "files.autoSave": "onFocusChange",
     "diffEditor.ignoreTrimWhitespace": false,
     "editor.renderWhitespace": "all",
@@ -14,5 +16,5 @@
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook"
     },
-    "workbench.startupEditor": "none"
+    "javascript.validate.enable": false
 }
