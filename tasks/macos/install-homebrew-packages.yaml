@@ -65,7 +65,12 @@
 
 - name: imagemagick
   homebrew:
-    name: vim
+    name: imagemagick
+    state: present
+
+- name: imapfilter
+  homebrew:
+    name: imapfilter
     state: present
 
 - name: jenv
