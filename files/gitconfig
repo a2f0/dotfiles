@@ -21,7 +21,15 @@
 [branch]
         autosetupmerge = always
 [init]
-	defaultBranch = main
+        defaultBranch = main
 
 [includeIf "gitdir:github-thinkspan/"]
-  path = .gitconfig-thinkspan
+        path = .gitconfig-thinkspan
+
+[credential "https://github.com"]
+        helper =
+        helper = !/usr/local/bin/gh auth git-credential
+
+[credential "https://gist.github.com"]
+        helper =
+        helper = !/usr/local/bin/gh auth git-credential
