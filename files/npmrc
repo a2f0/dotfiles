@@ -1,1 +1,2 @@
-unicode = false
+unicode = true
+//npm.pkg.github.com/:_authToken=${TF_VAR_github_token}
