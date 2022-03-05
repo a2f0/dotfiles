@@ -10,12 +10,21 @@ gmail = IMAP {
     ssl = "tls1"
 }
 
+mailboxes, folders = gmail:list_all()
+print("=== mailboxes")
+for _, m in ipairs(mailboxes) do print(m) end
+print("=== folders")
+for _, f in ipairs(folders) do print(f) end
+
+-- Cleanup Spam Folder
 senders = {
-    "spammer@spammerdomain.com", "youtube.com", "Mailer Delivery System"
+    "americastestkitchen.com",
+    "marcusmillichap.com"
 }
 
 for sender = 1, #senders do
     print("Removing messages from " .. senders[sender])
-    -- messages = gmail["[Gmail]/All Mail"]:contain_from(senders[sender])
+    messages = gmail["Junk"]:contain_from(senders[sender])
+
     -- messages:move_messages(account1["[Gmail]/Trash"])
 end
