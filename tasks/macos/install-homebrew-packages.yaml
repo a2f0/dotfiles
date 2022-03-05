@@ -43,6 +43,11 @@
     name: gcc
     state: present
 
+- name: gh
+  homebrew:
+    name: gh
+    state: present
+
 - name: git
   homebrew:
     name: git
@@ -136,6 +141,11 @@
 - name: shellcheck
   homebrew:
     name: shellcheck
+    state: present
+
+- name: swiftlint
+  homebrew:
+    name: swiftlint
     state: present
 
 - name: telnet
