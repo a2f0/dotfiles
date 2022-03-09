@@ -16,10 +16,11 @@ for _, m in ipairs(mailboxes) do print(m) end
 print("=== folders")
 for _, f in ipairs(folders) do print(f) end
 
-
 -- Cleanup GitHub
 messages = gmail["INBOX"]:contain_from("notifications@github.com")
 messages:move_messages(gmail["Keep/GitHub"])
+messages = gmail["Keep/GitHub"]:is_older(30)
+messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Cleanup Spam Folder
 senders = {
