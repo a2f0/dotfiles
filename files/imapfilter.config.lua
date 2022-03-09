@@ -16,12 +16,16 @@ for _, m in ipairs(mailboxes) do print(m) end
 print("=== folders")
 for _, f in ipairs(folders) do print(f) end
 
+
+-- Cleanup GitHub
+messages = gmail["INBOX"]:contain_from("notifications@github.com")
+messages:move_messages(gmail["Keep/GitHub"])
+
 -- Cleanup Spam Folder
 senders = {
     "americastestkitchen.com",
     "marcusmillichap.com"
 }
-
 for sender = 1, #senders do
     print("Removing messages from " .. senders[sender])
     messages = gmail["Junk"]:contain_from(senders[sender])
