@@ -10,7 +10,7 @@ gmail = IMAP {
     ssl = "tls1"
 }
 
-mailboxes, folders = gmail:list_all()
+mailboxes, folders = gmail:list_all('*')
 print("=== mailboxes")
 for _, m in ipairs(mailboxes) do print(m) end
 print("=== folders")
@@ -20,6 +20,10 @@ for _, f in ipairs(folders) do print(f) end
 messages = gmail["INBOX"]:contain_from("notifications@github.com")
 messages:move_messages(gmail["Keep/GitHub"])
 messages = gmail["Keep/GitHub"]:is_older(30)
+messages:move_messages(gmail['[Gmail]/Trash'])
+
+-- Cleanup Sent
+messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
 messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Cleanup Spam Folder
