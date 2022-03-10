@@ -25,15 +25,3 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 -- Cleanup Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
 messages:move_messages(gmail['[Gmail]/Trash'])
-
--- Cleanup Spam Folder
-senders = {
-    "americastestkitchen.com",
-    "marcusmillichap.com"
-}
-for sender = 1, #senders do
-    print("Removing messages from " .. senders[sender])
-    messages = gmail["Junk"]:contain_from(senders[sender])
-
-    -- messages:move_messages(account1["[Gmail]/Trash"])
-end
