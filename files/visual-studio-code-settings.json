@@ -16,5 +16,6 @@
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook"
     },
-    "javascript.validate.enable": false
+    "javascript.validate.enable": false,
+    "files.insertFinalNewline": true
 }
