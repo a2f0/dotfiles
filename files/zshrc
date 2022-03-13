@@ -48,7 +48,7 @@ fi
 export LC_ALL=en_US.UTF-8
 
 # aws cli tools
-export AWS_PAGER=""|
+export AWS_PAGER="" # disable the use of a pager
 
 # custom compiled software (./configure --prefix=~/install)
 export PATH=$PATH:~/install/bin
@@ -58,6 +58,10 @@ export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
 export IRCNICK="dps"
 export IRCNAME="dps"
 
-# don't share history
-setopt no_share_history
-unsetopt share_history
+# history settings
+HISTSIZE=1000               # how many lines of history to keep in memory
+HISTFILE=~/.zsh_history     # where to save history to disk
+SAVEHIST=1000               # number of history entries to save to disk
+setopt no_share_history     # don't share history across terminals
+unsetopt share_history      # don't share history across terminals
+alias history="history 1"   # display all entries from entry number 1
