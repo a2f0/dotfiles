@@ -1,4 +1,4 @@
-- name: make sure  ~/Library/ApplicationSupport/Code/User/ exists
+- name: make sure ~/Library/ApplicationSupport/Code/User/ exists
   file:
     path: ~/Library/ApplicationSupport/Code/User/
     state: directory
