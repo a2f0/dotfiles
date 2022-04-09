@@ -54,3 +54,7 @@ Start rsyncing Vagrant files
 Run provisioners on the running instance
 
     vagrant provision
+
+Destroy the VM
+
+    vagrant destroy
