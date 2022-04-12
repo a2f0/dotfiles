@@ -1,3 +1,10 @@
+- name: make sure  ~/.config/Code - OSS/User/ exists
+  file:
+    path: ~/.config/Code - OSS/User/
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0700
+
 - name: ~/.config/Code - OSS/User/settings.json
   file:
     src: "{{dotfiles_dir}}/files/visual-studio-code-settings.json"
