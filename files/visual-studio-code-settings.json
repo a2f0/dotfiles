@@ -17,5 +17,6 @@
         "*.ipynb": "jupyter-notebook"
     },
     "javascript.validate.enable": false,
-    "files.insertFinalNewline": true
+    "files.insertFinalNewline": true,
+    "workbench.startupEditor": "none"
 }
