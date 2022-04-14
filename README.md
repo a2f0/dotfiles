@@ -45,7 +45,10 @@ Configure via Ansible
 Start a Virtualbox VM
 
     vagrant plugin update
+    vagrant box update
     vagrant up
+    # login
+    vagrant ssh
 
 Start rsyncing Vagrant files
 
