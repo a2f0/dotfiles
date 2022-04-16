@@ -21,6 +21,7 @@ if [[ $(uname -a)  =~ ARCH ]]; then
 fi
 
 if [[ $(uname -a) =~ Darwin ]]; then
+    alias derived="rm -rf ~/Library/Developer/Xcode/DerivedData"
     alias currentbranch="git branch --show-current | tr -d '\n' | pbcopy"
     alias lsusb="system_profiler SPUSBDataType"
     alias md5sum="md5"
