@@ -23,6 +23,11 @@
     name: bitchx
     state: present
 
+- name: bitwarden-cli
+  homebrew:
+    name: bitwarden-cli
+    state: present
+
 - name: bzip2
   homebrew:
     name: bzip2
@@ -61,6 +66,15 @@
 - name: haskell-stack
   homebrew:
     name: haskell-stack
+    state: present
+
+- name: tap heroku
+  community.general.homebrew_tap:
+    name: heroku/brew
+
+- name: heroku
+  homebrew:
+    name: heroku
     state: present
 
 - name: imagemagick
