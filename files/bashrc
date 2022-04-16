@@ -40,6 +40,9 @@ if [ `uname` == Darwin ]; then
     # suppress deprecation warning
     export BASH_SILENCE_DEPRECATION_WARNING=1
 
+    # don't use GitHub's personal access token for features such as brew search
+    export HOMEBREW_NO_GITHUB_API=1
+
     # use UTF-8.
     export LC_ALL=en_US.UTF-8
 
