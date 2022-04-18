@@ -6,9 +6,8 @@
     dotfiles_dir: "{{ playbook_dir }}"
     ansible_python_interpreter: /usr/bin/python3
   tasks:
-    - import_tasks: tasks/macos/install-homebrew.yaml
     - import_tasks: tasks/clone-anduril-into-home.yaml
-    - import_tasks: tasks/macos/install-homebrew-packages.yaml
+    - import_tasks: tasks/macos/homebrew.yaml
     - import_tasks: tasks/files.yaml
       tags:
         - files
