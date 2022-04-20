@@ -25,3 +25,17 @@
     dest: ~/.Xresources
     state: link
     force: yes
+
+- name: make sure  ~/.xmonad exists
+  file:
+    path: ~/.xmonad
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0700
+
+- name: ~/.xmonad/
+  file:
+    src: "{{dotfiles_dir}}/files/.xmonad/xmonad.hs"
+    dest: ~/.Xresources
+    state: link
+    force: yes

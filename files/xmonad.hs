@@ -27,7 +27,7 @@ myBar = "xmobar"
 --}
 main :: IO ()
 main = xmonad $ ewmh xfceConfig
-  { terminal = "xfce4-terminal"
+  { terminal = "xterm"
   --make mod the windows key
   --, modMask = mod4Mask
   , borderWidth = 1
