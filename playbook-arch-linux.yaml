@@ -3,19 +3,7 @@
     dotfiles_dir: ~/dotfiles
     ansible_python_interpreter: /usr/bin/python3
   tasks:
-    - import_tasks: tasks/arch-linux/update-pacman-database.yaml
-      become: yes
     - import_tasks: tasks/arch-linux/reflector.yaml
-      become: yes
-    - import_tasks: tasks/arch-linux/update-pacman-database.yaml
-      become: yes
-    - import_tasks: tasks/arch-linux/update-the-entire-system.yaml
-      become: yes
-    - import_tasks: tasks/arch-linux/reboot.yaml
-      become: yes
-    - import_tasks: tasks/arch-linux/uninstall-default-vagrant-packages.yaml
-      become: yes
-    - import_tasks: tasks/arch-linux/install-xorg-virtualbox-guest-utils.yaml
       become: yes
     - import_tasks: tasks/arch-linux/install-xorg-server.yaml
       become: yes
@@ -33,6 +21,4 @@
     - import_tasks: tasks/mcabber.yaml
       tags:
         - files
-    - import_tasks: tasks/arch-linux/reboot.yaml
-      become: yes
     - import_tasks: tasks/clone-anduril-into-home.yaml
