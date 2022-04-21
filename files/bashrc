@@ -15,11 +15,6 @@ for function in `declare -F | awk '{ print $3 }' `; do unset -f  "$function"; do
 [ -e ~/.functions ] && source ~/.functions
 [ -e ~/.functions-private ] && source ~/.functions-private
 
-# ~/.functions
-trap ctrl_c INT
-trap hangup HUP
-trap hangup KILL
-
 # enable vi mode (set +o vi to revert)
 set -o vi
 
