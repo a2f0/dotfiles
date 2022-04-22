@@ -39,3 +39,10 @@
     dest: ~/.xmonad/xmonad.hs
     state: link
     force: yes
+
+- name: ~/.xmobarrc
+  file:
+    src: "{{dotfiles_dir}}/files/xmobarrc.hs"
+    dest: ~/.xmobarrc
+    state: link
+    force: yes
