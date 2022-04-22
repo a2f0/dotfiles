@@ -1,6 +1,6 @@
 - name: ~/.aliases
   file:
-    src: "{{dotfiles_dir}}/files/aliases"
+    src: "{{dotfiles_dir}}/files/shellcheck/aliases"
     dest: ~/.aliases
     state: link
     force: yes
