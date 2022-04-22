@@ -10,3 +10,11 @@ repos:
     -   id: mixed-line-ending
     -   id: no-commit-to-branch
         args: ['--branch', 'main']
+
+-   repo: local
+    hooks:
+    -   id: shellcheck
+        name: shellcheck
+        entry: shellcheck
+        language: system
+        files: ^files/shellcheck*

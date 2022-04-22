@@ -35,7 +35,7 @@
 
 - name: ~/.xmonad/
   file:
-    src: "{{dotfiles_dir}}/files/.xmonad/xmonad.hs"
-    dest: ~/.Xresources
+    src: "{{dotfiles_dir}}/files/xmonad.hs"
+    dest: ~/.xmonad/xmonad.hs
     state: link
     force: yes
