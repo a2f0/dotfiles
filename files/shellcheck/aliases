@@ -1,3 +1,4 @@
+#!/bin/bash
 alias 256="~/github/misc_scripts/256_color.pl -w"
 alias listrunning="vboxmanage list runningvms"
 alias listvms="vboxmanage list vms"
