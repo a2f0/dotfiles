@@ -25,5 +25,5 @@ xset r rate 200 100
 # load ~/.Xresources
 [[ -f ~/.Xresources ]] && xrdb -merge ~/.Xresources
 
-#exec xmonad
-exec startxfce4
+exec xmonad
+#exec startxfce4
