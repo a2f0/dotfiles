@@ -1,104 +1,25 @@
-- name: chromium
-  community.general.pacman:
-    name: chromium
-    state: present
-
-- name: code
-  community.general.pacman:
-    name: code
-    state: present
-
-- name: firefox
-  community.general.pacman:
-    name: firefox
-    state: present
-
-- name: rdesktop
-  community.general.pacman:
-    name: rdesktop
-    state: present
-
-- name: xclip
-  community.general.pacman:
-    name: xclip
-    state: present
-
-- name: xdotool
-  community.general.pacman:
-    name: xdotool
-    state: present
-
-- name: xfce4
-  community.general.pacman:
-    name: xfce4
-    state: present
-
-- name: xfce4-terminal
-  community.general.pacman:
-    name: xfce4-terminal
-    state: present
-
-- name: xmobar
-  community.general.pacman:
-    name: xmobar
-    state: present
-
-- name: xmonad
-  community.general.pacman:
-    name: xmonad
-    state: present
-
-- name: xmonad-contrib
-  community.general.pacman:
-    name: xmonad-contrib
-    state: present
-
-- name: xorg-appres
-  community.general.pacman:
-    name: xorg-appres
-    state: present
-
-- name: xorg-xfd
-  community.general.pacman:
-    name: xorg-xfd
-    state: present
-
-- name: xorg-xfontsel
-  community.general.pacman:
-    name: xorg-xfontsel
-    state: present
-
-- name: xorg-xinput
-  community.general.pacman:
-    name: xorg-xinput
-    state: present
-
-- name: xorg-xkill
-  community.general.pacman:
-    name: xorg-xkill
-    state: present
-
-- name: xorg-xmodmap
-  community.general.pacman:
-    name: xorg-xmodmap
-    state: present
-
-- name: xorg-xprop
-  community.general.pacman:
-    name: xorg-xprop
-    state: present
-
-- name: xorg-xrdb
-  community.general.pacman:
-    name: xorg-xrdb
-    state: present
-
-- name: xorg-xwininfo
-  community.general.pacman:
-    name: xorg-xwininfo
-    state: present
-
-- name: xterm
-  community.general.pacman:
-    name: xterm
-    state: present
+- name: xorg packages
+  community.general.pacman: name={{ item }} state=present
+  with_items:
+    - chromium
+    - code
+    - firefox
+    - rdesktop
+    - xclip
+    - xdotoool
+    - xfce4
+    - xfce-terminal
+    - xmobar
+    - xmonad
+    - xmonad-contrib
+    - xorg-appres
+    - xorg-xfd
+    - xorg-xfontsel
+    - xorg-xlsfonts
+    - xorg-xinput
+    - xorg-xkill
+    - xorg-xmodmap
+    - xorg-xprop
+    - xorg-xrdb
+    - xorg-xwininfo
+    - xterm
