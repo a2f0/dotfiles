@@ -7,15 +7,13 @@ dzen2.background:       black
 
 xterm*background:       black
 xterm*foreground:       white
-xterm*font:             -nil-profont-medium-r-normal--12-120-72-72-c-60-iso8859-1
-xterm*boldFont:         -nil-profont-medium-r-normal--12-120-72-72-c-60-iso8859-1
-!xterm*font:             fixed
-!xterm*boldFont:         fixed
+xterm*faceName:         Terminus
+xterm*faceSize:         20
 
 ! Disable bold colors
 xterm*boldMode:         false
 
-! Make sure locate settings are correct for UTF-8
+! Make sure locale settings are correct for UTF-8
 xterm*locale:           true
 
 ! Scrollback buffer
