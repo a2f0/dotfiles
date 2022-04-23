@@ -1,369 +1,73 @@
-- name: alsa-utils
-  community.general.pacman:
-    name: alsa-utils
-    state: present
-
-- name: ansible
-  community.general.pacman:
-    name: ansible
-    state: present
-
-- name: ascii
-  community.general.pacman:
-    name: xmobar
-    state: present
-
-- name: aspell
-  community.general.pacman:
-    name: aspell
-    state: present
-
-- name: aspell-en
-  community.general.pacman:
-    name: aspell-en
-    state: present
-
-- name: autocutsel
-  community.general.pacman:
-    name: autocutsel
-    state: present
-
-- name: base-devel
-  community.general.pacman:
-    name: base-devel
-    state: present
-
-- name: bind
-  community.general.pacman:
-    name: bind
-    state: present
-
-- name: bison
-  community.general.pacman:
-    name: bison
-    state: present
-
-- name: cabal-install
-  community.general.pacman:
-    name: cabal-install
-    state: present
-
-- name: cdrkit
-  community.general.pacman:
-    name: cdrkit
-    state: present
-
-- name: cronie
-  community.general.pacman:
-    name: cronie
-    state: present
-
-- name: cvs
-  community.general.pacman:
-    name: cvs
-    state: present
-
-- name: dmenu
-  community.general.pacman:
-    name: dmenu
-    state: present
-
-- name: dmidecode
-  community.general.pacman:
-    name: dmidecode
-    state: present
-
-- name: dmraid
-  community.general.pacman:
-    name: dmraid
-    state: present
-
-- name: dstat
-  community.general.pacman:
-    name: dstat
-    state: present
-
-- name: epic4
-  community.general.pacman:
-    name: epic4
-    state: present
-
-- name: flex
-  community.general.pacman:
-    name: flex
-    state: present
-
-- name: gimp
-  community.general.pacman:
-    name: gimp
-    state: present
-
-- name: git
-  community.general.pacman:
-    name: git
-    state: present
-
-- name: glib2
-  community.general.pacman:
-    name: glib2
-    state: present
-
-- name: gnuplot
-  community.general.pacman:
-    name: gnuplot
-    state: present
-
-- name: go
-  community.general.pacman:
-    name: go
-    state: present
-
-- name: hdparm
-  community.general.pacman:
-    name: hdparm
-    state: present
-
-- name: iftop
-  community.general.pacman:
-    name: iftop
-    state: present
-
-- name: imagemagick
-  community.general.pacman:
-    name: imagemagick
-    state: present
-
-- name: iotop
-  community.general.pacman:
-    name: iotop
-    state: present
-
-- name: iw
-  community.general.pacman:
-    name: iw
-    state: present
-
-- name: jq
-  community.general.pacman:
-    name: jq
-    state: present
-
-- name: keepass
-  community.general.pacman:
-    name: keepass
-    state: present
-
-- name: libxslt
-  community.general.pacman:
-    name: libxslt
-    state: present
-
-- name: linux-headers
-  community.general.pacman:
-    name: linux-headers
-    state: present
-
-- name: lsof
-  community.general.pacman:
-    name: lsof
-    state: present
-
-- name: lua
-  community.general.pacman:
-    name: lua
-    state: present
-
-- name: lynx
-  community.general.pacman:
-    name: lynx
-    state: present
-
-- name: mcabber
-  community.general.pacman:
-    name: mcabber
-    state: present
-
-- name: memcached
-  community.general.pacman:
-    name: memcached
-    state: present
-
-- name: mlocate
-  community.general.pacman:
-    name: mlocate
-    state: present
-
-- name: mutt
-  community.general.pacman:
-    name: mutt
-    state: present
-
-- name: mysql
-  community.general.pacman:
-    name: mysql
-    state: present
-
-- name: net-snmp
-  community.general.pacman:
-    name: net-snmp
-    state: present
-
-- name: nftables
-  community.general.pacman:
-    name: nftables
-    state: present
-
-- name: nodejs
-  community.general.pacman:
-    name: nodejs
-    state: present
-
-- name: npm
-  community.general.pacman:
-    name: npm
-    state: present
-
-- name: ntp
-  community.general.pacman:
-    name: ntp
-    state: present
-
-- name: offlineimap
-  community.general.pacman:
-    name: offlineimap
-    state: present
-
-- name: openldap
-  community.general.pacman:
-    name: openldap
-    state: present
-
-- name: openssh
-  community.general.pacman:
-    name: openssh
-    state: present
-
-- name: openvpn
-  community.general.pacman:
-    name: openvpn
-    state: present
-
-- name: perlbrew
-  community.general.pacman:
-    name: perlbrew
-    state: present
-
-- name: php
-  community.general.pacman:
-    name: php
-    state: present
-
-- name: pkg-config
-  community.general.pacman:
-    name: pkg-config
-    state: present
-
-- name: pkgfile
-  community.general.pacman:
-    name: pkgfile
-    state: present
-
-- name: postgresql-libs
-  community.general.pacman:
-    name: postgresql-libs
-    state: present
-
-- name: python-virtualenv
-  community.general.pacman:
-    name: python-virtualenv
-    state: present
-
-- name: reflector
-  community.general.pacman:
-    name: reflector
-    state: present
-
-- name: rrdtool
-  community.general.pacman:
-    name: rrdtool
-    state: present
-
-- name: rsync
-  community.general.pacman:
-    name: rsync
-    state: present
-
-- name: ruby
-  community.general.pacman:
-    name: ruby
-    state: present
-
-- name: screen
-  community.general.pacman:
-    name: screen
-    state: present
-
-- name: sshfs
-  community.general.pacman:
-    name: sshfs
-    state: present
-
-- name: strace
-  community.general.pacman:
-    name: strace
-    state: present
-
-- name: svn
-  community.general.pacman:
-    name: svn
-    state: present
-
-- name: syslog-ng
-  community.general.pacman:
-    name: syslog-ng
-    state: present
-
-- name: sysstat
-  community.general.pacman:
-    name: sysstat
-    state: present
-
-- name: tcpdump
-  community.general.pacman:
-    name: tcpdump
-    state: present
-
-- name: tk
-  community.general.pacman:
-    name: tk
-    state: present
-
-- name: traceroute
-  community.general.pacman:
-    name: traceroute
-    state: present
-
-- name: unzip
-  community.general.pacman:
-    name: unzip
-    state: present
-
-- name: vim
-  community.general.pacman:
-    name: vim
-    state: present
-
-- name: whois
-  community.general.pacman:
-    name: whois
-    state: present
-
-- name: wpa_supplicant
-  community.general.pacman:
-    name: wpa_supplicant
-    state: present
-
-- name: zsh
-  community.general.pacman:
-    name: zsh
-    state: present
+- name: console packages
+  community.general.pacman: name={{ item }} state=present
+  with_items:
+    - alsa-utils
+    - ansible
+    - aspell
+    - aspell-en
+    - base-devel
+    - bind
+    - bison
+    - cabal-install
+    - cdrkit
+    - cronie
+    - cvs
+    - dmenu
+    - dmidecode
+    - dmraid
+    - dstat
+    - epic4
+    - flex
+    - git
+    - gnuplot
+    - go
+    - hdparm
+    - iftop
+    - imagemagick
+    - iotop
+    - iw
+    - jq
+    - keepass
+    - libxslt
+    - linux-headers
+    - lsof
+    - lua
+    - lynx
+    - mcabber
+    - memcached
+    - mlocate
+    - mutt
+    - mysql
+    - net-snmp
+    - nftables
+    - nodejs
+    - npm
+    - ntp
+    - offlineimap
+    - openldap
+    - openssh
+    - openvpn
+    - perlbrew
+    - php
+    - pkg-config
+    - pkgfile
+    - postgresql-libs
+    - python-virtualenv
+    - reflector
+    - rrdtool
+    - rsync
+    - ruby
+    - screen
+    - sshfs
+    - strace
+    - svn
+    - syslog-ng
+    - sysstat
+    - tcpdump
+    - tk
+    - traceroute
+    - unzip
+    - vim
+    - whois
+    - wpa_supplicant
+    - zsh
