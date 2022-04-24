@@ -5,8 +5,6 @@
   tasks:
     - import_tasks: tasks/arch-linux/reflector.yaml
       become: yes
-    - import_tasks: tasks/arch-linux/install-xorg-server.yaml
-      become: yes
     - import_tasks: tasks/arch-linux/install-xorg-packages.yaml
       become: yes
     - import_tasks: tasks/arch-linux/install-console-packages.yaml
