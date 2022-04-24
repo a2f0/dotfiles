@@ -16,6 +16,7 @@
     - xmonad
     - xmonad-contrib
     - xorg-appres
+    - xorg-server
     - xorg-xfd
     - xorg-xfontsel
     - xorg-xlsfonts
