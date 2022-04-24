@@ -1,3 +1,10 @@
+- name: make sure ~/install/bin exists
+  file:
+    path: ~/install/bin
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0700
+
 - name: ~/.aliases
   file:
     src: "{{dotfiles_dir}}/files/shellcheck/aliases"
