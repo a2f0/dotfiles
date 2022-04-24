@@ -16,6 +16,8 @@
     - import_tasks: tasks/arch-linux/files.yaml
       tags:
          - files
+    - import_tasks: tasks/arch-linux/users.yaml
+      become: yes
     - import_tasks: tasks/mcabber.yaml
       tags:
         - files
