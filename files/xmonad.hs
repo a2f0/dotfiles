@@ -1,6 +1,4 @@
 --Xmonad Configuration File
---Default at /usr/share/xmonad-0.10/man/xmonad.hs
---http://ohspite.net/2013/05/02/keepass-global-autotype-in-xmonad/
 --https://wiki.haskell.org/Xmonad/Config_archive/yiannist's_xmonad.hs
 
 import XMonad
