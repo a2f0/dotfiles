@@ -40,3 +40,6 @@ override.tf.json
 terraform.rc
 /terraform/main.tfvars
 /terraform/terraform.backend
+
+# build artifacts
+a.out
