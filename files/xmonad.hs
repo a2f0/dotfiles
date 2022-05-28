@@ -1,6 +1,4 @@
 --Xmonad Configuration File
---Default at /usr/share/xmonad-0.10/man/xmonad.hs
---http://ohspite.net/2013/05/02/keepass-global-autotype-in-xmonad/
 --https://wiki.haskell.org/Xmonad/Config_archive/yiannist's_xmonad.hs
 
 import XMonad
@@ -45,35 +43,10 @@ main = xmonad $ ewmh xfceConfig
              ]
     myManageHook = manageDocks
 
-myPP = defaultPP {
-    ppCurrent = wrap "<fc=#8ae234>[" "]</fc>"
-    , ppVisible = wrap "<fc=#8ae234>" "</fc>"
-    , ppHidden = wrap "" ""
-    , ppHiddenNoWindows = \_ -> ""
-    , ppUrgent = wrap "<fc=#ff0000>" "</fc>"
-    , ppSep     = " "
-    , ppLayout  = \_ -> ""
-    , ppTitle   = wrap "<fc=#ffffff>< " " ></fc>"
-}
-
 --Key binding to toggle the gap for the bar.
 --this is mod+ b
 --http://hackage.haskell.org/packages/archive/X11/1.6.0/doc/html/Graphics-X11-Types.html
 toggleStrutsKey XConfig {XMonad.modMask = modMask} = (modMask, xK_b)
-
-myConfig = xfceConfig {
-    --this sets the default key binding to the windows key.
-    --modMask = mod4Mask,
-    terminal="xterm",
-    --terminal="urxvt",
-    borderWidth=1,
-    normalBorderColor="#00afff",
-    --normalBorderColor="#cccccc",
-    focusedBorderColor="#ff00d7",
-    layoutHook=avoidStruts $ layoutHook defaultConfig,
-    startupHook=ewmhDesktopsStartup,
-    manageHook=manageHook defaultConfig <+> manageDocks
-}
 
 --myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 --    [ ((mod4Mask, xK_r), spawn "urxvt")
