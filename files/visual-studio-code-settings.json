@@ -18,5 +18,6 @@
     },
     "javascript.validate.enable": false,
     "files.insertFinalNewline": true,
-    "workbench.startupEditor": "none"
+    "workbench.startupEditor": "none",
+    "terminal.integrated.enableMultiLinePasteWarning": false
 }
