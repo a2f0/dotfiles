@@ -29,7 +29,8 @@ export HISTTIMEFORMAT="%d.%m.%y %T "
 umask 0077
 
 # custom compiled software (./configure --prefix=~/install)
-PATH=$PATH:~/install/bin
+export PREFIX=~/install
+export PATH=$PATH:~/install/bin
 
 if [ `uname` == Darwin ]; then
     # suppress deprecation warning
