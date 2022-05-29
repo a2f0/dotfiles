@@ -21,8 +21,6 @@ set -o vi
 # set the editor
 export EDITOR="vim"
 
-# enable timestamp on bash_history
-export HISTTIMEFORMAT="%d.%m.%y %T "
 
 # set the umask to prevent files from being created with access
 # to group members or others
@@ -42,9 +40,13 @@ if [ `uname` == Darwin ]; then
     # use UTF-8.
     export LC_ALL=en_US.UTF-8
 
-    # android development
+    # android studio
     export ANDROID_SDK=$HOME/Library/Android/sdk
-    export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
+    export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
+    export PATH=$PATH:$HOME/Library/Android/sdk/tools/bin
+    export PATH=$PATH:$HOME/Library/Android/sdk/emulator
+    export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
+    export PATH=$PATH:$HOME/Library/Android/sdk/build-tools/30.0.3
 
     # go, installed via brew
     export GOPATH=$HOME/go
@@ -99,6 +101,8 @@ export IRCNAME="dps"
 # set cvs remote shell
 export CVS_RSH=ssh
 
+# enable timestamp on bash_history
+export HISTTIMEFORMAT="%d.%m.%y %T "
 # exempt commands that start with spaces from ~/.bash_history
 export HISTCONTROL=ignorespace
 
