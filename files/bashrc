@@ -27,7 +27,6 @@ export EDITOR="vim"
 umask 0077
 
 # custom compiled software (./configure --prefix=~/install)
-export PREFIX=~/install
 export PATH=$PATH:~/install/bin
 
 if [ `uname` == Darwin ]; then
