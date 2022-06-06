@@ -50,7 +50,6 @@ export LC_ALL=en_US.UTF-8
 export AWS_PAGER="" # disable the use of a pager
 
 # custom compiled software (./configure --prefix=~/install)
-export PREFIX=~/install
 export PATH=$PATH:~/install/bin
 
 # also see efnet/freenode functions in ~/.functions
