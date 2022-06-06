@@ -63,6 +63,10 @@ messages:move_messages(gmail["Keep/Notifications/American Express"])
 messages = gmail["INBOX"]:contain_to('masters-alumni@cs.uchicago.edu')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
+-- Cleanup OnPay
+messages = gmail["INBOX"]:contain_from('doNotReply@app.onpay.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+
 -- Cleanup Spectrum Emails
 messages = gmail["INBOX"]:contain_from('spectrumemails.com')
 messages:move_messages(gmail["Keep/Notifications/Spectrum"])
