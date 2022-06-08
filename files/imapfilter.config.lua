@@ -98,6 +98,22 @@ messages:move_messages(gmail["Keep/Notifications/AWS"])
 -- Cleanup Lowe's
 messages = gmail["INBOX"]:contain_from('do-not-reply@notifications.lowes.com')
 messages:move_messages(gmail["Keep/Notifications/Lowe's"])
+messages = gmail["INBOX"]:contain_from('do-not-reply@confirmation.lowes.com')
+messages:move_messages(gmail["Keep/Notifications/Lowe's"])
+messages = gmail["INBOX"]:contain_from('do-not-reply@receipt.lowes.com')
+messages:move_messages(gmail["Keep/Notifications/Lowe's"])
+
+-- Cleanup tZERO
+messages = gmail["INBOX"]:contain_from('no-reply@tzero.com')
+messages:move_messages(gmail["Keep/Notifications/tZERO"])
+
+-- Cleanup Google Voice
+messages = gmail["INBOX"]:contain_from('voice-noreply@google.com')
+messages:move_messages(gmail["[Gmail]/Trash"])
+
+-- Cleanup Flynn's Barber Studio
+messages = gmail["INBOX"]:contain_subject('Barber Studio')
+messages:move_messages(gmail["[Gmail]/Trash"])
 
 -- Cleanup Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
