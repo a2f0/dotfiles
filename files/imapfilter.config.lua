@@ -82,6 +82,8 @@ messages:move_messages(gmail["Keep/Notifications/Google"])
 -- Cleanup TD Ameritrade
 messages = gmail["INBOX"]:contain_from('client@notifications.tdameritrade.com')
 messages:move_messages(gmail["Keep/Notifications/TD Ameritrade"])
+messages = gmail["INBOX"]:contain_from('from@communications.tdameritrade.com')
+messages:move_messages(gmail["Keep/Notifications/TD Ameritrade"])
 
 -- Cleanup Chattanooga Gas
 messages = gmail["INBOX"]:contain_from('cgc@email.southerncompgas.com')
@@ -114,6 +116,14 @@ messages:move_messages(gmail["[Gmail]/Trash"])
 -- Cleanup Flynn's Barber Studio
 messages = gmail["INBOX"]:contain_subject('Barber Studio')
 messages:move_messages(gmail["[Gmail]/Trash"])
+
+-- Cleanup Azure
+messages = gmail["INBOX"]:contain_from('azure-noreply@microsoft.com')
+messages:move_messages(gmail["[Gmail]/Notifications/Azure"])
+
+-- Cleanup LinkedIn
+messages = gmail["INBOX"]:contain_from('messages-noreply@linkedin.com')
+messages:move_messages(gmail["[Gmail]/Notifications/LinkedIn"])
 
 -- Cleanup Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
