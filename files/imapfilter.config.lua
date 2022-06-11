@@ -88,6 +88,8 @@ messages:move_messages(gmail["Keep/Notifications/TD Ameritrade"])
 -- Cleanup Chattanooga Gas
 messages = gmail["INBOX"]:contain_from('cgc@email.southerncompgas.com')
 messages:move_messages(gmail["Keep/Notifications/Chattanooga Gas"])
+messages = gmail["INBOX"]:contain_from('noreply@speedpay.com'):contain_subject('Chattanooga Gas')
+messages:move_messages(gmail["Keep/Notifications/Chattanooga Gas"])
 
 -- Cleanup Eastside Utility
 messages = gmail["INBOX"]:contain_from('CustomerService@PaymentServiceNetwork.com')
@@ -119,11 +121,11 @@ messages:move_messages(gmail["[Gmail]/Trash"])
 
 -- Cleanup Azure
 messages = gmail["INBOX"]:contain_from('azure-noreply@microsoft.com')
-messages:move_messages(gmail["[Gmail]/Notifications/Azure"])
+messages:move_messages(gmail["Keep/Notifications/Azure"])
 
 -- Cleanup LinkedIn
 messages = gmail["INBOX"]:contain_from('messages-noreply@linkedin.com')
-messages:move_messages(gmail["[Gmail]/Notifications/LinkedIn"])
+messages:move_messages(gmail["Keep/Notifications/LinkedIn"])
 
 -- Cleanup Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
