@@ -133,7 +133,7 @@ messages:move_messages(gmail["Keep/Notifications/LinkedIn"])
 
 -- Cleanup Schwab
 messages = gmail["INBOX"]:contain_from('schwab.com')
-messages:move_messages(gmail["Keep/Notifications/Schwab"])
+messages:move_messages(gmail["Keep/Notifications/Schwab"])\
 
 -- Cleanup Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
