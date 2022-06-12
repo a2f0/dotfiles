@@ -123,9 +123,17 @@ messages:move_messages(gmail["[Gmail]/Trash"])
 messages = gmail["INBOX"]:contain_from('azure-noreply@microsoft.com')
 messages:move_messages(gmail["Keep/Notifications/Azure"])
 
+-- Cleanup Home Depot
+messages = gmail["INBOX"]:contain_from('homedepot.com')
+messages:move_messages(gmail["Keep/Notifications/Home Depot"])
+
 -- Cleanup LinkedIn
 messages = gmail["INBOX"]:contain_from('messages-noreply@linkedin.com')
 messages:move_messages(gmail["Keep/Notifications/LinkedIn"])
+
+-- Cleanup Schwab
+messages = gmail["INBOX"]:contain_from('schwab.com')
+messages:move_messages(gmail["Keep/Notifications/Schwab"])
 
 -- Cleanup Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
