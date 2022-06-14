@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# delete other branches
+dlob () {
+    git remote prune origin
+    git branch | grep -v "$(git branch --show-current)" | xargs git branch -D
+}
