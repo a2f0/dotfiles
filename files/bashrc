@@ -13,6 +13,7 @@ unalias -a
 for function in `declare -F | awk '{ print $3 }' `; do unset -f  "$function"; done
 
 [ -e ~/.functions ] && source ~/.functions
+[ -e ~/.functions-posix ] && source ~/.functions-posix
 [ -e ~/.functions-private ] && source ~/.functions-private
 
 # enable vi mode (set +o vi to revert)
