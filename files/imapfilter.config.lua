@@ -133,7 +133,15 @@ messages:move_messages(gmail["Keep/Notifications/LinkedIn"])
 
 -- Cleanup Schwab
 messages = gmail["INBOX"]:contain_from('schwab.com')
-messages:move_messages(gmail["Keep/Notifications/Schwab"])\
+messages:move_messages(gmail["Keep/Notifications/Schwab"])
+
+-- Cleanup Slack
+messages = gmail["INBOX"]:contain_from('slack.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+
+-- Cleanup Google Local Guides
+messages = gmail["INBOX"]:contain_from('noreply-local-guides@google.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Cleanup Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
