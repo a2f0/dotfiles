@@ -66,7 +66,6 @@ if [ `uname` == Darwin ]; then
     export NVM_DIR="$HOME/.nvm"
     [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
     [ -s "/usr/local/opt/nvm/etc/bash_completion" ] && . "/usr/local/opt/nvm/etc/bash_completion"  # This loads nvm bash_completion
-    alias cd='cdnvm'
 
     # for git gpg signature verification
     export GPG_TTY=$(tty)
