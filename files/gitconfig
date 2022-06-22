@@ -33,3 +33,5 @@
 [credential "https://gist.github.com"]
         helper =
         helper = !/usr/local/bin/gh auth git-credential
+[alias]
+	uncommit = reset --soft HEAD~1
