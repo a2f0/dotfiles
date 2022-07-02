@@ -6,9 +6,9 @@ Arch Linux system is provisionable via `vagrant up`.
 
 ## Developing
 
-Install pre-commit to lint files
+Install pre-commit
 
-    run `pre-commit install` to configure pre-commit hook.
+    pre-commit install
 
 ## MacOS
 
@@ -33,12 +33,6 @@ Configure via Ansible
 Run specific tags in the playbook
 
     ansible-playbook -i inventory.yaml playbook-arch-linux.yaml -l 127.0.0.1 --tags 'files'
-
-## UofC CS Cluster
-
-Configure via Ansible
-
-    ansible-playbook -i inventory.yaml playbook-cs.yaml -l linux.cs.uchicago.edu
 
 ### Vagrant
 
