@@ -1,0 +1,2 @@
+BUNDLE_BUILD__THERUBYRACER: "--with-v8-dir=/usr/local/opt/v8@3.15"
+BUNDLE_BUILD__LIBV8: "--with-system-v8"
