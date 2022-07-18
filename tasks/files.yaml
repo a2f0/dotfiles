@@ -33,6 +33,20 @@
     state: link
     force: yes
 
+- name: make sure ~/.bundle exists
+  file:
+    path: ~/.bundle
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0700
+
+- name: ~/.bundle/config
+  file:
+    src: "{{dotfiles_dir}}/files/bundler"
+    dest:  ~/.bundle/config
+    state: link
+    force: yes
+
 - name: ~/.efnet.ircrc
   file:
     src: "{{dotfiles_dir}}/files/efnet.ircrc"
