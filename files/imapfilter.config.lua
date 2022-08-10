@@ -119,9 +119,21 @@ messages:move_messages(gmail["[Gmail]/Trash"])
 messages = gmail["INBOX"]:contain_subject('Barber Studio')
 messages:move_messages(gmail["[Gmail]/Trash"])
 
+-- Cleanup AMC Theatres
+messages = gmail["INBOX"]:contain_from('amctheaters.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+
+-- Cleanup Sprint Estimation
+messages = gmail["INBOX"]:contain_from('appfire.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+
 -- Cleanup Azure
 messages = gmail["INBOX"]:contain_from('azure-noreply@microsoft.com')
 messages:move_messages(gmail["Keep/Notifications/Azure"])
+
+-- Cleanup Chipolte
+messages = gmail["INBOX"]:contain_from('chipotle@email.chipotle.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Cleanup Home Depot
 messages = gmail["INBOX"]:contain_from('homedepot.com')
@@ -131,6 +143,10 @@ messages:move_messages(gmail["Keep/Notifications/Home Depot"])
 messages = gmail["INBOX"]:contain_from('messages-noreply@linkedin.com')
 messages:move_messages(gmail["Keep/Notifications/LinkedIn"])
 
+-- Cleanup PayPal
+messages = gmail["INBOX"]:contain_from('service@paypal.com')
+messages:move_messages(gmail["Keep/Notifications/PayPal"])
+
 -- Cleanup Schwab
 messages = gmail["INBOX"]:contain_from('schwab.com')
 messages:move_messages(gmail["Keep/Notifications/Schwab"])
@@ -139,8 +155,24 @@ messages:move_messages(gmail["Keep/Notifications/Schwab"])
 messages = gmail["INBOX"]:contain_from('slack.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
+-- Cleanup Starbucks
+messages = gmail["INBOX"]:contain_from('starbucks.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+
 -- Cleanup Google Local Guides
 messages = gmail["INBOX"]:contain_from('noreply-local-guides@google.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+
+-- Cleanup Venmo
+messages = gmail["INBOX"]:contain_from('venmo.com')
+messages:move_messages(gmail["Keep/Notifications/Venmo"])
+
+-- Cleanup Walmart
+messages = gmail["INBOX"]:contain_from('walmart.com')
+messages:move_messages(gmail["Keep/Notifications/Walmart"])
+
+-- Cleanup YouVersion
+messages = gmail["INBOX"]:contain_from('youversion.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Cleanup Sent
