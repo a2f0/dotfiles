@@ -131,9 +131,17 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('azure-noreply@microsoft.com')
 messages:move_messages(gmail["Keep/Notifications/Azure"])
 
+-- Cleanup Chase
+messages = gmail["INBOX"]:contain_from('no-reply@alertsp.chase.com')
+messages:move_messages(gmail["Keep/Notifications/Chase"])
+
 -- Cleanup Chipolte
 messages = gmail["INBOX"]:contain_from('chipotle@email.chipotle.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
+
+-- Cleanup Farmers Insurance
+messages = gmail["INBOX"]:contain_from('noreply@policy.farmers.com')
+messages:move_messages(gmail["Keep/Notifications/Farmers"])
 
 -- Cleanup Home Depot
 messages = gmail["INBOX"]:contain_from('homedepot.com')
@@ -146,6 +154,8 @@ messages:move_messages(gmail["Keep/Notifications/LinkedIn"])
 -- Cleanup PayPal
 messages = gmail["INBOX"]:contain_from('service@paypal.com')
 messages:move_messages(gmail["Keep/Notifications/PayPal"])
+messages = gmail["INBOX"]:contain_from('paypal@mail.paypal.com')
+messages:move_messages(gmail["Keep/Notifications/PayPal"])
 
 -- Cleanup Schwab
 messages = gmail["INBOX"]:contain_from('schwab.com')
@@ -153,6 +163,8 @@ messages:move_messages(gmail["Keep/Notifications/Schwab"])
 
 -- Cleanup Slack
 messages = gmail["INBOX"]:contain_from('slack.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+messages = gmail["INBOX"]:contain_from('slackhq.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Cleanup Starbucks
