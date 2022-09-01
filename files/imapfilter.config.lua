@@ -139,6 +139,10 @@ messages:move_messages(gmail["Keep/Notifications/Chase"])
 messages = gmail["INBOX"]:contain_from('chipotle@email.chipotle.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
+-- Cleanup EPB
+messages = gmail["INBOX"]:contain_from('customer.service@epb.net')
+messages:move_messages(gmail["Keep/Notifications/EPB"])
+
 -- Cleanup Farmers Insurance
 messages = gmail["INBOX"]:contain_from('noreply@policy.farmers.com')
 messages:move_messages(gmail["Keep/Notifications/Farmers"])
