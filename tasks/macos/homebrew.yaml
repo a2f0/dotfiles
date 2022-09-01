@@ -42,7 +42,6 @@
     - rbenv
     - rust
     - shellcheck
-    - swiftlint
     - telnet
     - tfenv
     - tflint
