@@ -19,6 +19,7 @@
     - bzip2
     - dos2unix
     - epic5
+    - foreman
     - gcc
     - gh
     - git
