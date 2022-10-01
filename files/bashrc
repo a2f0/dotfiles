@@ -69,6 +69,10 @@ if [ `uname` == Darwin ]; then
     # az cli, installed via brew
     source /usr/local/etc/bash_completion.d/az
 
+    # jenv, installed via brew
+    export PATH="$HOME/.jenv/bin:$PATH"
+    eval "$(jenv init -)"
+
     # fastlane
     export PATH="$HOME/.fastlane/bin:$PATH"
 
