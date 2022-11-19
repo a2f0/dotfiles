@@ -93,7 +93,7 @@ if [ `uname` == Darwin ]; then
     command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
     eval "$(pyenv init -)"
 
-elif [ `uname` == Linux ]; then
+elif [ `uname -n` == archlinux ]; then
     # init volume to 20.
     #amixer sset Master 67%
     PATH=$PATH:/opt/local/scripts
