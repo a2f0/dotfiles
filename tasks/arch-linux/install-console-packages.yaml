@@ -58,6 +58,8 @@
     - rsync
     - ruby
     - screen
+    - shellcheck
+    - sof-firmware        # provides audio support for x1
     - sshfs
     - strace
     - svn

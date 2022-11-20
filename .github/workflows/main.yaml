@@ -59,6 +59,7 @@ jobs:
         # reflector and dependencies
         pacman -S rsync reflector --noconfirm
         reflector -l 5 --sort rate --save /etc/pacman.d/mirrorlist
-        pacman -S ansible reflector --noconfirm
     - name: configure arch
-      run: ansible-playbook -i inventory.yaml playbook-arch-linux.yaml  -l 127.0.0.1 --tags 'files'
+      run: |
+        pacman -S ansible --noconfirm
+        ansible-playbook -i inventory.yaml playbook-arch-linux.yaml  -l 127.0.0.1 --tags 'files'
