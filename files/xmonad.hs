@@ -8,5 +8,6 @@ main = xmonad $ def
     { modMask = mod4Mask -- remap modifier key from alt to super.
     }
   `additionalKeysP`
-    [ ("M-f", spawn "firefox")
+    [ ("M-f", spawn "firefox"),
+      ("M-c", spawn "code")
     ]

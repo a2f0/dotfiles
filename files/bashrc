@@ -43,7 +43,6 @@ export HISTTIMEFORMAT="%d.%m.%y %T "
 # exempt commands that start with spaces from ~/.bash_history
 export HISTCONTROL=ignorespace
 
-
 if [ `uname` == Darwin ]; then
     # suppress deprecation warning
     export BASH_SILENCE_DEPRECATION_WARNING=1
@@ -106,7 +105,18 @@ elif [ `uname -n` == archlinux ]; then
     # X Desktop Group Configuration Paths
     export XDG_CONFIG_HOME=$HOME/.config
     export XDG_CACHE_HOME=$HOME/.cache
-    # use the default POSIX/C locale, print only standard ASCII characters.
-    export LC_ALL=C
+
+    # use UTF-8 - Ansible requires this.
+    export LC_ALL=en_US.UTF-8
+
     export JAVA_HOME=/opt/local/jdk1.7.0_45
+
+    # nvm, installed via curl
+    export NVM_DIR="$HOME/.config/nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+    # pyenv, installed via pacman
+    export PYENV_ROOT="$HOME/.pyenv"
+    command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
 fi
