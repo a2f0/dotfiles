@@ -66,6 +66,7 @@
     - syslog-ng
     - sysstat
     - tcpdump
+    - terminus-font
     - tk
     - traceroute
     - unzip
