@@ -22,6 +22,7 @@
     - xorg-xlsfonts
     - xorg-xinput
     - xorg-xkill
+    - xorg-xmessage # for displaying xmonad build issues when recompiling using Mod+q
     - xorg-xmodmap
     - xorg-xprop
     - xorg-xrdb
