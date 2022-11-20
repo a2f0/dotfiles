@@ -105,8 +105,10 @@ elif [ `uname -n` == archlinux ]; then
     # X Desktop Group Configuration Paths
     export XDG_CONFIG_HOME=$HOME/.config
     export XDG_CACHE_HOME=$HOME/.cache
-    # use the default POSIX/C locale, print only standard ASCII characters.
-    export LC_ALL=C
+    
+    # use UTF-8 - Ansible requires this.
+    export LC_ALL=en_US.UTF-8
+
     export JAVA_HOME=/opt/local/jdk1.7.0_45
 
     # nvm, installed via curl
