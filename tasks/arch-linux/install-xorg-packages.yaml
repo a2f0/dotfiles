@@ -18,6 +18,7 @@
     - xorg-xfd
     - xorg-xfontsel
     - xorg-xlsfonts
+    - xorg-xinit    # provides startx
     - xorg-xinput
     - xorg-xkill
     - xorg-xmessage # for displaying xmonad build issues when recompiling using Mod+q
