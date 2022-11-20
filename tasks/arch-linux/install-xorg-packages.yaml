@@ -10,8 +10,6 @@
     - rdesktop
     - xclip
     - xdotool
-    - xfce4
-    - xfce4-terminal
     - xmobar
     - xmonad
     - xmonad-contrib
@@ -28,3 +26,9 @@
     - xorg-xrdb
     - xorg-xwininfo
     - xterm
+
+- name: xorg packages
+  community.general.pacman: name={{ item }} state=absent
+  with_items:
+    - xfce4
+    - xfce4-terminal
