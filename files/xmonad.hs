@@ -9,5 +9,6 @@ main = xmonad $ def
     }
   `additionalKeysP`
     [ ("M-f", spawn "firefox"),
+      ("M-b", spawn "brave"),
       ("M-c", spawn "code")
     ]
