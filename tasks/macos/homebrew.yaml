@@ -28,7 +28,9 @@
     - heroku
     - imagemagick
     - imapfilter
+    - jdk-openjdk
     - jenv
+    - jre-openjdk
     - jq
     - kubernetes-helm
     - mitmproxy

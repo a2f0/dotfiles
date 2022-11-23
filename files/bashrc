@@ -109,7 +109,10 @@ elif [ `uname -n` == archlinux ]; then
     export XDG_CONFIG_HOME=$HOME/.config
     export XDG_CACHE_HOME=$HOME/.cache
 
-    export JAVA_HOME=/opt/local/jdk1.7.0_45
+    # jre and jdk installed via pacman (jdk-openjdk and jre-openjdk)
+    export JAVA_HOME=/usr/lib/jvm/default
+    # To run android studio in xmonad.
+    export _JAVA_AWT_WM_NONREPARENTING=1
 
     # nvm, installed via curl
     export NVM_DIR="$HOME/.config/nvm"
