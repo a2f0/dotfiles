@@ -62,12 +62,12 @@ if [ `uname` == Darwin ]; then
     export LC_ALL=en_US.UTF-8
 
     # android studio
-    export ANDROID_SDK=$HOME/Library/Android/sdk
-    export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
-    export PATH=$PATH:$HOME/Library/Android/sdk/tools/bin
-    export PATH=$PATH:$HOME/Library/Android/sdk/emulator
-    export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
-    export PATH=$PATH:$HOME/Library/Android/sdk/build-tools/30.0.3
+    export ANDROID_SDK=$HOME/Library/Android/Sdk
+    export ANDROID_SDK_ROOT=$HOME/Library/Android/Sdk
+    export PATH=$PATH:$HOME/Library/Android/Sdk/tools/bin
+    export PATH=$PATH:$HOME/Library/Android/Sdk/emulator
+    export PATH=$PATH:$HOME/Library/Android/Sdk/platform-tools
+    export PATH=$PATH:$HOME/Library/Android/Sdk/build-tools/30.0.3
 
     # go, installed via brew
     export GOPATH=$HOME/go
@@ -108,6 +108,14 @@ elif [ `uname -n` == archlinux ]; then
     # X Desktop Group Configuration Paths
     export XDG_CONFIG_HOME=$HOME/.config
     export XDG_CACHE_HOME=$HOME/.cache
+
+    # android studio
+    export ANDROID_SDK=$HOME/Android/Sdk
+    export ANDROID_SDK_ROOT=$HOME/Android/Sdk
+    export PATH=$PATH:$HOME/Android/Sdk/tools/bin
+    export PATH=$PATH:$HOME/Android/Sdk/emulator
+    export PATH=$PATH:$HOME/Android/Sdk/platform-tools
+    export PATH=$PATH:$HOME/Android/Sdk/build-tools/33.0.0
 
     # jre and jdk installed via pacman (jdk-openjdk and jre-openjdk)
     export JAVA_HOME=/usr/lib/jvm/default
