@@ -20,5 +20,5 @@
     "files.insertFinalNewline": true,
     "workbench.startupEditor": "none",
     "terminal.integrated.enableMultiLinePasteWarning": false,
-    "window.openFoldersInNewWindow": "on"
+    "window.openFoldersInNewWindow": "off"
 }
