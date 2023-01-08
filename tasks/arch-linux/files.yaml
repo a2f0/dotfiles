@@ -5,10 +5,25 @@
     owner: "{{ ansible_user_id }}"
     mode: 0700
 
+- name: make sure  ~/.config/Code/User/ exists
+  file:
+    path: ~/.config/Code/User/
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0700
+
+
 - name: ~/.config/Code - OSS/User/settings.json
   file:
     src: "{{dotfiles_dir}}/files/visual-studio-code-settings.json"
     dest: ~/.config/Code - OSS/User/settings.json
+    state: link
+    force: yes
+
+- name: ~/.config/Code/User/settings.json
+  file:
+    src: "{{dotfiles_dir}}/files/visual-studio-code-settings.json"
+    dest: ~/.config/Code/User/settings.json
     state: link
     force: yes
 
