@@ -8,9 +8,8 @@ alias mscreen="screen -S mail -c ~/.mscreenrc"
 alias offlineimap="offlineimap -c ~/.offlineimaprc"
 alias showrunning="vboxmanage list runningvms"
 alias showvminfo="vboxmanage metrics list"
-alias vi="vim"
 
-if [[ $(uname -a)  =~ ARCH ]]; then
+if [[ $(uname -a) =~ ARCH ]]; then
     # copy whatever was selected into the actual clipboard
     alias clipboard="xclip -out | xclip -selection clipboard"
     alias lock="xlock -mode laser"
@@ -28,4 +27,5 @@ if [[ $(uname -a) =~ Darwin ]]; then
     alias md5sum="md5"
     alias resetwireless="sudo ifconfig en0 down;sudo ifconfig en0 up"
     alias lock='open -a /System/Library/Frameworks/ScreenSaver.framework/Versions/A/Resources/ScreenSaverEngine.app'
+    alias vi="vim"
 fi
