@@ -95,10 +95,7 @@ if [ `uname` == Darwin ]; then
     # for git gpg signature verification
     export GPG_TTY=$(tty)
 
-elif [ `uname -n` == archlinux ]; then
-    # init volume to 20.
-    #amixer sset Master 67%
-    PATH=$PATH:/opt/local/scripts
+elif [ `uname -n` == x1 ]; then
     PATH=$PATH:~/.cabal/bin
     PATH=$PATH:/usr/local/heroku/bin
     # vendor perl, for perlbrew
@@ -122,7 +119,6 @@ elif [ `uname -n` == archlinux ]; then
     # To run android studio in xmonad.
     export _JAVA_AWT_WM_NONREPARENTING=1
 
-    # nvm, installed via curl
-    export NVM_DIR="$HOME/.config/nvm"
+    export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 fi
