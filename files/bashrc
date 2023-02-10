@@ -113,11 +113,16 @@ elif [ `uname -n` == x1 ]; then
     export PATH=$PATH:$HOME/Android/Sdk/emulator
     export PATH=$PATH:$HOME/Android/Sdk/platform-tools
     export PATH=$PATH:$HOME/Android/Sdk/build-tools/33.0.0
+    # fastboot, lineageos
+    export PATH=$PATH:$HOME/platform-tools
 
     # jre and jdk installed via pacman (jdk-openjdk and jre-openjdk)
     export JAVA_HOME=/usr/lib/jvm/default
     # To run android studio in xmonad.
     export _JAVA_AWT_WM_NONREPARENTING=1
+
+    # rust installed using rustup
+    . "$HOME/.cargo/env"
 
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
