@@ -31,7 +31,6 @@ export PATH=$PATH:~/install/bin
 
 # from ~/.functions
 bash_prompt
-loadrbenv
 
 # also see efnet/freenode functions in ~/.functions
 export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
@@ -123,6 +122,9 @@ elif [ `uname -n` == x1 ]; then
 
     # rust installed using rustup
     . "$HOME/.cargo/env"
+
+    # rbenv installed via git
+    eval "$(~/.rbenv/bin/rbenv init - bash)"
 
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
