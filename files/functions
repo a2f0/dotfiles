@@ -159,12 +159,6 @@ loadrvm() {
    fi
 }
 
-loadrbenv() {
-    if hash rbenv 2>/dev/null; then
-        eval "$(rbenv init -)"
-    fi
-}
-
 if [ `uname` == Darwin ]; then
     dock() {
       echo "dock"
