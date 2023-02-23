@@ -4,6 +4,7 @@
     "files.autoSave": "onFocusChange",
     "diffEditor.ignoreTrimWhitespace": false,
     "editor.renderWhitespace": "all",
+    "editor.tabSize": 2,
     "html.trace.server": "messages",
     "editor.renderControlCharacters": true,
     "window.zoomLevel": 0,
