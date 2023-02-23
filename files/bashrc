@@ -50,6 +50,11 @@ eval "$(pyenv init -)"
 # use UTF-8 - Ansible requires this.
 export LC_ALL=en_US.UTF-8
 
+# jenv, installed via git
+# make sure to run 'jenv enable-plugin export' after installing to enable the JAVA_HOME export.
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
+
 if [ `uname` == Darwin ]; then
     # suppress deprecation warning
     export BASH_SILENCE_DEPRECATION_WARNING=1
@@ -75,9 +80,6 @@ if [ `uname` == Darwin ]; then
     # az cli, installed via brew
     source /usr/local/etc/bash_completion.d/az
 
-    # jenv, installed via brew
-    export PATH="$HOME/.jenv/bin:$PATH"
-    eval "$(jenv init -)"
 
     # fastlane
     export PATH="$HOME/.fastlane/bin:$PATH"
@@ -115,10 +117,6 @@ elif [ `uname -n` == x1 ]; then
     # fastboot, lineageos
     export PATH=$PATH:$HOME/platform-tools
 
-    # jre and jdk installed via pacman (jdk-openjdk and jre-openjdk)
-    export JAVA_HOME=/usr/lib/jvm/default
-    # To run android studio in xmonad.
-    export _JAVA_AWT_WM_NONREPARENTING=1
 
     # rust installed using rustup
     . "$HOME/.cargo/env"
