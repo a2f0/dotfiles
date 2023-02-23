@@ -47,19 +47,3 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-  arch-linux:
-    runs-on: ubuntu-latest
-    container: archlinux:latest
-    continue-on-error: false
-    steps:
-    - uses: actions/checkout@v3
-    - name: Update the container and install dependencles
-      run: |
-        pacman -Syyuu --noconfirm
-        # reflector and dependencies
-        pacman -S rsync reflector --noconfirm
-        reflector -l 5 --sort rate --save /etc/pacman.d/mirrorlist
-    - name: configure arch
-      run: |
-        pacman -S ansible --noconfirm
-        ansible-playbook -i inventory.yaml playbook-arch-linux.yaml  -l 127.0.0.1 --tags 'files'
