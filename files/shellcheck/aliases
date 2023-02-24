@@ -1,5 +1,4 @@
 #!/bin/bash
-alias 256="~/github/misc_scripts/256_color.pl -w"
 alias epoch="date +%s"
 alias listrunning="vboxmanage list runningvms"
 alias listvms="vboxmanage list vms"
@@ -9,18 +8,15 @@ alias offlineimap="offlineimap -c ~/.offlineimaprc"
 alias showrunning="vboxmanage list runningvms"
 alias showvminfo="vboxmanage metrics list"
 
-if [[ $(uname -a) =~ ARCH ]]; then
+if [ "$(uname -n)" == x1 ]; then
     # copy whatever was selected into the actual clipboard
     alias clipboard="xclip -out | xclip -selection clipboard"
+    alias currentbranch="git branch --show-current | tr -d '\n' | xclip -selection clipboard"
     alias lock="xlock -mode laser"
     alias windows="xwininfo -root -children"
-    alias random_hex="cat /dev/urandom | hexdump -C | grep \"ca fe\""
-    alias screenshot="import screenshot.jpg"
-    alias unlockluks="sudo cryptsetup luksOpen /dev/sdb luksAuxiliary; sudo mount /dev/mapper/luksAuxiliary /mnt/luksAuxiliary"
-    alias unlocktruecrypt="sudo mkdir -p /mnt/archtc; sudo modprobe loop; truecrypt -t ~/working/TrueCrypt/Arch.tc /mnt/archtc"
 fi
 
-if [[ $(uname -a) =~ Darwin ]]; then
+if [ "$(uname)" == Darwin ]; then
     alias derived="rm -rf ~/Library/Developer/Xcode/DerivedData"
     alias currentbranch="git branch --show-current | tr -d '\n' | pbcopy"
     alias lsusb="system_profiler SPUSBDataType"
