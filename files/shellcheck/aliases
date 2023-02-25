@@ -7,6 +7,7 @@ alias mscreen="screen -S mail -c ~/.mscreenrc"
 alias offlineimap="offlineimap -c ~/.offlineimaprc"
 alias showrunning="vboxmanage list runningvms"
 alias showvminfo="vboxmanage metrics list"
+alias branches="git branches"
 
 if [ "$(uname -n)" == x1 ]; then
     # copy whatever was selected into the actual clipboard
