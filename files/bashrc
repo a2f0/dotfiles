@@ -55,6 +55,9 @@ export LC_ALL=en_US.UTF-8
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
 
+# rbenv installed via git
+eval "$(~/.rbenv/bin/rbenv init - bash)"
+
 if [ `uname` == Darwin ]; then
     # suppress deprecation warning
     export BASH_SILENCE_DEPRECATION_WARNING=1
@@ -121,8 +124,6 @@ elif [ `uname -n` == x1 ]; then
     # rust installed using rustup
     . "$HOME/.cargo/env"
 
-    # rbenv installed via git
-    eval "$(~/.rbenv/bin/rbenv init - bash)"
 
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
