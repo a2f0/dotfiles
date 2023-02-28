@@ -40,7 +40,6 @@
     - postgresql
     - pre-commit
     - pyenv
-    - rbenv
     - rust
     - shellcheck
     - telnet
