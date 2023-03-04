@@ -194,3 +194,9 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 -- Cleanup Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
 messages:move_messages(gmail['[Gmail]/Trash'])
+
+--- Cleanup Thinkspan
+messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspanstaging.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspan.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
