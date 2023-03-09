@@ -1,3 +1,4 @@
+source ~/.shellcheck/aliases
 source ~/.aliases-private
 source ~/.functions-zsh
 source ~/.quick
@@ -12,6 +13,9 @@ if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-clou
 
 if [[ `uname` == Darwin ]]; then
 
+  # brew
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+
   # rbenv - installed via brew
   if hash rbenv 2>/dev/null; then
     eval "$(rbenv init -)"
@@ -24,8 +28,8 @@ if [[ `uname` == Darwin ]]; then
 
   # nvm - installed via brew
   export NVM_DIR="$HOME/.nvm"
-  [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
   # android studio
   export ANDROID_SDK=$HOME/Library/Android/sdk
@@ -49,7 +53,7 @@ export LC_ALL=en_US.UTF-8
 # aws cli tools
 export AWS_PAGER="" # disable the use of a pager
 
-# custom compiled software (./configure --prefix=~/install)
+# custom compiled software (./configure --prefix=~/install, export PREFIX=~/install, etc.)
 export PATH=$PATH:~/install/bin
 
 # also see efnet/freenode functions in ~/.functions
