@@ -1,4 +1,4 @@
-source ~/.shellcheck/aliases
+source ~/dotfiles/aliases
 source ~/.aliases-private
 source ~/.functions-zsh
 source ~/.quick
