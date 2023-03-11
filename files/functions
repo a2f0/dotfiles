@@ -148,15 +148,8 @@ listdcs () {
     dig any _kerberos._tcp.$1
 }
 
-loadrvm() {
-   if [ -e ~/.rvm/scripts/rvm ]; then
-      source ~/.rvm/scripts/rvm > /dev/null
-      #export PATH=$HOME/.rvm/bin:$PATH;
-      rvm list
-      echo "RVM Loaded."
-   else
-      echo "RVM Not installed."
-   fi
+killp () {
+    kill -9 $(lsof -ti:$1)
 }
 
 if [ `uname` == Darwin ]; then
