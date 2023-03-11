@@ -1,13 +1,13 @@
-- name: make sure ~/Library/ApplicationSupport/Code/User/ exists
+- name: make sure ~/Library/Application Support/Code/User/ exists
   file:
-    path: ~/Library/ApplicationSupport/Code/User/
+    path: '~/Library/Application Support/Code/User/'
     state: directory
     owner: "{{ ansible_user_id }}"
     mode: 0700
 
-- name: ~/Library/ApplicationSupport/Code/User/settings.json
+- name: ~/Library/Application Support/Code/User/settings.json
   file:
     src: "{{dotfiles_dir}}/files/visual-studio-code-settings.json"
-    dest: ~/Library/ApplicationSupport/Code/User/settings.json
+    dest: ~/Library/Application Support/Code/User/settings.json
     state: link
     force: yes
