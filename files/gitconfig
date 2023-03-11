@@ -26,13 +26,6 @@
 [includeIf "gitdir:github-thinkspan/"]
         path = .gitconfig-thinkspan
 
-[credential "https://github.com"]
-        helper =
-        helper = !/usr/bin/gh auth git-credential
-
-[credential "https://gist.github.com"]
-        helper =
-        helper = !/usr/bin/gh auth git-credential
 [alias]
 	uncommit = reset --soft HEAD~1
         branches = branch -a --sort=-committerdate
