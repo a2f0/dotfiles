@@ -12,6 +12,7 @@
     "files.insertFinalNewline": true,
     "javascript.validate.enable": false,
     "python.showStartPage": false,
+    "python.terminal.activateEnvironment": false,
     "terminal.integrated.enableMultiLinePasteWarning": false,
     "terminal.integrated.enablePersistentSessions": false,
     "terminal.integrated.persistentSessionReviveProcess": "never",
