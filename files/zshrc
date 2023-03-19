@@ -26,6 +26,9 @@ if [[ `uname` == Darwin ]]; then
     eval "$(pyenv init -)"
   fi
 
+  # jenv - installed via brew
+  eval "$(jenv init -)"
+
   # nvm - installed via brew
   export NVM_DIR="$HOME/.nvm"
   [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
@@ -45,7 +48,14 @@ if [[ `uname` == Darwin ]]; then
 
   # for git gpg signature verification
   export GPG_TTY=$(tty)
+
+  # macos specific aliases
+  alias currentbranch="git branch --show-current | tr -d '\n' | pbcopy"
+  alias derived="rm -rf ~/Library/Developer/Xcode/DerivedData"
 fi
+
+# platform independent aliases
+alias branches="git branches"
 
 # set the locale
 export LC_ALL=en_US.UTF-8
