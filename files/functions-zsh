@@ -1,29 +1,38 @@
-doesnamedscreenexist(){
+doesnamedscreenexist() {
     if [[ $# -lt 1 ]]; then
         echo "Usage: doesnamedscreenexist <name>"
         echo "Example: doesnamedscreenexist mail"
         return -1
     fi
-    if [[ `screen -ls | grep $1 | wc -l` -eq '1' ]]; then
+    if [[ $(screen -ls | grep $1 | wc -l) -eq '1' ]]; then
         echo -n "1"
     else
         echo -n "0"
     fi
 }
 
-efnet(){
-    if [[ `doesnamedscreenexist efnet` -eq '1' ]]; then
+efnet() {
+    if [[ $(doesnamedscreenexist efnet) -eq '1' ]]; then
         screen -rd efnet
     else
         screen -S efnet epic -l ~/.efnet.ircrc
     fi
 }
 
-freenode(){
-    if [[ `doesnamedscreenexist freenode` -eq '1' ]]; then
+freenode() {
+    if [[ $(doesnamedscreenexist freenode) -eq '1' ]]; then
         export IRCSERVER="irc.freenode.net"
         screen -rd freenode
     else
         screen -S freenode epic -l ~/.freenode.ircrc
     fi
+}
+
+dlob() {
+    git remote prune origin
+    git branch | grep -v "$(git branch --show-current)" | xargs git branch -D
+}
+
+rip() {
+    youtube-dl --extract-audio --audio-format mp3 "$1" --add-metadata "$1"
 }
