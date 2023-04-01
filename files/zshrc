@@ -12,6 +12,9 @@ if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-clou
 
 if [[ `uname` == Darwin ]]; then
 
+  # brew
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+
   # rbenv - installed via brew
   if hash rbenv 2>/dev/null; then
     eval "$(rbenv init -)"
@@ -22,10 +25,24 @@ if [[ `uname` == Darwin ]]; then
     eval "$(pyenv init -)"
   fi
 
+  # jenv - installed via brew
+  eval "$(jenv init -)"
+
   # nvm - installed via brew
   export NVM_DIR="$HOME/.nvm"
-  [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+  # antigen, installed via curl
+  source ~/install/bin/antigen.zsh
+  antigen use oh-my-zsh
+
+  antigen theme robbyrussell
+
+  export NVM_AUTO_USE=true
+  antigen bundle lukechilds/zsh-nvm
+
+  antigen apply
 
   # android studio
   export ANDROID_SDK=$HOME/Library/Android/sdk
@@ -41,7 +58,14 @@ if [[ `uname` == Darwin ]]; then
 
   # for git gpg signature verification
   export GPG_TTY=$(tty)
+
+  # macos specific aliases
+  alias currentbranch="git branch --show-current | tr -d '\n' | pbcopy"
+  alias derived="rm -rf ~/Library/Developer/Xcode/DerivedData"
 fi
+
+# platform independent aliases
+alias branches="git branches"
 
 # set the locale
 export LC_ALL=en_US.UTF-8
@@ -49,7 +73,7 @@ export LC_ALL=en_US.UTF-8
 # aws cli tools
 export AWS_PAGER="" # disable the use of a pager
 
-# custom compiled software (./configure --prefix=~/install)
+# custom compiled software (./configure --prefix=~/install, export PREFIX=~/install, etc.)
 export PATH=$PATH:~/install/bin
 
 # also see efnet/freenode functions in ~/.functions

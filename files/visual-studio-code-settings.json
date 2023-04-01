@@ -1,24 +1,30 @@
 {
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.defaultFormatter": "vscode.typescript-language-features",
+    "editor.renderControlCharacters": true,
+    "editor.renderWhitespace": "all",
+    "editor.tabSize": 2,
+    "extensions.ignoreRecommendations": true,
+    "files.autoSave": "onFocusChange",
     "flow.pathToFlow": "flow",
     "flow.useNPMPackagedFlow": true,
-    "files.autoSave": "onFocusChange",
-    "diffEditor.ignoreTrimWhitespace": false,
-    "editor.renderWhitespace": "all",
     "html.trace.server": "messages",
-    "editor.renderControlCharacters": true,
-    "window.zoomLevel": 0,
-    "terminal.integrated.scrollback": 100000,
-    "editor.defaultFormatter": "vscode.typescript-language-features",
+    "files.insertFinalNewline": true,
+    "javascript.validate.enable": false,
     "python.showStartPage": false,
-    "terminal.integrated.persistentSessionReviveProcess": "never",
+    "python.terminal.activateEnvironment": false,
+    "terminal.integrated.enableMultiLinePasteWarning": false,
     "terminal.integrated.enablePersistentSessions": false,
+    "terminal.integrated.persistentSessionReviveProcess": "never",
+    "terminal.integrated.scrollback": 100000,
+    "window.openFoldersInNewWindow": "off",
     "window.restoreWindows": "none",
+    "window.zoomLevel": 0,
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook"
     },
-    "javascript.validate.enable": false,
-    "files.insertFinalNewline": true,
     "workbench.startupEditor": "none",
-    "terminal.integrated.enableMultiLinePasteWarning": false,
-    "window.openFoldersInNewWindow": "off"
+    "[shellscript]": {
+        "editor.defaultFormatter": "foxundermoon.shell-format"
+    }
 }
