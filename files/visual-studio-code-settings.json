@@ -24,6 +24,10 @@
         "*.ipynb": "jupyter-notebook"
     },
     "workbench.startupEditor": "none",
+    "[javascript][typescript]": {
+        "editor.tabSize": 2,
+        "tabWidth": 2
+    },
     "[shellscript]": {
         "editor.defaultFormatter": "foxundermoon.shell-format"
     }
