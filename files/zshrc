@@ -39,6 +39,8 @@ if [[ `uname` == Darwin ]]; then
 
   antigen theme robbyrussell
 
+  antigen bundle vi-mode
+
   export NVM_AUTO_USE=true
   antigen bundle lukechilds/zsh-nvm
 

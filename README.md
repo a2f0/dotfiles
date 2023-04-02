@@ -8,10 +8,11 @@ Arch Linux system is provisionable via `vagrant up`.
 
 Install pre-commit
 
+    pyenv install `cat .python-version`
     pyenv local `cat .python-version`
     pip install pre-commit
     pre-commit install
-    pre-commit run
+    pre-commit run --all-files
 
 ## MacOS
 
