@@ -10,14 +10,22 @@ gmail = IMAP {
     ssl = "tls1"
 }
 
+thinkspan = IMAP {
+    server = "imap.gmail.com",
+    username = "dan@thinkspan.com",
+    password = os.getenv("THINKSPAN_GMAIL_APP_SPECIFIC_PASSWORD"),
+    ssl = "tls1"
+}
+
 mailboxes, folders = gmail:list_all('*')
 print("=== mailboxes")
 for _, m in ipairs(mailboxes) do print(m) end
 print("=== folders")
 for _, f in ipairs(folders) do print(f) end
 
--- Get all
-all_messages = gmail["INBOX"]:select_all()
+-- Thinkspan
+messages = thinkspan["INBOX"]:select_all()
+messages:move_messages(gmail["INBOX"])
 
 -- Jira
 messages = gmail["INBOX"]:contain_subject('[JIRA]'):contain_from('atlassian.net')
