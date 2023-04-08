@@ -200,3 +200,18 @@
     dest: ~/.zshrc
     state: link
     force: yes
+
+- name: make sure  ~/.config/nvim exists
+  file:
+    path: ~/.config/nvim
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0700
+
+
+- name: ~/.config/nvim
+  file:
+    src: "{{dotfiles_dir}}/files/nvim.init.vim"
+    dest: ~/.config/nvim/init.vim
+    state: link
+    force: yes
