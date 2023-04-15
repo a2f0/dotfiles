@@ -107,8 +107,8 @@ messages:move_messages(gmail["Keep/Notifications/Computershare"])
 
 -- Confluence
 messages = gmail["INBOX"]:contain_subject('[Confluence]'):contain_from('atlassian.net')
-messages:move_messages(gmail["Keep/Confluence"])
-messages = gmail["Keep/Confluence"]:is_older(30)
+messages:move_messages(gmail["Keep/Notifications/Confluence"])
+messages = gmail["Keep/Notifications/Confluence"]:is_older(30)
 messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- CVS
@@ -149,23 +149,27 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('noreply@policy.farmers.com')
 messages:move_messages(gmail["Keep/Notifications/Farmers"])
 
+-- Firefox
+messages = gmail["INBOX"]:contain_from('firefox.com')
+messages:move_messages(gmail["[Gmail]/Trash"])
+
 -- Flynn's Barber Studio
 messages = gmail["INBOX"]:contain_subject('Barber Studio')
 messages:move_messages(gmail["[Gmail]/Trash"])
 
 -- Jira
 messages = gmail["INBOX"]:contain_subject('[JIRA]'):contain_from('atlassian.net')
-messages:move_messages(gmail["Keep/Jira"])
+messages:move_messages(gmail["Keep/Notifications/Jira"])
 messages = gmail["INBOX"]:contain_from('no-reply@spartez-software.com')
-messages:move_messages(gmail["Keep/Jira"])
-messages = gmail["Keep/Jira"]:is_older(30)
+messages:move_messages(gmail["Keep/Notifications/Jira"])
+messages = gmail["Keep/Notifications/Jira"]:is_older(30)
 messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Gemini
 messages = gmail["INBOX"]:contain_from("hello@news.gemini.com")
-messages:move_messages(gmail["Keep/GitHub"])
+messages:move_messages(gmail["Keep/Notifications/GitHub"])
 messages = gmail["INBOX"]:contain_from("no-reply@em.gemini.com")
-messages:move_messages(gmail["Keep/GitHub"])
+messages:move_messages(gmail["Keep/Notifications/GitHub"])
 
 -- GitHub
 messages = gmail["INBOX"]:contain_from("github.com")
@@ -234,6 +238,14 @@ messages:move_messages(gmail["Keep/Notifications/Lowe's"])
 messages = gmail["INBOX"]:contain_from('do-not-reply@receipt.lowes.com')
 messages:move_messages(gmail["Keep/Notifications/Lowe's"])
 
+-- Mailgun
+messages = gmail["INBOX"]:contain_from('mailgun.com')
+messages:move_messages(gmail["Keep/Notifications/Mailgun"])
+
+-- MongoDB
+messages = gmail["INBOX"]:contain_from('mongodb.com')
+messages:move_messages(gmail["Keep/Notifications/MongoDB"])
+
 -- Open AI
 messages = gmail["INBOX"]:contain_from('noreply@email.openai.com')
 messages:move_messages(gmail["Keep/Notifications/Open AI"])
@@ -248,6 +260,10 @@ messages:move_messages(gmail["Keep/Notifications/PayPal"])
 messages = gmail["INBOX"]:contain_from('paypal@mail.paypal.com')
 messages:move_messages(gmail["Keep/Notifications/PayPal"])
 
+-- Safeco
+messages = gmail["INBOX"]:contain_from('email-safeco.com')
+messages:move_messages(gmail["Keep/Notifications/Safeco"])
+
 -- Schwab
 messages = gmail["INBOX"]:contain_from('schwab.com')
 messages:move_messages(gmail["Keep/Notifications/Schwab"])
@@ -256,11 +272,19 @@ messages:move_messages(gmail["Keep/Notifications/Schwab"])
 messages = gmail["INBOX"]:contain_from('spectrumemails.com')
 messages:move_messages(gmail["Keep/Notifications/Spectrum"])
 
+-- Spotify
+messages = gmail["INBOX"]:contain_from('spotify.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+
 -- TD Ameritrade
 messages = gmail["INBOX"]:contain_from('client@notifications.tdameritrade.com')
 messages:move_messages(gmail["Keep/Notifications/TD Ameritrade"])
 messages = gmail["INBOX"]:contain_from('from@communications.tdameritrade.com')
 messages:move_messages(gmail["Keep/Notifications/TD Ameritrade"])
+
+-- Trashbilling.com (garbage collection.)
+messages = gmail["INBOX"]:contain_from('trashbilling.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- tZERO
 messages = gmail["INBOX"]:contain_from('tzero.com')
