@@ -38,7 +38,8 @@ messages = gmail["INBOX"]:contain_from('payments-messages@amazon.com')
 messages:move_messages(gmail["Keep/Notifications/Amazon"])
 messages = gmail["INBOX"]:contain_from('no-reply@amazon.com')
 messages:move_messages(gmail["Keep/Notifications/Amazon"])
-
+messages = gmail["INBOX"]:contain_from('account-update@amazon.com')
+messages:move_messages(gmail["Keep/Notifications/Amazon"])
 
 -- American Express
 messages = gmail["INBOX"]:contain_from('americanexpress.com')
@@ -54,11 +55,23 @@ messages:move_messages(gmail["Keep/Notifications/Apple"])
 messages = gmail["INBOX"]:contain_from('axosbank.com')
 messages:move_messages(gmail["Keep/Notifications/Axos"])
 
+-- Box
+messages = gmail["INBOX"]:contain_from('box.com')
+messages:move_messages(gmail["Keep/Notifications/Box"])
+
 -- Confluence
 messages = gmail["INBOX"]:contain_subject('[Confluence]'):contain_from('atlassian.net')
 messages:move_messages(gmail["Keep/Confluence"])
 messages = gmail["Keep/Confluence"]:is_older(30)
 messages:move_messages(gmail['[Gmail]/Trash'])
+
+-- CVS
+messages = gmail["INBOX"]:contain_from('CVSPharmacy@pharmacy.cvs.com')
+messages:move_messages(gmail["Keep/Notifications/CVS"])
+
+-- Dropbox
+messages = gmail["INBOX"]:contain_from('no-reply@dropbox.com')
+messages:move_messages(gmail["Keep/Notifications/CVS"])
 
 -- Experian
 messages = gmail["INBOX"]:contain_from('experian.com')
@@ -123,6 +136,8 @@ messages = gmail["INBOX"]:contain_from('cgc@email.southerncompgas.com')
 messages:move_messages(gmail["Keep/Notifications/Chattanooga Gas"])
 messages = gmail["INBOX"]:contain_from('noreply@speedpay.com'):contain_subject('Chattanooga Gas')
 messages:move_messages(gmail["Keep/Notifications/Chattanooga Gas"])
+messages = gmail["INBOX"]:contain_from('cgc@emailweb.southerncompgas.com')
+messages:move_messages(gmail["Keep/Notifications/Chattanooga Gas"])
 
 -- Eastside Utility
 messages = gmail["INBOX"]:contain_from('CustomerService@PaymentServiceNetwork.com')
@@ -157,6 +172,11 @@ messages = gmail["INBOX"]:contain_from('googleplay-developer-support@google.com'
 messages:move_messages(gmail["Keep/Notifications/Google"])
 messages = gmail["INBOX"]:contain_from('noreply@google.com')
 messages:move_messages(gmail["[Gmail]/Trash"])
+messages = gmail["INBOX"]:contain_from('drive-shares-dm-noreply@google.com')
+messages:move_messages(gmail["[Gmail]/Trash"])
+messages = gmail["INBOX"]:contain_from('comments-noreply@docs.google.com')
+messages:move_messages(gmail["[Gmail]/Trash"])
+
 
 -- Flynn's Barber Studio
 messages = gmail["INBOX"]:contain_subject('Barber Studio')
@@ -188,7 +208,7 @@ messages = gmail["INBOX"]:contain_from('coinbase.com')
 messages:move_messages(gmail["Keep/Notifications/Coinbase"])
 
 -- Computershare
-messages = gmail["INBOX"]:contain_from('cpucommunication.com')
+messages = gmail["INBOX"]:contain_from('cpucommunications.com')
 messages:move_messages(gmail["Keep/Notifications/Computershare"])
 messages = gmail["INBOX"]:contain_from('computershare.com')
 messages:move_messages(gmail["Keep/Notifications/Computershare"])
@@ -196,10 +216,9 @@ messages:move_messages(gmail["Keep/Notifications/Computershare"])
 -- Datadog
 messages = gmail["INBOX"]:contain_from('datadog.com')
 messages:move_messages(gmail["Keep/Notifications/Datadog"])
+messages = gmail["INBOX"]:contain_from('datadoghq.com')
+messages:move_messages(gmail["Keep/Notifications/Datadog"])
 
--- Computershare
-messages = gmail["INBOX"]:contain_from('computershare.com')
-messages:move_messages(gmail["Keep/Notifications/Computershare"])
 
 -- eBay 
 messages = gmail["INBOX"]:contain_from('ebay.com')
@@ -212,7 +231,6 @@ messages:move_messages(gmail["Keep/Notifications/EPB"])
 -- Farmers Insurance
 messages = gmail["INBOX"]:contain_from('noreply@policy.farmers.com')
 messages:move_messages(gmail["Keep/Notifications/Farmers"])
-
 
 -- Home Depot
 messages = gmail["INBOX"]:contain_from('homedepot.com')
@@ -281,7 +299,13 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 -- Webull
 messages = gmail["INBOX"]:contain_from('webull.com')
 messages:move_messages(gmail["Keep/Notifications/Webull"])
+messages = gmail["INBOX"]:contain_from('uscl_stmt_mbox@investordelivery.com')
+messages:move_messages(gmail["Keep/Notifications/Webull"])
 
 -- Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
+messages:move_messages(gmail['[Gmail]/Trash'])
+
+-- From Me
+messages = gmail["INBOX"]:contain_from('dansullivan@gmail.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
