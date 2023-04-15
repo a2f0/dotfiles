@@ -36,6 +36,9 @@ messages = gmail["INBOX"]:contain_from('no-reply-aws@amazon.com')
 messages:move_messages(gmail["Keep/Notifications/AWS"])
 messages = gmail["INBOX"]:contain_from('payments-messages@amazon.com')
 messages:move_messages(gmail["Keep/Notifications/Amazon"])
+messages = gmail["INBOX"]:contain_from('no-reply@amazon.com')
+messages:move_messages(gmail["Keep/Notifications/Amazon"])
+
 
 -- American Express
 messages = gmail["INBOX"]:contain_from('americanexpress.com')
@@ -43,6 +46,8 @@ messages:move_messages(gmail["Keep/Notifications/American Express"])
 
 -- Apple 
 messages = gmail["INBOX"]:contain_from('no_reply@email.apple.com')
+messages:move_messages(gmail["Keep/Notifications/Apple"])
+messages = gmail["INBOX"]:contain_from('developer@insideapple.apple.com')
 messages:move_messages(gmail["Keep/Notifications/Apple"])
 
 -- Axos
@@ -107,7 +112,6 @@ messages:move_messages(gmail["Keep/Notifications/Google"])
 messages = gmail["INBOX"]:contain_from('firebase-noreply@google.com')
 messages:move_messages(gmail["Keep/Notifications/Google"])
 
-
 -- TD Ameritrade
 messages = gmail["INBOX"]:contain_from('client@notifications.tdameritrade.com')
 messages:move_messages(gmail["Keep/Notifications/TD Ameritrade"])
@@ -154,8 +158,6 @@ messages:move_messages(gmail["Keep/Notifications/Google"])
 messages = gmail["INBOX"]:contain_from('noreply@google.com')
 messages:move_messages(gmail["[Gmail]/Trash"])
 
-
-
 -- Flynn's Barber Studio
 messages = gmail["INBOX"]:contain_subject('Barber Studio')
 messages:move_messages(gmail["[Gmail]/Trash"])
@@ -187,6 +189,8 @@ messages:move_messages(gmail["Keep/Notifications/Coinbase"])
 
 -- Computershare
 messages = gmail["INBOX"]:contain_from('cpucommunication.com')
+messages:move_messages(gmail["Keep/Notifications/Computershare"])
+messages = gmail["INBOX"]:contain_from('computershare.com')
 messages:move_messages(gmail["Keep/Notifications/Computershare"])
 
 -- Datadog
@@ -221,6 +225,10 @@ messages:move_messages(gmail["Keep/Notifications/Lawn Starter"])
 -- LinkedIn
 messages = gmail["INBOX"]:contain_from('messages-noreply@linkedin.com')
 messages:move_messages(gmail["Keep/Notifications/LinkedIn"])
+
+-- Open AI
+messages = gmail["INBOX"]:contain_from('noreply@email.openai.com')
+messages:move_messages(gmail["Keep/Notifications/Open AI"])
 
 -- PayPal
 messages = gmail["INBOX"]:contain_from('service@paypal.com')
