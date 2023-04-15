@@ -41,73 +41,70 @@ messages:move_messages(gmail["Keep/Confluence"])
 messages = gmail["Keep/Confluence"]:is_older(30)
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Cleanup GitHub
+-- GitHub
 messages = gmail["INBOX"]:contain_from("notifications@github.com")
 messages:move_messages(gmail["Keep/GitHub"])
 messages = gmail["Keep/GitHub"]:is_older(30)
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Cleanup Alumni
+-- Alumni
 messages = gmail["INBOX"]:contain_from("masters-alumni@cs.uchicago.edu")
-messages:move_messages(gmail["Keep/GitHub"])
+messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Cleanup Heroku Notifications
+-- Heroku
 messages = gmail["INBOX"]:contain_from('bot@notifications.heroku.com')
 messages:move_messages(gmail["Keep/Notifications/Heroku"])
 messages = gmail["Keep/Notifications/Heroku"]:is_older(30)
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Cleanup Experian Notifications
+-- Experian
 messages = gmail["INBOX"]:contain_from('experian.com')
 messages:move_messages(gmail["Keep/Notifications/Experian"])
 messages = gmail["Keep/Notifications/Experian"]:is_older(30)
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Cleanup American Express Notifications
+-- American Express
 messages = gmail["INBOX"]:contain_from('americanexpress.com')
 messages:move_messages(gmail["Keep/Notifications/American Express"])
 
--- Cleanup UofC Alumni
-messages = gmail["INBOX"]:contain_to('masters-alumni@cs.uchicago.edu')
+
+-- OnPay
+messages = gmail["INBOX"]:contain_from('onpay.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Cleanup OnPay
-messages = gmail["INBOX"]:contain_from('doNotReply@app.onpay.com')
-messages:move_messages(gmail['[Gmail]/Trash'])
-
--- Cleanup Spectrum Emails
+-- Spectrum Emails
 messages = gmail["INBOX"]:contain_from('spectrumemails.com')
 messages:move_messages(gmail["Keep/Notifications/Spectrum"])
 
--- Cleanup Intuit
+-- Intuit
 messages = gmail["INBOX"]:contain_from('intuit@notifications.intuit.com')
 messages:move_messages(gmail["Keep/Notifications/Intuit"])
 
--- Cleanup Google
+-- Google
 messages = gmail["INBOX"]:contain_from('payments-noreply@google.com')
 messages:move_messages(gmail["Keep/Notifications/Google"])
 
--- Cleanup TD Ameritrade
+-- TD Ameritrade
 messages = gmail["INBOX"]:contain_from('client@notifications.tdameritrade.com')
 messages:move_messages(gmail["Keep/Notifications/TD Ameritrade"])
 messages = gmail["INBOX"]:contain_from('from@communications.tdameritrade.com')
 messages:move_messages(gmail["Keep/Notifications/TD Ameritrade"])
 
--- Cleanup Chattanooga Gas
+-- Chattanooga Gas
 messages = gmail["INBOX"]:contain_from('cgc@email.southerncompgas.com')
 messages:move_messages(gmail["Keep/Notifications/Chattanooga Gas"])
 messages = gmail["INBOX"]:contain_from('noreply@speedpay.com'):contain_subject('Chattanooga Gas')
 messages:move_messages(gmail["Keep/Notifications/Chattanooga Gas"])
 
--- Cleanup Eastside Utility
+-- Eastside Utility
 messages = gmail["INBOX"]:contain_from('CustomerService@PaymentServiceNetwork.com')
 messages:move_messages(gmail["Keep/Notifications/Eastside Utility"])
 
--- Cleanup Amazon
+-- Amazon
 messages = gmail["INBOX"]:contain_from('no-reply-aws@amazon.com')
 messages:move_messages(gmail["Keep/Notifications/AWS"])
 
--- Cleanup Lowe's
+-- Lowe's
 messages = gmail["INBOX"]:contain_from('do-not-reply@notifications.lowes.com')
 messages:move_messages(gmail["Keep/Notifications/Lowe's"])
 messages = gmail["INBOX"]:contain_from('do-not-reply@confirmation.lowes.com')
@@ -115,31 +112,31 @@ messages:move_messages(gmail["Keep/Notifications/Lowe's"])
 messages = gmail["INBOX"]:contain_from('do-not-reply@receipt.lowes.com')
 messages:move_messages(gmail["Keep/Notifications/Lowe's"])
 
--- Cleanup tZERO
+-- tZERO
 messages = gmail["INBOX"]:contain_from('tzero.com')
 messages:move_messages(gmail["Keep/Notifications/tZERO"])
 
--- Cleanup Google Voice
+-- Google Voice
 messages = gmail["INBOX"]:contain_from('voice-noreply@google.com')
 messages:move_messages(gmail["[Gmail]/Trash"])
 
--- Cleanup Flynn's Barber Studio
+-- Flynn's Barber Studio
 messages = gmail["INBOX"]:contain_subject('Barber Studio')
 messages:move_messages(gmail["[Gmail]/Trash"])
 
--- Cleanup AMC Theatres
+-- AMC Theatres
 messages = gmail["INBOX"]:contain_from('amctheaters.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Cleanup Sprint Estimation
+-- Sprint Estimation
 messages = gmail["INBOX"]:contain_from('appfire.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Cleanup Azure
+-- Azure
 messages = gmail["INBOX"]:contain_from('azure-noreply@microsoft.com')
 messages:move_messages(gmail["Keep/Notifications/Azure"])
 
--- Cleanup Chase
+-- Chase
 messages = gmail["INBOX"]:contain_from('no-reply@alertsp.chase.com')
 messages:move_messages(gmail["Keep/Notifications/Chase"])
 
@@ -147,15 +144,15 @@ messages:move_messages(gmail["Keep/Notifications/Chase"])
 messages = gmail["INBOX"]:contain_from('chipotle@email.chipotle.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Cleanup EPB
+-- EPB
 messages = gmail["INBOX"]:contain_from('customer.service@epb.net')
 messages:move_messages(gmail["Keep/Notifications/EPB"])
 
--- Cleanup Farmers Insurance
+-- Farmers Insurance
 messages = gmail["INBOX"]:contain_from('noreply@policy.farmers.com')
 messages:move_messages(gmail["Keep/Notifications/Farmers"])
 
--- Cleanup Home Depot
+-- Home Depot
 messages = gmail["INBOX"]:contain_from('homedepot.com')
 messages:move_messages(gmail["Keep/Notifications/Home Depot"])
 
@@ -219,13 +216,12 @@ messages:move_messages(gmail["Keep/Notifications/Walmart"])
 messages = gmail["INBOX"]:contain_from('youversion.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
-
 --- Thinkspan
 messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspanstaging.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspan.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Cleanup Sent
+-- Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
 messages:move_messages(gmail['[Gmail]/Trash'])
