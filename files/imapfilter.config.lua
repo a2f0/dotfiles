@@ -41,6 +41,14 @@ messages:move_messages(gmail["Keep/Notifications/Amazon"])
 messages = gmail["INBOX"]:contain_from('americanexpress.com')
 messages:move_messages(gmail["Keep/Notifications/American Express"])
 
+-- Apple 
+messages = gmail["INBOX"]:contain_from('no_reply@email.apple.com')
+messages:move_messages(gmail["Keep/Notifications/Apple"])
+
+-- Axos
+messages = gmail["INBOX"]:contain_from('axosbank.com')
+messages:move_messages(gmail["Keep/Notifications/Axos"])
+
 -- Confluence
 messages = gmail["INBOX"]:contain_subject('[Confluence]'):contain_from('atlassian.net')
 messages:move_messages(gmail["Keep/Confluence"])
@@ -61,6 +69,12 @@ messages:move_messages(gmail["Keep/Jira"])
 messages = gmail["Keep/Jira"]:is_older(30)
 messages:move_messages(gmail['[Gmail]/Trash'])
 
+-- Gemini
+messages = gmail["INBOX"]:contain_from("hello@news.gemini.com")
+messages:move_messages(gmail["Keep/GitHub"])
+messages = gmail["INBOX"]:contain_from("no-reply@em.gemini.com")
+messages:move_messages(gmail["Keep/GitHub"])
+
 -- GitHub
 messages = gmail["INBOX"]:contain_from("github.com")
 messages:move_messages(gmail["Keep/GitHub"])
@@ -72,8 +86,8 @@ messages = gmail["INBOX"]:contain_from('bot@notifications.heroku.com')
 messages:move_messages(gmail["Keep/Notifications/Heroku"])
 messages = gmail["Keep/Notifications/Heroku"]:is_older(30)
 messages:move_messages(gmail['[Gmail]/Trash'])
-
-
+messages = gmail["INBOX"]:contain_from('team.notifications@herokumanager.com')
+messages:move_messages(gmail["Keep/Notifications/Heroku"])
 
 -- OnPay
 messages = gmail["INBOX"]:contain_from('onpay.com')
@@ -90,6 +104,9 @@ messages:move_messages(gmail["Keep/Notifications/Intuit"])
 -- Google
 messages = gmail["INBOX"]:contain_from('payments-noreply@google.com')
 messages:move_messages(gmail["Keep/Notifications/Google"])
+messages = gmail["INBOX"]:contain_from('firebase-noreply@google.com')
+messages:move_messages(gmail["Keep/Notifications/Google"])
+
 
 -- TD Ameritrade
 messages = gmail["INBOX"]:contain_from('client@notifications.tdameritrade.com')
@@ -121,9 +138,23 @@ messages:move_messages(gmail["Keep/Notifications/Lowe's"])
 messages = gmail["INBOX"]:contain_from('tzero.com')
 messages:move_messages(gmail["Keep/Notifications/tZERO"])
 
--- Google Voice
+-- Google
+messages = gmail["INBOX"]:contain_from('noreply-local-guides@google.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+messages = gmail["INBOX"]:contain_from('workspace-noreply@google.com')
+messages:move_messages(gmail["Keep/Notifications/Google"])
 messages = gmail["INBOX"]:contain_from('voice-noreply@google.com')
 messages:move_messages(gmail["[Gmail]/Trash"])
+messages = gmail["INBOX"]:contain_from('no-reply@accounts.google.com')
+messages:move_messages(gmail["[Gmail]/Trash"])
+messages = gmail["INBOX"]:contain_from('googledev-noreply@google.com')
+messages:move_messages(gmail["Keep/Notifications/Google"])
+messages = gmail["INBOX"]:contain_from('googleplay-developer-support@google.com')
+messages:move_messages(gmail["Keep/Notifications/Google"])
+messages = gmail["INBOX"]:contain_from('noreply@google.com')
+messages:move_messages(gmail["[Gmail]/Trash"])
+
+
 
 -- Flynn's Barber Studio
 messages = gmail["INBOX"]:contain_subject('Barber Studio')
@@ -133,10 +164,6 @@ messages:move_messages(gmail["[Gmail]/Trash"])
 messages = gmail["INBOX"]:contain_from('amctheaters.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
-
--- Apple 
-messages = gmail["INBOX"]:contain_from('no_reply@email.apple.com')
-messages:move_messages(gmail["Keep/Notifications/Apple"])
 
 -- Azure
 messages = gmail["INBOX"]:contain_from('azure-noreply@microsoft.com')
@@ -182,11 +209,6 @@ messages:move_messages(gmail["Keep/Notifications/EPB"])
 messages = gmail["INBOX"]:contain_from('noreply@policy.farmers.com')
 messages:move_messages(gmail["Keep/Notifications/Farmers"])
 
--- Google
-messages = gmail["INBOX"]:contain_from('noreply-local-guides@google.com')
-messages:move_messages(gmail['[Gmail]/Trash'])
-messages = gmail["INBOX"]:contain_from('workspace-noreply@google.com')
-messages:move_messages(gmail["Keep/Notifications/Google"])
 
 -- Home Depot
 messages = gmail["INBOX"]:contain_from('homedepot.com')
@@ -195,7 +217,6 @@ messages:move_messages(gmail["Keep/Notifications/Home Depot"])
 -- Lawn Starter
 messages = gmail["INBOX"]:contain_from('lawnstarter.com')
 messages:move_messages(gmail["Keep/Notifications/Lawn Starter"])
-
 
 -- LinkedIn
 messages = gmail["INBOX"]:contain_from('messages-noreply@linkedin.com')
@@ -221,13 +242,11 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('starbucks.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
-
-
 -- Twilio
 messages = gmail["INBOX"]:contain_from('twilio.com')
 messages:move_messages(gmail["Keep/Notifications/Twilio"])
 
---- Thinkspan
+-- Thinkspan
 messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspanstaging.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspan.com')
@@ -235,7 +254,7 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('appfire.com') -- Sprint Estimation
 messages:move_messages(gmail['[Gmail]/Trash'])
 
---- UPS
+-- UPS
 messages = gmail["INBOX"]:contain_from('ups.com')
 messages:move_messages(gmail["Keep/Notifications/UPS"])
 
@@ -251,9 +270,7 @@ messages:move_messages(gmail["Keep/Notifications/Walmart"])
 messages = gmail["INBOX"]:contain_from('youversion.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
-
-
---- Webull
+-- Webull
 messages = gmail["INBOX"]:contain_from('webull.com')
 messages:move_messages(gmail["Keep/Notifications/Webull"])
 
