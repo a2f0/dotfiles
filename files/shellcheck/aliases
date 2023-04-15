@@ -15,6 +15,7 @@ if [ "$(uname -n)" == x1 ]; then
     alias currentbranch="git branch --show-current | tr -d '\n' | xclip -selection clipboard"
     alias lock="xlock -mode laser"
     alias windows="xwininfo -root -children"
+    alias kb="xset r rate 200 100"
 fi
 
 if [ "$(uname)" == Darwin ]; then
