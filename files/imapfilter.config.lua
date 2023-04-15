@@ -27,6 +27,22 @@ for _, f in ipairs(folders) do print(f) end
 messages = thinkspan["INBOX"]:select_all()
 messages:move_messages(gmail["INBOX"])
 
+-- Alumni
+messages = gmail["INBOX"]:contain_from("masters-alumni@cs.uchicago.edu")
+messages:move_messages(gmail['[Gmail]/Trash'])
+
+-- Amazon
+messages = gmail["INBOX"]:contain_from('no-reply-aws@amazon.com')
+messages:move_messages(gmail["Keep/Notifications/AWS"])
+messages = gmail["INBOX"]:contain_from('payments-messages@amazon.com')
+messages:move_messages(gmail["Keep/Notifications/Amazon"])
+
+-- Confluence
+messages = gmail["INBOX"]:contain_subject('[Confluence]'):contain_from('atlassian.net')
+messages:move_messages(gmail["Keep/Confluence"])
+messages = gmail["Keep/Confluence"]:is_older(30)
+messages:move_messages(gmail['[Gmail]/Trash'])
+
 -- Jira
 messages = gmail["INBOX"]:contain_subject('[JIRA]'):contain_from('atlassian.net')
 messages:move_messages(gmail["Keep/Jira"])
@@ -35,21 +51,13 @@ messages:move_messages(gmail["Keep/Jira"])
 messages = gmail["Keep/Jira"]:is_older(30)
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Confluence
-messages = gmail["INBOX"]:contain_subject('[Confluence]'):contain_from('atlassian.net')
-messages:move_messages(gmail["Keep/Confluence"])
-messages = gmail["Keep/Confluence"]:is_older(30)
-messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- GitHub
-messages = gmail["INBOX"]:contain_from("notifications@github.com")
+messages = gmail["INBOX"]:contain_from("github.com")
 messages:move_messages(gmail["Keep/GitHub"])
 messages = gmail["Keep/GitHub"]:is_older(30)
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Alumni
-messages = gmail["INBOX"]:contain_from("masters-alumni@cs.uchicago.edu")
-messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Heroku
 messages = gmail["INBOX"]:contain_from('bot@notifications.heroku.com')
@@ -66,7 +74,6 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 -- American Express
 messages = gmail["INBOX"]:contain_from('americanexpress.com')
 messages:move_messages(gmail["Keep/Notifications/American Express"])
-
 
 -- OnPay
 messages = gmail["INBOX"]:contain_from('onpay.com')
@@ -99,10 +106,9 @@ messages:move_messages(gmail["Keep/Notifications/Chattanooga Gas"])
 -- Eastside Utility
 messages = gmail["INBOX"]:contain_from('CustomerService@PaymentServiceNetwork.com')
 messages:move_messages(gmail["Keep/Notifications/Eastside Utility"])
+messages = gmail["INBOX"]:contain_from('no-reply@invoicecloud.net')
+messages:move_messages(gmail["Keep/Notifications/Eastside Utility"])
 
--- Amazon
-messages = gmail["INBOX"]:contain_from('no-reply-aws@amazon.com')
-messages:move_messages(gmail["Keep/Notifications/AWS"])
 
 -- Lowe's
 messages = gmail["INBOX"]:contain_from('do-not-reply@notifications.lowes.com')
@@ -140,9 +146,21 @@ messages:move_messages(gmail["Keep/Notifications/Azure"])
 messages = gmail["INBOX"]:contain_from('no-reply@alertsp.chase.com')
 messages:move_messages(gmail["Keep/Notifications/Chase"])
 
--- Cleanup Chipolte
+-- Chipolte
 messages = gmail["INBOX"]:contain_from('chipotle@email.chipotle.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
+
+-- Coinbase
+messages = gmail["INBOX"]:contain_from('coinbase.com')
+messages:move_messages(gmail["Keep/Notifications/Coinbase"])
+
+-- Datadog
+messages = gmail["INBOX"]:contain_from('datadog.com')
+messages:move_messages(gmail["Keep/Notifications/Datadog"])
+
+-- eBay 
+messages = gmail["INBOX"]:contain_from('ebay.com')
+messages:move_messages(gmail["Keep/Notifications/eBay"])
 
 -- EPB
 messages = gmail["INBOX"]:contain_from('customer.service@epb.net')
@@ -221,6 +239,14 @@ messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspanstaging.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspan.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
+
+--- UPS
+messages = gmail["INBOX"]:contain_from('ups.com')
+messages:move_messages(gmail["Keep/Notifications/UPS"])
+
+--- Webull
+messages = gmail["INBOX"]:contain_from('webull.com')
+messages:move_messages(gmail["Keep/Notifications/Webull"])
 
 -- Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
