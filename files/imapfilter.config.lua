@@ -79,7 +79,7 @@ messages:move_messages(gmail["Keep/Notifications/Box"])
 messages = gmail["INBOX"]:contain_from('no-reply@alertsp.chase.com')
 messages:move_messages(gmail["Keep/Notifications/Chase"])
 
--- Chipolte
+-- Chipotle
 messages = gmail["INBOX"]:contain_from('chipotle@email.chipotle.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
