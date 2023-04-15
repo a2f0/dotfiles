@@ -45,7 +45,7 @@ messages:move_messages(gmail["Keep/Notifications/Amazon"])
 messages = gmail["INBOX"]:contain_from('americanexpress.com')
 messages:move_messages(gmail["Keep/Notifications/American Express"])
 
--- Apple 
+-- Apple
 messages = gmail["INBOX"]:contain_from('no_reply@email.apple.com')
 messages:move_messages(gmail["Keep/Notifications/Apple"])
 messages = gmail["INBOX"]:contain_from('developer@insideapple.apple.com')
@@ -202,7 +202,7 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('azure-noreply@microsoft.com')
 messages:move_messages(gmail["Keep/Notifications/Azure"])
 
--- Bitwarden 
+-- Bitwarden
 messages = gmail["INBOX"]:contain_from('bitwarden.com')
 messages:move_messages(gmail["Keep/Notifications/Bitwarden"])
 
@@ -231,7 +231,7 @@ messages = gmail["INBOX"]:contain_from('datadoghq.com')
 messages:move_messages(gmail["Keep/Notifications/Datadog"])
 
 
--- eBay 
+-- eBay
 messages = gmail["INBOX"]:contain_from('ebay.com')
 messages:move_messages(gmail["Keep/Notifications/eBay"])
 
