@@ -116,7 +116,7 @@ messages = gmail["INBOX"]:contain_from('do-not-reply@receipt.lowes.com')
 messages:move_messages(gmail["Keep/Notifications/Lowe's"])
 
 -- Cleanup tZERO
-messages = gmail["INBOX"]:contain_from('no-reply@tzero.com')
+messages = gmail["INBOX"]:contain_from('tzero.com')
 messages:move_messages(gmail["Keep/Notifications/tZERO"])
 
 -- Cleanup Google Voice
@@ -159,52 +159,73 @@ messages:move_messages(gmail["Keep/Notifications/Farmers"])
 messages = gmail["INBOX"]:contain_from('homedepot.com')
 messages:move_messages(gmail["Keep/Notifications/Home Depot"])
 
--- Cleanup LinkedIn
+-- Lawn Starter
+messages = gmail["INBOX"]:contain_from('lawnstarter.com')
+messages:move_messages(gmail["Keep/Notifications/Lawn Starter"])
+
+-- Bitwarden 
+messages = gmail["INBOX"]:contain_from('bitwarden.com')
+messages:move_messages(gmail["Keep/Notifications/Bitwarden"])
+
+-- LinkedIn
 messages = gmail["INBOX"]:contain_from('messages-noreply@linkedin.com')
 messages:move_messages(gmail["Keep/Notifications/LinkedIn"])
 
--- Cleanup PayPal
+-- PayPal
 messages = gmail["INBOX"]:contain_from('service@paypal.com')
 messages:move_messages(gmail["Keep/Notifications/PayPal"])
 messages = gmail["INBOX"]:contain_from('paypal@mail.paypal.com')
 messages:move_messages(gmail["Keep/Notifications/PayPal"])
 
--- Cleanup Schwab
+-- Schwab
 messages = gmail["INBOX"]:contain_from('schwab.com')
 messages:move_messages(gmail["Keep/Notifications/Schwab"])
 
--- Cleanup Slack
+-- Slack
 messages = gmail["INBOX"]:contain_from('slack.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('slackhq.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Cleanup Starbucks
+-- Starbucks
 messages = gmail["INBOX"]:contain_from('starbucks.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Cleanup Google Local Guides
+-- Apple 
+messages = gmail["INBOX"]:contain_from('no_reply@email.apple.com')
+messages:move_messages(gmail["Keep/Notifications/Apple"])
+
+-- Google Workspace
+messages = gmail["INBOX"]:contain_from('workspace-noreply@google.com')
+messages:move_messages(gmail["Keep/Notifications/Google"])
+
+-- Twilio
+messages = gmail["INBOX"]:contain_from('twilio.com')
+messages:move_messages(gmail["Keep/Notifications/Twilio"])
+
+-- Google Local Guides
 messages = gmail["INBOX"]:contain_from('noreply-local-guides@google.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Cleanup Venmo
+-- Venmo
 messages = gmail["INBOX"]:contain_from('venmo.com')
 messages:move_messages(gmail["Keep/Notifications/Venmo"])
 
--- Cleanup Walmart
+-- Walmart
 messages = gmail["INBOX"]:contain_from('walmart.com')
 messages:move_messages(gmail["Keep/Notifications/Walmart"])
 
--- Cleanup YouVersion
+-- YouVersion
 messages = gmail["INBOX"]:contain_from('youversion.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+
+
+--- Thinkspan
+messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspanstaging.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspan.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Cleanup Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
-messages:move_messages(gmail['[Gmail]/Trash'])
-
---- Cleanup Thinkspan
-messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspanstaging.com')
-messages:move_messages(gmail['[Gmail]/Trash'])
-messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspan.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
