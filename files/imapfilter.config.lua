@@ -55,9 +55,17 @@ messages:move_messages(gmail["Keep/Notifications/Apple"])
 messages = gmail["INBOX"]:contain_from('axosbank.com')
 messages:move_messages(gmail["Keep/Notifications/Axos"])
 
+-- BCBSIL
+messages = gmail["INBOX"]:contain_from('BCBSIL_noreply@bcbsil.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+
 -- Box
 messages = gmail["INBOX"]:contain_from('box.com')
 messages:move_messages(gmail["Keep/Notifications/Box"])
+
+-- CircleCI
+messages = gmail["INBOX"]:contain_from('security@circleci.com')
+messages:move_messages(gmail["Keep/Notifications/CircleCI"])
 
 -- Confluence
 messages = gmail["INBOX"]:contain_subject('[Confluence]'):contain_from('atlassian.net')
@@ -176,7 +184,10 @@ messages = gmail["INBOX"]:contain_from('drive-shares-dm-noreply@google.com')
 messages:move_messages(gmail["[Gmail]/Trash"])
 messages = gmail["INBOX"]:contain_from('comments-noreply@docs.google.com')
 messages:move_messages(gmail["[Gmail]/Trash"])
-
+messages = gmail["INBOX"]:contain_from('CloudPlatform-noreply@google.com')
+messages:move_messages(gmail["[Gmail]/Trash"])
+messages = gmail["INBOX"]:contain_from('noreply-play-developer-console@google.com')
+messages:move_messages(gmail["[Gmail]/Trash"])
 
 -- Flynn's Barber Studio
 messages = gmail["INBOX"]:contain_subject('Barber Studio')
@@ -308,4 +319,6 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- From Me
 messages = gmail["INBOX"]:contain_from('dansullivan@gmail.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+messages = gmail["INBOX"]:contain_from('dan@thinkspan.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
