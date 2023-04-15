@@ -173,8 +173,8 @@ messages:move_messages(gmail["Keep/Notifications/GitHub"])
 
 -- GitHub
 messages = gmail["INBOX"]:contain_from("github.com")
-messages:move_messages(gmail["Keep/GitHub"])
-messages = gmail["Keep/GitHub"]:is_older(30)
+messages:move_messages(gmail["Keep/Notifications/GitHub"])
+messages = gmail["Keep/Notifications/GitHub"]:is_older(30)
 messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Google
