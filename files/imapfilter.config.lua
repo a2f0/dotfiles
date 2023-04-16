@@ -17,11 +17,6 @@ thinkspan = IMAP {
     ssl = "tls1"
 }
 
--- Define a filter to match messages a subject starting with `msg`.
-filter_subject_begins_with = function(msg, match_subject)
-    return msg.subject:match("^" .. match_subject)
-end
-
 mailboxes, folders = gmail:list_all('*')
 print("=== mailboxes")
 for _, m in ipairs(mailboxes) do print(m) end
