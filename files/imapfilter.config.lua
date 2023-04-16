@@ -17,6 +17,11 @@ thinkspan = IMAP {
     ssl = "tls1"
 }
 
+-- Define a filter to match messages a subject starting with `msg`.
+filter_subject_begins_with = function(msg, match_subject)
+    return msg.subject:match("^" .. match_subject)
+end
+
 mailboxes, folders = gmail:list_all('*')
 print("=== mailboxes")
 for _, m in ipairs(mailboxes) do print(m) end
@@ -281,6 +286,10 @@ messages = gmail["INBOX"]:contain_from('client@notifications.tdameritrade.com')
 messages:move_messages(gmail["Keep/Notifications/TD Ameritrade"])
 messages = gmail["INBOX"]:contain_from('from@communications.tdameritrade.com')
 messages:move_messages(gmail["Keep/Notifications/TD Ameritrade"])
+
+-- Test Fairy
+messages = gmail["INBOX"]:contain_from('jamie@thinkspan.com'):match_subject('^Tester feedback report for')
+messages:move_messages(gmail["Keep/Notifications/TestFairy"])
 
 -- Trashbilling.com (garbage collection.)
 messages = gmail["INBOX"]:contain_from('trashbilling.com')
