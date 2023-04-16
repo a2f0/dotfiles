@@ -282,6 +282,10 @@ messages:move_messages(gmail["Keep/Notifications/TD Ameritrade"])
 messages = gmail["INBOX"]:contain_from('from@communications.tdameritrade.com')
 messages:move_messages(gmail["Keep/Notifications/TD Ameritrade"])
 
+-- Test Fairy
+messages = gmail["INBOX"]:contain_from('jamie@thinkspan.com'):match_subject('^Tester feedback report for')
+messages:move_messages(gmail["Keep/Notifications/TestFairy"])
+
 -- Trashbilling.com (garbage collection.)
 messages = gmail["INBOX"]:contain_from('trashbilling.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
