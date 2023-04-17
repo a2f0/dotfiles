@@ -55,6 +55,14 @@ messages:move_messages(gmail["Keep/Notifications/Apple"])
 messages = gmail["INBOX"]:contain_from('developer@insideapple.apple.com')
 messages:move_messages(gmail["Keep/Notifications/Apple"])
 
+-- Atlassian
+messages = gmail["INBOX"]:contain_from('am.atlassian.com')
+messages:move_messages(gmail["Keep/Notifications/Atlassian"])
+messages = gmail["INBOX"]:contain_from('info@e.atlassian.com')
+messages:move_messages(gmail["Keep/Notifications/Atlassian"])
+messages = gmail["Keep/Notifications/Atlassian"]:is_older(30)
+messages:move_messages(gmail['[Gmail]/Trash'])
+
 -- Axos
 messages = gmail["INBOX"]:contain_from('axosbank.com')
 messages:move_messages(gmail["Keep/Notifications/Axos"])
@@ -149,6 +157,10 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('noreply@policy.farmers.com')
 messages:move_messages(gmail["Keep/Notifications/Farmers"])
 
+-- Figma
+messages = gmail["INBOX"]:contain_from('figma.com')
+messages:move_messages(gmail["Keep/Notifications/Figma"])
+
 -- Firefox
 messages = gmail["INBOX"]:contain_from('firefox.com')
 messages:move_messages(gmail["[Gmail]/Trash"])
@@ -204,11 +216,22 @@ messages = gmail["INBOX"]:contain_from('CloudPlatform-noreply@google.com')
 messages:move_messages(gmail["[Gmail]/Trash"])
 messages = gmail["INBOX"]:contain_from('noreply-play-developer-console@google.com')
 messages:move_messages(gmail["[Gmail]/Trash"])
+messages = gmail["INBOX"]:contain_from('calendar-noreply@google.com')
+messages:move_messages(gmail["[Gmail]/Trash"])
+messages = gmail["INBOX"]:contain_subject('^Invitation: '):match_body('https://calendar.google.com/calendar')
+messages:move_messages(gmail["Keep/Notifications/Google"])
+messages = gmail["INBOX"]:contain_subject('^Updated invitation:'):match_body('https://calendar.google.com/calendar')
+messages:move_messages(gmail["Keep/Notifications/Google"])
+messages = gmail["INBOX"]:contain_subject('^Canceled event:'):match_body('https://calendar.google.com/calendar')
+messages:move_messages(gmail["Keep/Notifications/Google"])
+messages = gmail["INBOX"]:contain_subject('^Canceled event with note:'):match_body('https://calendar.google.com/calendar')
+messages:move_messages(gmail["Keep/Notifications/Google"])
+messages = gmail["INBOX"]:contain_subject('^Accepted: '):match_body('https://calendar.google.com/calendar')
+messages:move_messages(gmail["Keep/Notifications/Google"])
 
 -- Home Depot
 messages = gmail["INBOX"]:contain_from('homedepot.com')
 messages:move_messages(gmail["Keep/Notifications/Home Depot"])
-
 
 -- Heroku
 messages = gmail["INBOX"]:contain_from('bot@notifications.heroku.com')
@@ -216,6 +239,10 @@ messages:move_messages(gmail["Keep/Notifications/Heroku"])
 messages = gmail["Keep/Notifications/Heroku"]:is_older(30)
 messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('team.notifications@herokumanager.com')
+messages:move_messages(gmail["Keep/Notifications/Heroku"])
+messages = gmail["INBOX"]:contain_from('noreply@salesforce.com')
+messages:move_messages(gmail["Keep/Notifications/Heroku"])
+messages = gmail["INBOX"]:contain_from('noreply@heroku.com')
 messages:move_messages(gmail["Keep/Notifications/Heroku"])
 
 -- Intuit
@@ -241,6 +268,14 @@ messages:move_messages(gmail["Keep/Notifications/Lowe's"])
 -- Mailgun
 messages = gmail["INBOX"]:contain_from('mailgun.com')
 messages:move_messages(gmail["Keep/Notifications/Mailgun"])
+messages = gmail["INBOX"]:contain_from('support@mailgun.net')
+messages:move_messages(gmail["Keep/Notifications/Mailgun"])
+
+-- Miro
+messages = gmail["INBOX"]:contain_from('miro.com')
+messages:move_messages(gmail["Keep/Notifications/Miro"])
+messages = gmail["Keep/Notifications/Miro"]:is_older(30)
+messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- MongoDB
 messages = gmail["INBOX"]:contain_from('mongodb.com')
@@ -264,6 +299,18 @@ messages:move_messages(gmail["Keep/Notifications/PayPal"])
 messages = gmail["INBOX"]:contain_from('email-safeco.com')
 messages:move_messages(gmail["Keep/Notifications/Safeco"])
 
+-- Sentry
+messages = gmail["INBOX"]:contain_from('noreply@md.getsentry.com')
+messages:move_messages(gmail["Keep/Notifications/Sentry"])
+messages = gmail["INBOX"]:contain_from('updates@sentry.io')
+messages:move_messages(gmail["Keep/Notifications/Sentry"])
+messages = gmail["INBOX"]:contain_from('learn@sentry.io')
+messages:move_messages(gmail["Keep/Notifications/Sentry"])
+messages = gmail["INBOX"]:contain_from('help@sentry.io')
+messages:move_messages(gmail["Keep/Notifications/Sentry"])
+messages = gmail["Keep/Notifications/Sentry"]:is_older(30)
+messages:move_messages(gmail['[Gmail]/Trash'])
+
 -- Schwab
 messages = gmail["INBOX"]:contain_from('schwab.com')
 messages:move_messages(gmail["Keep/Notifications/Schwab"])
@@ -283,7 +330,9 @@ messages = gmail["INBOX"]:contain_from('from@communications.tdameritrade.com')
 messages:move_messages(gmail["Keep/Notifications/TD Ameritrade"])
 
 -- Test Fairy
-messages = gmail["INBOX"]:contain_from('jamie@thinkspan.com'):match_subject('^Tester feedback report for')
+messages = gmail["INBOX"]:match_subject('^Tester feedback report for')
+messages:move_messages(gmail["Keep/Notifications/TestFairy"])
+messages = gmail["INBOX"]:match_subject('^New build of')
 messages:move_messages(gmail["Keep/Notifications/TestFairy"])
 
 -- Trashbilling.com (garbage collection.)
@@ -337,6 +386,10 @@ messages = gmail["INBOX"]:contain_from('webull.com')
 messages:move_messages(gmail["Keep/Notifications/Webull"])
 messages = gmail["INBOX"]:contain_from('uscl_stmt_mbox@investordelivery.com')
 messages:move_messages(gmail["Keep/Notifications/Webull"])
+
+-- Zoom
+messages = gmail["INBOX"]:match_subject('^Please join Zoom meeting in progress')
+messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
