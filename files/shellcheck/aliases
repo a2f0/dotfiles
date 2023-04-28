@@ -8,6 +8,8 @@ alias offlineimap="offlineimap -c ~/.offlineimaprc"
 alias showrunning="vboxmanage list runningvms"
 alias showvminfo="vboxmanage metrics list"
 alias branches="git branches"
+alias vi="nvim"
+alias vim="nvim"
 
 if [ "$(uname -n)" == x1 ]; then
     # copy whatever was selected into the actual clipboard
@@ -25,5 +27,4 @@ if [ "$(uname)" == Darwin ]; then
     alias md5sum="md5"
     alias resetwireless="sudo ifconfig en0 down;sudo ifconfig en0 up"
     alias lock='open -a /System/Library/Frameworks/ScreenSaver.framework/Versions/A/Resources/ScreenSaverEngine.app'
-    alias vi="vim"
 fi
