@@ -66,6 +66,9 @@ if [[ `uname` == Darwin ]]; then
   alias derived="rm -rf ~/Library/Developer/Xcode/DerivedData"
 fi
 
+alias vi="nvim"
+alias vim="nvim"
+
 # platform independent aliases
 alias branches="git branches"
 
