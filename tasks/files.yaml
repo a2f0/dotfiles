@@ -211,7 +211,7 @@
 
 - name: ~/.config/nvim
   file:
-    src: "{{dotfiles_dir}}/files/nvim.init.vim"
-    dest: ~/.config/nvim/init.vim
+    src: "{{dotfiles_dir}}/files/nvim.init.lua"
+    dest: ~/.config/nvim/init.lua
     state: link
     force: yes
