@@ -17,6 +17,7 @@
     "terminal.integrated.enablePersistentSessions": false,
     "terminal.integrated.persistentSessionReviveProcess": "never",
     "terminal.integrated.scrollback": 100000,
+    "update.mode": "manual",
     "window.openFoldersInNewWindow": "off",
     "window.restoreWindows": "none",
     "window.zoomLevel": 0,
