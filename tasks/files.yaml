@@ -215,3 +215,10 @@
     dest: ~/.config/nvim/init.lua
     state: link
     force: yes
+
+- name: ~/.tmux.conf
+  file:
+    src: "{{dotfiles_dir}}/files/tmux.conf"
+    dest: ~/.tmux.conf
+    state: link
+    force: yes
