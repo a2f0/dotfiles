@@ -32,7 +32,3 @@ dlob() {
     git remote prune origin
     git branch | grep -v "$(git branch --show-current)" | xargs git branch -D
 }
-
-rip() {
-    youtube-dl --extract-audio --audio-format mp3 "$1" --add-metadata "$1"
-}
