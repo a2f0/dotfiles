@@ -1,4 +1,5 @@
 source ~/.aliases-private
+source ~/.functions-posix
 source ~/.functions-zsh
 source ~/.quick
 

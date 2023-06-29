@@ -7,5 +7,13 @@ dlob () {
 }
 
 rip () {
-    youtube-dl --extract-audio --audio-format mp3 "$1" --add-metadata "$1"
+    yt-dlp --extract-audio --audio-format mp3 "$1" --add-metadata "$1"
+}
+
+ide () {
+    tmux new-session -d
+    tmux split-window -h
+    tmux split-window -v
+    tmux new-window
+    tmux attach-session -d
 }
