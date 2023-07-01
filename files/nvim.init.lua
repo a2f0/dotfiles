@@ -8,6 +8,9 @@ vim.opt.termguicolors = true
 vim.opt.wildmode = "longest:full,full"
 vim.opt.wildmenu = true
 
+vim.opt.number = true
+vim.opt.wrap = true
+
 vim.cmd([[ let g:neo_tree_remove_legacy_commands = 1 ]])
 
 local ensure_packer = function()
@@ -33,7 +36,11 @@ return require('packer').startup(function(use)
         "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
         "MunifTanjim/nui.nvim",
       }
-    }
+  }
+  use {
+    'nvim-telescope/telescope.nvim', tag = '0.1.2',
+     requires = { {'nvim-lua/plenary.nvim'} }
+  }
   if packer_bootstrap then
     require('packer').sync()
   end
