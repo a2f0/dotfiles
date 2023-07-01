@@ -8,6 +8,8 @@ vim.opt.termguicolors = true
 vim.opt.wildmode = "longest:full,full"
 vim.opt.wildmenu = true
 
+vim.cmd([[ let g:neo_tree_remove_legacy_commands = 1 ]])
+
 local ensure_packer = function()
   local fn = vim.fn
   local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
@@ -24,12 +26,14 @@ local packer_bootstrap = ensure_packer()
 return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
   use {
-    'nvim-tree/nvim-tree.lua',
-    requires = {
-      'nvim-tree/nvim-web-devicons',
-    },
-  }
-  require("nvim-tree").setup()
+    "nvim-neo-tree/neo-tree.nvim",
+      branch = "v2.x",
+      requires = {
+        "nvim-lua/plenary.nvim",
+        "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+        "MunifTanjim/nui.nvim",
+      }
+    }
   if packer_bootstrap then
     require('packer').sync()
   end
