@@ -48,6 +48,13 @@ return require('packer').startup(function(use)
       }
     }
   }
+  use {
+  'nvim-lualine/lualine.nvim',
+    requires = { 'nvim-tree/nvim-web-devicons', opt = true }
+  }
+  require('lualine').setup()
+  use {'akinsho/bufferline.nvim', tag = "*", requires = 'nvim-tree/nvim-web-devicons'}
+  require("bufferline").setup{}
   if packer_bootstrap then
     require('packer').sync()
   end
