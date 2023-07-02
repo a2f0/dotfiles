@@ -11,9 +11,10 @@ rip () {
 }
 
 ide () {
-    tmux new-session -d
-    tmux split-window -h
+    tmux new-session -d nvim
     tmux split-window -v
-    tmux new-window
+    tmux split-window -h
+    tmux select-layout main-horizontal
+    tmux select-pane -t 0
     tmux attach-session -d
 }
