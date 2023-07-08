@@ -8,6 +8,9 @@
     "files.autoSave": "onFocusChange",
     "flow.pathToFlow": "flow",
     "flow.useNPMPackagedFlow": true,
+    "git.terminalAuthentication": false,
+    "github.gitAuthentication": false,
+    "github.gitProtocol": "ssh",
     "html.trace.server": "messages",
     "files.insertFinalNewline": true,
     "javascript.validate.enable": false,
@@ -21,6 +24,7 @@
     "window.openFoldersInNewWindow": "off",
     "window.restoreWindows": "none",
     "window.zoomLevel": 0,
+    "window.titleBarStyle": "native",
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook"
     },
