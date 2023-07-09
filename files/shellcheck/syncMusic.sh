@@ -1,4 +1,5 @@
 #!/bin/bash
+time \
 rsync --verbose \
       --progress \
       --omit-dir-times \
