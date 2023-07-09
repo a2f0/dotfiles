@@ -387,6 +387,10 @@ messages:move_messages(gmail["Keep/Notifications/Webull"])
 messages = gmail["INBOX"]:contain_from('uscl_stmt_mbox@investordelivery.com')
 messages:move_messages(gmail["Keep/Notifications/Webull"])
 
+-- Workable
+messages = gmail["INBOX"]:contain_from('noreply@workablemail.com')
+messages:move_messages(gmail['[Gmail]/Trash'])
+
 -- Zoom
 messages = gmail["INBOX"]:match_subject('^Please join Zoom meeting in progress')
 messages:move_messages(gmail['[Gmail]/Trash'])
