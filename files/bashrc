@@ -83,7 +83,6 @@ if [ `uname` == Darwin ]; then
     # az cli, installed via brew
     source /usr/local/etc/bash_completion.d/az
 
-
     # fastlane
     export PATH="$HOME/.fastlane/bin:$PATH"
 
@@ -119,6 +118,9 @@ elif [ `uname -n` == x1 ]; then
     export PATH=$PATH:$HOME/Android/Sdk/build-tools/33.0.0
     # fastboot, lineageos
     export PATH=$PATH:$HOME/platform-tools
+
+    # dotfiles scripts
+    export PATH=$PATH:$HOME/dotfiles/files/shellcheck
 
 
     # rust installed using rustup
