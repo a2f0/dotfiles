@@ -21,6 +21,7 @@
     "terminal.integrated.persistentSessionReviveProcess": "never",
     "terminal.integrated.scrollback": 100000,
     "update.mode": "manual",
+    "vim.handleKeys": { "<C-f>": false },
     "window.openFoldersInNewWindow": "off",
     "window.restoreWindows": "none",
     "window.zoomLevel": 0,
