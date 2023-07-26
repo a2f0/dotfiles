@@ -16,12 +16,15 @@
     "javascript.validate.enable": false,
     "python.showStartPage": false,
     "python.terminal.activateEnvironment": false,
+    "terminal.integrated.copyOnSelection": true,
     "terminal.integrated.enableMultiLinePasteWarning": false,
     "terminal.integrated.enablePersistentSessions": false,
     "terminal.integrated.persistentSessionReviveProcess": "never",
     "terminal.integrated.scrollback": 100000,
     "update.mode": "manual",
-    "vim.handleKeys": { "<C-f>": false },
+    "vim.handleKeys": {
+        "<C-f>": false
+    },
     "window.openFoldersInNewWindow": "off",
     "window.restoreWindows": "none",
     "window.zoomLevel": 0,
