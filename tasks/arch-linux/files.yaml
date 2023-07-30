@@ -20,10 +20,24 @@
     state: link
     force: yes
 
+- name: ~/.config/Code - OSS/User/keybindings.json
+  file:
+    src: "{{dotfiles_dir}}/files/visual-studio-code-keybindings.json"
+    dest: ~/.config/Code - OSS/User/keybindingsjson
+    state: link
+    force: yes
+
 - name: ~/.config/Code/User/settings.json
   file:
     src: "{{dotfiles_dir}}/files/visual-studio-code-settings.json"
     dest: ~/.config/Code/User/settings.json
+    state: link
+    force: yes
+
+- name: ~/.config/Code/User/keybindings.json
+  file:
+    src: "{{dotfiles_dir}}/files/visual-studio-code-keybindings.json"
+    dest: ~/.config/Code/User/keybindings.json
     state: link
     force: yes
 
