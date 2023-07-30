@@ -1,0 +1,17 @@
+[
+  {
+    "key": "ctrl+right",
+    "command": "-editor.action.inlineSuggest.acceptNextWord",
+    "when": "inlineSuggestionVisible && !editorReadonly"
+  },
+  {
+    "key": "ctrl+right",
+    "command": "-extension.vim_ctrl+right",
+    "when": "editorTextFocus && vim.active && !inDebugRepl && vim.mode != 'Insert'"
+  },
+  {
+    "key": "ctrl+right",
+    "command": "-gitlens.key.ctrl+right",
+    "when": "gitlens:key:ctrl+right"
+  }
+]
