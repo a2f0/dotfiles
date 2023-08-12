@@ -37,6 +37,7 @@
     },
     "workbench.startupEditor": "none",
     "[javascript][typescript]": {
+        "editor.autoClosingBrackets": "never",
         "editor.tabSize": 2,
         "tabWidth": 2
     },
