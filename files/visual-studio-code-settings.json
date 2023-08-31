@@ -1,5 +1,7 @@
 {
     "diffEditor.ignoreTrimWhitespace": false,
+    "editor.autoClosingBrackets": "never",
+    "editor.autoClosingQuotes": "never",
     "editor.defaultFormatter": "vscode.typescript-language-features",
     "editor.renderControlCharacters": true,
     "editor.renderWhitespace": "all",
@@ -37,7 +39,6 @@
     },
     "workbench.startupEditor": "none",
     "[javascript][typescript]": {
-        "editor.autoClosingBrackets": "never",
         "editor.tabSize": 2,
         "tabWidth": 2
     },
