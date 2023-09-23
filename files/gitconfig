@@ -4,7 +4,6 @@
         signingkey = 827B8379F39A31F0
 [commit]
         gpgsign = true
-
 [pull]
         rebase = true
 [filter "lfs"]
@@ -22,10 +21,10 @@
         autosetupmerge = always
 [init]
         defaultBranch = main
-
 [includeIf "gitdir:github-thinkspan/"]
         path = .gitconfig-thinkspan
-
 [alias]
 	uncommit = reset --soft HEAD~1
         branches = branch -a --sort=-committerdate
+        stashall = stash --include-untracked
+        unstash = stash pop
