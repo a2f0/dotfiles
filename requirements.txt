@@ -1,2 +1,2 @@
 ansible==8.3.0
-pre-commit==3.3.3
+pre-commit==3.4.0
