@@ -12,6 +12,7 @@ vim.opt.number = true
 vim.opt.wrap = true
 
 vim.cmd([[ let g:neo_tree_remove_legacy_commands = 1 ]])
+vim.cmd("autocmd tabnew * Neotree")
 
 local ensure_packer = function()
   local fn = vim.fn
