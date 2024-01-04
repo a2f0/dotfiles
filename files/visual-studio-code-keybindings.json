@@ -10,6 +10,11 @@
     "when": "editorTextFocus && vim.active && !inDebugRepl && vim.mode != 'Insert'"
   },
   {
+    "key": "ctrl+p",
+    "command": "-extension.vim_ctrl+p",
+    "when": "editorTextFocus && vim.active && !inDebugRepl && vim.mode = 'Insert'"
+  },
+  {
     "key": "ctrl+right",
     "command": "-gitlens.key.ctrl+right",
     "when": "gitlens:key:ctrl+right"
