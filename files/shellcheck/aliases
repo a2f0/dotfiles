@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 alias epoch="date +%s"
 alias listrunning="vboxmanage list runningvms"
 alias listvms="vboxmanage list vms"
@@ -12,7 +12,7 @@ alias branches="git branches"
 alias vi="nvim"
 alias vim="nvim"
 
-if [ "$(uname -n)" == x1 ]; then
+if [ "$(uname -n)" = x1 ]; then
     # copy whatever was selected into the actual clipboard
     alias clipboard="xclip -out | xclip -selection clipboard"
     alias currentbranch="git branch --show-current | tr -d '\n' | xclip -selection clipboard"
@@ -21,11 +21,14 @@ if [ "$(uname -n)" == x1 ]; then
     alias kb="xset r rate 200 100"
 fi
 
-if [ "$(uname)" == Darwin ]; then
+if [ "$(uname)" = Darwin ]; then
     alias derived="rm -rf ~/Library/Developer/Xcode/DerivedData"
     alias currentbranch="git branch --show-current | tr -d '\n' | pbcopy"
     alias lsusb="system_profiler SPUSBDataType"
     alias md5sum="md5"
     alias resetwireless="sudo ifconfig en0 down;sudo ifconfig en0 up"
     alias lock='open -a /System/Library/Frameworks/ScreenSaver.framework/Versions/A/Resources/ScreenSaverEngine.app'
+    # macos specific aliases
+    alias currentbranch="git branch --show-current | tr -d '\n' | pbcopy"
+    alias derived="rm -rf ~/Library/Developer/Xcode/DerivedData"
 fi
