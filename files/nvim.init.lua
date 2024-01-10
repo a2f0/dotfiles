@@ -41,6 +41,8 @@ return require('packer').startup(function(use)
     'nvim-telescope/telescope.nvim', tag = '0.1.2',
      requires = { {'nvim-lua/plenary.nvim'} }
   }
+  -- ripgrep is required for live_grep and grep_string
+  -- sudo apt install ripgrep
   require('telescope').setup{
     defaults = {
       file_ignore_patterns = {
