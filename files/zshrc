@@ -1,3 +1,4 @@
+source ~/.aliases
 source ~/.aliases-private
 source ~/.functions-posix
 source ~/.functions-zsh
@@ -61,10 +62,6 @@ if [[ `uname` == Darwin ]]; then
 
   # for git gpg signature verification
   export GPG_TTY=$(tty)
-
-  # macos specific aliases
-  alias currentbranch="git branch --show-current | tr -d '\n' | pbcopy"
-  alias derived="rm -rf ~/Library/Developer/Xcode/DerivedData"
 fi
 
 alias vi="nvim"
