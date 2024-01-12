@@ -35,19 +35,6 @@ if [[ `uname` == Darwin ]]; then
   [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
   [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
-  # antigen, installed via curl
-  source ~/install/bin/antigen.zsh
-  antigen use oh-my-zsh
-
-  antigen theme robbyrussell
-
-  antigen bundle vi-mode
-
-  export NVM_AUTO_USE=true
-  antigen bundle lukechilds/zsh-nvm
-
-  antigen apply
-
   # android studio
   export ANDROID_SDK=$HOME/Library/Android/sdk
   export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
@@ -83,6 +70,15 @@ export PATH=$PATH:~/install/bin
 export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
 export IRCNICK="dps"
 export IRCNAME="dps"
+
+# antigen, installed via curl
+source ~/install/bin/antigen.zsh
+antigen use oh-my-zsh
+antigen theme robbyrussell
+antigen bundle vi-mode
+export NVM_AUTO_USE=true
+antigen bundle lukechilds/zsh-nvm
+antigen apply
 
 # history settings
 HISTSIZE=1000               # how many lines of history to keep in memory
