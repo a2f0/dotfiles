@@ -90,3 +90,5 @@ SAVEHIST=1000               # number of history entries to save to disk
 setopt no_share_history     # don't share history across terminals
 unsetopt share_history      # don't share history across terminals
 alias history="history 1"   # display all entries from entry number 1
+
+export EDITOR="nvim"
