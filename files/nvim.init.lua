@@ -35,5 +35,18 @@ require("lazy").setup({{
       "nvim-tree/nvim-web-devicons",
       "MunifTanjim/nui.nvim",
     },
+  },{
+  "nvim-telescope/telescope.nvim", tag = "0.1.5",
+     dependencies = { "nvim-lua/plenary.nvim" }
   }
 })
+
+-- ripgrep is required for live_grep and grep_string
+-- sudo apt install ripgrep
+require('telescope').setup{
+  defaults = {
+    file_ignore_patterns = {
+      "node_modules", "package-lock.json"
+    }
+  }
+}
