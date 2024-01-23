@@ -50,3 +50,5 @@ require('telescope').setup{
     }
   }
 }
+
+vim.cmd(':Neotree')
