@@ -14,6 +14,12 @@ vim.opt.wrap = true
 vim.cmd([[ let g:neo_tree_remove_legacy_commands = 1 ]])
 vim.cmd('colorscheme habamax')
 
+-- spacing and indentation
+vim.opt.tabstop = 2
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+vim.opt.list = true
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
