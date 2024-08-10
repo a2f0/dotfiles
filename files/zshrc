@@ -55,6 +55,9 @@ if [[ `uname -n` == x1 ]]; then
   export PATH=$PATH:$HOME/Android/Sdk/emulator
   export PATH=$PATH:$HOME/Android/Sdk/platform-tools
   export PATH=$PATH:$HOME/Android/Sdk/build-tools/33.0.0i
+
+  # rbenv, installed via git
+  eval "$(~/.rbenv/bin/rbenv init - zsh)"
 fi
 
 alias vi="nvim"
@@ -101,5 +104,9 @@ export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
+# jenv, installed via git
+# make sure to run 'jenv enable-plugin export' after installing to enable the JAVA_HOME export.
+export PATH="$HOME/.jenv/bin:$PATH"
+eval "$(jenv init -)"
 
 export EDITOR="nvim"
