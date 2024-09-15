@@ -15,7 +15,9 @@
     "github.gitProtocol": "ssh",
     "gradle.autoDetect": "on",
     "gradle.debug": true,
-    "gradle.nestedProjects": ["android"],
+    "gradle.nestedProjects": [
+        "android"
+    ],
     "html.trace.server": "messages",
     "files.insertFinalNewline": true,
     "javascript.validate.enable": false,

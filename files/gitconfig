@@ -28,3 +28,5 @@
         branches = branch -a --sort=-committerdate
         stashall = stash --include-untracked
         unstash = stash pop
+[rerere]
+	enabled = false
