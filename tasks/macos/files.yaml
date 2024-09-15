@@ -11,3 +11,17 @@
     dest: ~/Library/Application Support/Code/User/settings.json
     state: link
     force: yes
+
+- name: make sure ~/Library/Application Support/Cursor/User/ exists
+  file:
+    path: '~/Library/Application Support/Cursor/User/'
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0700
+
+- name: ~/Library/Application Support/Cursor/User/settings.json
+  file:
+    src: "{{dotfiles_dir}}/files/cursor-settings.json"
+    dest: ~/Library/Application Support/Cursor/User/settings.json
+    state: link
+    force: yes
