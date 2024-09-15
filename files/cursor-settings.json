@@ -38,6 +38,7 @@
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook"
     },
+    "workbench.activityBar.orientation": "vertical",
     "workbench.startupEditor": "none",
     "[javascript][typescript]": {
         "editor.tabSize": 2,
