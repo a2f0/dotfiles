@@ -11,6 +11,7 @@
     "flow.pathToFlow": "flow",
     "flow.useNPMPackagedFlow": true,
     "git.terminalAuthentication": false,
+    "git.useIndex": false,
     "github.gitAuthentication": false,
     "github.gitProtocol": "ssh",
     "gradle.autoDetect": "on",
