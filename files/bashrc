@@ -125,7 +125,7 @@ elif [ `uname -n` == x1 ]; then
     # rust installed using rustup
     . "$HOME/.cargo/env"
 
-    # terraform virtual environments
+    # terraform virtual environment installed manually
     export PATH="$HOME/.tfenv/bin:$PATH"
 
     export NVM_DIR="$HOME/.nvm"
