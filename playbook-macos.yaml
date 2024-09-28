@@ -5,6 +5,13 @@
   vars:
     dotfiles_dir: "{{ playbook_dir }}"
     ansible_python_interpreter: /usr/bin/python3
+  pre_tasks:
+    - name: Ensure this playbook only runs on macOS
+      fail:
+        msg: "This playbook is intended for macOS systems only"
+      when: ansible_facts['os_family'] != 'Darwin'
+      tags:
+        - always
   tasks:
     - import_tasks: tasks/clone-anduril-into-home.yaml
     - import_tasks: tasks/files.yaml
