@@ -75,3 +75,17 @@
     dest: ~/.xmobarrc
     state: link
     force: yes
+
+- name: make sure ~/.config/Cursor/User exists
+  file:
+    path: '~/.config/Cursor/User'
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0700
+
+- name: ~/.config/Cursor/User/settings.json
+  file:
+    src: "{{dotfiles_dir}}/files/cursor-settings.json"
+    dest: ~/.config/Cursor/User/settings.json
+    state: link
+    force: yes
