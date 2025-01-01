@@ -3,10 +3,6 @@ name: Github Actions
 on:
   push:
     branches: '**'
-  pull_request:
-    branches: '**'
-  schedule:
-  - cron: "0 0 * * *"
 jobs:
   code-quality:
     runs-on: macos-latest
