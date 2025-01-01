@@ -112,4 +112,7 @@ eval "$(pyenv init -)"
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
 
+# rust installed using rustup
+. "$HOME/.cargo/env"
+
 export EDITOR="nvim"
