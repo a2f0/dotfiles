@@ -56,9 +56,6 @@ jobs:
     - name: Install virtualbox
       run: |
         sudo apt install virtualbox
-    - name: Install python3
-      run: |
-        sudo apt install python3
     - name: Ruby version
       run: |
         ruby --version
