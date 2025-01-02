@@ -10,6 +10,9 @@ Vagrant.configure("2") do |config|
     v.memory = 8192
     v.cpus = 2
   end
+  config.vm.provision "shell",
+    inline: "sudo pacman -S --noconfirm python"
+  end
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "playbook-arch-linux-vm.yaml"
   end
