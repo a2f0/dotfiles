@@ -2,4 +2,4 @@
   community.general.pacman:
     name: virtualbox-guest-utils-nox
     state: absent
-    extra_args: --recursive --nosave
+    extra_args: --recursive
