@@ -12,7 +12,6 @@ Vagrant.configure("2") do |config|
   end
   config.vm.provision "shell",
     inline: "sudo pacman -S --noconfirm python"
-  end
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "playbook-arch-linux-vm.yaml"
   end
