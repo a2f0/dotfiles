@@ -56,6 +56,10 @@ jobs:
     - name: Install virtualbox
       run: |
         sudo apt install virtualbox
+    - name: Ruby version
+      run: |
+        ruby --version
+        which ruby
     - name: Run vagrant up
       run: |
         ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
