@@ -6,4 +6,4 @@
 
 - name: Perform cleanup
   ansible.builtin.command:
-    cmd: rm -rf /usr/bin/VBoxClient
+    cmd: rm -rf /usr/bin/VBoxClient /usr/bin/VBoxDRMClient
