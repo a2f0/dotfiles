@@ -4,6 +4,6 @@
     state: absent
     extra_args: --recursive
 
-- name: Find file owner
+- name: Perform cleanup
   ansible.builtin.command:
-    cmd: pacman -Qo /usr/bin/VBoxClient
+    cmd: rm -rf /usr/bin/VBoxClient
