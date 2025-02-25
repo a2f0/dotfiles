@@ -1,2 +1,3 @@
-- name: Reboot the machine with all defaults options
+- name: Reboot the machine
   reboot:
+    msg: "Rebooting the machine"
