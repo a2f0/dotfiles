@@ -23,12 +23,12 @@ fi
 
 if [ "$(uname)" = Darwin ]; then
     alias derived="rm -rf ~/Library/Developer/Xcode/DerivedData"
-    alias currentbranch="git branch --show-current | tr -d '\n' | pbcopy"
+    alias currentbranch="git branch --show-current | tee /dev/tty | tr -d '\n' | pbcopy"
     alias lsusb="system_profiler SPUSBDataType"
     alias md5sum="md5"
     alias resetwireless="sudo ifconfig en0 down;sudo ifconfig en0 up"
     alias lock='open -a /System/Library/Frameworks/ScreenSaver.framework/Versions/A/Resources/ScreenSaverEngine.app'
     # macos specific aliases
-    alias currentbranch="git branch --show-current | tr -d '\n' | pbcopy"
+    alias currentbranch="git branch --show-current | tee /dev/tty | tr -d '\n' | pbcopy"
     alias derived="rm -rf ~/Library/Developer/Xcode/DerivedData"
 fi
