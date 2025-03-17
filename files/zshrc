@@ -89,7 +89,7 @@ export IRCNAME="dps"
 # antigen, installed via curl
 source ~/install/bin/antigen.zsh
 antigen use oh-my-zsh
-antigen theme frontcube
+antigen theme agnoster
 antigen bundle vi-mode
 export NVM_AUTO_USE=true
 antigen bundle lukechilds/zsh-nvm
