@@ -106,8 +106,75 @@ for _, acc in ipairs(accounts) do
     messages:move_messages(account["Keep/Notifications/Apple"])
     messages = account["Keep/Notifications/Apple"]:is_older(30)
     messages:move_messages(account['[Gmail]/Trash'])
-end
 
+    -- From Me
+    messages = account["INBOX"]:contain_from('dansullivan@gmail.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('dan@thinkspan.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Zoom
+    messages = account["INBOX"]:match_subject('^Please join Zoom meeting in progress')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('no-reply@zoom.us')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Thinkspan
+    messages = account["INBOX"]:contain_from('postmaster@send.thinkspan.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Sentry
+    messages = account["INBOX"]:contain_from('noreply@md.getsentry.com')
+    messages:move_messages(account["Keep/Notifications/Sentry"])
+    messages = account["INBOX"]:contain_from('updates@sentry.io')
+    messages:move_messages(account["Keep/Notifications/Sentry"])
+    messages = account["INBOX"]:contain_from('learn@sentry.io')
+    messages:move_messages(account["Keep/Notifications/Sentry"])
+    messages = account["INBOX"]:contain_from('help@sentry.io')
+    messages:move_messages(account["Keep/Notifications/Sentry"])
+    messages = account["INBOX"]:contain_from('support@sentry.io')
+    messages:move_messages(account["Keep/Notifications/Sentry"])
+    messages = account["Keep/Notifications/Sentry"]:is_older(30)
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Twilio
+    messages = account["INBOX"]:contain_from('twilio.com')
+    messages:move_messages(account["Keep/Notifications/Twilio"])
+
+    -- Airtable
+    messages = account["INBOX"]:contain_from('airtable.com')
+    messages:move_messages(account["Keep/Notifications/Airtable"])
+
+    -- Slack
+    messages = account["INBOX"]:contain_from('slack.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('slackhq.com')
+    messages:move_messages(gmail['[Gmail]/Trash'])
+
+    -- OpenAI
+    messages = account["INBOX"]:contain_from('openai.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Notion
+    messages = account["INBOX"]:contain_from('notion.io')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Bitwarden
+    messages = account["INBOX"]:contain_from('bitwarden.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- MongoDB
+    messages = account["INBOX"]:contain_from('cloud-manager-support@mongodb.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- ClickUp
+    messages = account["INBOX"]:contain_from('notifications@tasks.clickup.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Stripe
+    messages = account["INBOX"]:contain_from('stripe.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+end
 
 --
 -- Thinkspan
@@ -119,6 +186,12 @@ messages:move_messages(thinkspan["Keep/Notifications/Atlassian"])
 messages = thinkspan["INBOX"]:contain_from('jira@thinkspan.atlassian.net')
 messages:move_messages(thinkspan["Keep/Notifications/Atlassian"])
 messages = thinkspan["Keep/Notifications/Atlassian"]:is_older(30)
+messages:move_messages(thinkspan['[Gmail]/Trash'])
+
+-- LiveContact
+messages = thinkspan["INBOX"]:contain_from('support@livecontact.ai')
+messages:move_messages(thinkspan['[Gmail]/Trash'])
+messages = thinkspan["INBOX"]:contain_from('support@livecontact.com')
 messages:move_messages(thinkspan['[Gmail]/Trash'])
 
 --
@@ -168,9 +241,7 @@ messages:move_messages(gmail["Keep/Notifications/Azure"])
 messages = gmail["INBOX"]:contain_from('BCBSIL_noreply@bcbsil.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Bitwarden
-messages = gmail["INBOX"]:contain_from('bitwarden.com')
-messages:move_messages(gmail["Keep/Notifications/Bitwarden"])
+
 
 -- Box
 messages = gmail["INBOX"]:contain_from('box.com')
@@ -336,17 +407,6 @@ messages:move_messages(gmail["Keep/Notifications/PayPal"])
 messages = gmail["INBOX"]:contain_from('email-safeco.com')
 messages:move_messages(gmail["Keep/Notifications/Safeco"])
 
--- Sentry
-messages = gmail["INBOX"]:contain_from('noreply@md.getsentry.com')
-messages:move_messages(gmail["Keep/Notifications/Sentry"])
-messages = gmail["INBOX"]:contain_from('updates@sentry.io')
-messages:move_messages(gmail["Keep/Notifications/Sentry"])
-messages = gmail["INBOX"]:contain_from('learn@sentry.io')
-messages:move_messages(gmail["Keep/Notifications/Sentry"])
-messages = gmail["INBOX"]:contain_from('help@sentry.io')
-messages:move_messages(gmail["Keep/Notifications/Sentry"])
-messages = gmail["Keep/Notifications/Sentry"]:is_older(30)
-messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Schwab
 messages = gmail["INBOX"]:contain_from('schwab.com')
@@ -380,19 +440,12 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('tzero.com')
 messages:move_messages(gmail["Keep/Notifications/tZERO"])
 
--- Slack
-messages = gmail["INBOX"]:contain_from('slack.com')
-messages:move_messages(gmail['[Gmail]/Trash'])
-messages = gmail["INBOX"]:contain_from('slackhq.com')
-messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Starbucks
 messages = gmail["INBOX"]:contain_from('starbucks.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Twilio
-messages = gmail["INBOX"]:contain_from('twilio.com')
-messages:move_messages(gmail["Keep/Notifications/Twilio"])
+
 
 -- Thinkspan
 messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspanstaging.com')
@@ -428,16 +481,7 @@ messages:move_messages(gmail["Keep/Notifications/Webull"])
 messages = gmail["INBOX"]:contain_from('noreply@workablemail.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Zoom
-messages = gmail["INBOX"]:match_subject('^Please join Zoom meeting in progress')
-messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
-messages:move_messages(gmail['[Gmail]/Trash'])
-
--- From Me
-messages = gmail["INBOX"]:contain_from('dansullivan@gmail.com')
-messages:move_messages(gmail['[Gmail]/Trash'])
-messages = gmail["INBOX"]:contain_from('dan@thinkspan.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
