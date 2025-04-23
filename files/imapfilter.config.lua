@@ -17,15 +17,54 @@ thinkspan = IMAP {
     ssl = "tls1"
 }
 
+accounts = {
+    {name = "gmail", account = gmail},
+    {name = "thinkspan", account = thinkspan}
+}
+
+-- Operations that should be completed for every account.
+for _, acc in ipairs(accounts) do
+    local account = acc.account
+    local account_name = acc.name
+
+    print("Processing filters for account: " .. account_name)
+
+    -- GitHub
+    messages = account["INBOX"]:contain_from("github.com")
+    messages:move_messages(account["Keep/Notifications/GitHub"])
+    messages = account["Keep/Notifications/GitHub"]:is_older(30)
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Heroku
+    messages = account["INBOX"]:contain_from('bot@notifications.heroku.com')
+    messages:move_messages(account["Keep/Notifications/Heroku"])
+    messages = account["Keep/Notifications/Heroku"]:is_older(30)
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('team.notifications@herokumanager.com')
+    messages:move_messages(account["Keep/Notifications/Heroku"])
+    messages = account["INBOX"]:contain_from('noreply@salesforce.com')
+    messages:move_messages(account["Keep/Notifications/Heroku"])
+    messages = account["INBOX"]:contain_from('noreply@heroku.com')
+    messages:move_messages(account["Keep/Notifications/Heroku"])
+
+    -- Atlassian
+    messages = account["INBOX"]:contain_from('am.atlassian.com')
+    messages:move_messages(account["Keep/Notifications/Atlassian"])
+    messages = account["INBOX"]:contain_from('info@e.atlassian.com')
+    messages:move_messages(account["Keep/Notifications/Atlassian"])
+    messages = account["Keep/Notifications/Atlassian"]:is_older(30)
+    messages:move_messages(account['[Gmail]/Trash'])
+end
+
 mailboxes, folders = gmail:list_all('*')
 print("=== mailboxes")
 for _, m in ipairs(mailboxes) do print(m) end
 print("=== folders")
 for _, f in ipairs(folders) do print(f) end
 
--- Thinkspan
-messages = thinkspan["INBOX"]:select_all()
-messages:move_messages(gmail["INBOX"])
+-- Move work email to personal inbox.
+-- messages = thinkspan["INBOX"]:select_all()
+-- messages:move_messages(gmail["INBOX"])
 
 -- Alumni
 messages = gmail["INBOX"]:contain_from("masters-alumni@cs.uchicago.edu")
@@ -55,13 +94,6 @@ messages:move_messages(gmail["Keep/Notifications/Apple"])
 messages = gmail["INBOX"]:contain_from('developer@insideapple.apple.com')
 messages:move_messages(gmail["Keep/Notifications/Apple"])
 
--- Atlassian
-messages = gmail["INBOX"]:contain_from('am.atlassian.com')
-messages:move_messages(gmail["Keep/Notifications/Atlassian"])
-messages = gmail["INBOX"]:contain_from('info@e.atlassian.com')
-messages:move_messages(gmail["Keep/Notifications/Atlassian"])
-messages = gmail["Keep/Notifications/Atlassian"]:is_older(30)
-messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Axos
 messages = gmail["INBOX"]:contain_from('axosbank.com')
@@ -183,11 +215,6 @@ messages:move_messages(gmail["Keep/Notifications/GitHub"])
 messages = gmail["INBOX"]:contain_from("no-reply@em.gemini.com")
 messages:move_messages(gmail["Keep/Notifications/GitHub"])
 
--- GitHub
-messages = gmail["INBOX"]:contain_from("github.com")
-messages:move_messages(gmail["Keep/Notifications/GitHub"])
-messages = gmail["Keep/Notifications/GitHub"]:is_older(30)
-messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Google
 messages = gmail["INBOX"]:contain_from('payments-noreply@google.com')
@@ -233,17 +260,6 @@ messages:move_messages(gmail["Keep/Notifications/Google"])
 messages = gmail["INBOX"]:contain_from('homedepot.com')
 messages:move_messages(gmail["Keep/Notifications/Home Depot"])
 
--- Heroku
-messages = gmail["INBOX"]:contain_from('bot@notifications.heroku.com')
-messages:move_messages(gmail["Keep/Notifications/Heroku"])
-messages = gmail["Keep/Notifications/Heroku"]:is_older(30)
-messages:move_messages(gmail['[Gmail]/Trash'])
-messages = gmail["INBOX"]:contain_from('team.notifications@herokumanager.com')
-messages:move_messages(gmail["Keep/Notifications/Heroku"])
-messages = gmail["INBOX"]:contain_from('noreply@salesforce.com')
-messages:move_messages(gmail["Keep/Notifications/Heroku"])
-messages = gmail["INBOX"]:contain_from('noreply@heroku.com')
-messages:move_messages(gmail["Keep/Notifications/Heroku"])
 
 -- Intuit
 messages = gmail["INBOX"]:contain_from('intuit@notifications.intuit.com')
