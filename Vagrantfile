@@ -14,7 +14,6 @@ Vagrant.configure("2") do |config|
     sudo pacman -Sy archlinux-keyring --noconfirm
     sudo pacman-key --refresh-keys
     sudo pacman -Sy
-    # Then continue with your package installations
     sudo pacman -S --noconfirm python
   SHELL
   config.vm.provision "ansible" do |ansible|
