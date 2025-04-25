@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "archlinux/archlinux"
+  config.vm.box = "generic/arch"
   config.vm.provider 'virtualbox' do |v|
     v.gui = false
     v.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
