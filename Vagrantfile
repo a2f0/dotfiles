@@ -11,6 +11,8 @@ Vagrant.configure("2") do |config|
     v.cpus = 2
   end
   config.vm.provision "shell", inline: <<-SHELL
+    sudo pacman-key --init
+    sudo pacman-key --populate archlinux
     sudo pacman -Sy archlinux-keyring --noconfirm
     sudo pacman-key --refresh-keys
     sudo pacman -Sy
