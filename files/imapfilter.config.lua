@@ -98,11 +98,19 @@ for _, acc in ipairs(accounts) do
     -- Facebook
     messages = account["INBOX"]:contain_from('advertise-noreply@support.facebook.com')
     messages:move_messages(account["Keep/Notifications/Facebook"])
+    messages = account["INBOX"]:contain_from('facebookmail.com')
+    messages:move_messages(account["Keep/Notifications/Facebook"])
+    messages = account["INBOX"]:contain_from('developers.facebook.com')
+    messages:move_messages(account["Keep/Notifications/Facebook"])
 
     -- Apple
     messages = account["INBOX"]:contain_from('no_reply@email.apple.com')
     messages:move_messages(account["Keep/Notifications/Apple"])
     messages = account["INBOX"]:contain_from('developer@insideapple.apple.com')
+    messages:move_messages(account["Keep/Notifications/Apple"])
+    messages = account["INBOX"]:contain_from('apple_ads@insideapple.apple.com')
+    messages:move_messages(account["Keep/Notifications/Apple"])
+    messages = account["INBOX"]:contain_from('searchads@insideapple.apple.com')
     messages:move_messages(account["Keep/Notifications/Apple"])
     messages = account["Keep/Notifications/Apple"]:is_older(30)
     messages:move_messages(account['[Gmail]/Trash'])
@@ -166,6 +174,8 @@ for _, acc in ipairs(accounts) do
     -- MongoDB
     messages = account["INBOX"]:contain_from('cloud-manager-support@mongodb.com')
     messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('mongodb@alerts.mongodb.com')
+    messages:move_messages(account['[Gmail]/Trash'])
 
     -- ClickUp
     messages = account["INBOX"]:contain_from('notifications@tasks.clickup.com')
@@ -174,6 +184,21 @@ for _, acc in ipairs(accounts) do
     -- Stripe
     messages = account["INBOX"]:contain_from('stripe.com')
     messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Hubspot
+    messages = account["INBOX"]:contain_from('hubspot.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- SunIP
+    messages = account["INBOX"]:contain_from('sunip.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages:move_messages(account["Keep/Notifications/SunIP"])
+
+    -- Telynx
+    messages = account["INBOX"]:contain_from('telnyx.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages:move_messages(account["Keep/Notifications/Telynx"])
+
 end
 
 --
@@ -189,6 +214,12 @@ messages = thinkspan["Keep/Notifications/Atlassian"]:is_older(30)
 messages:move_messages(thinkspan['[Gmail]/Trash'])
 
 -- LiveContact
+messages = thinkspan["INBOX"]:contain_from('support@livecontact.ai')
+messages:move_messages(thinkspan['[Gmail]/Trash'])
+messages = thinkspan["INBOX"]:contain_from('support@livecontact.com')
+messages:move_messages(thinkspan['[Gmail]/Trash'])
+
+-- Invoices
 messages = thinkspan["INBOX"]:contain_from('support@livecontact.ai')
 messages:move_messages(thinkspan['[Gmail]/Trash'])
 messages = thinkspan["INBOX"]:contain_from('support@livecontact.com')
