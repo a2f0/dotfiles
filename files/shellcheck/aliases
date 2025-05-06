@@ -11,7 +11,7 @@ alias showvminfo="vboxmanage metrics list"
 alias branches="git branches"
 alias vi="nvim"
 alias vim="nvim"
-alias adbize="adb reverse tcp:3000 tcp:3000"
+alias adbize="adb devices | tail -n +2 | cut -f1 | xargs -I {} adb -s {} reverse tcp:3000 tcp:3000"
 
 if [ "$(uname -n)" = x1 ]; then
     # copy whatever was selected into the actual clipboard
