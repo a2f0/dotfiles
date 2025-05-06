@@ -65,7 +65,7 @@ jobs:
         cd vagrant-vbguest
         gem build vagrant-vbguest.gemspec
         vagrant plugin install vagrant-vbguest-0.32.1.gem
-    - name: Run vagrant up
-      run: |
-        ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
-        vagrant up
+    # - name: Run vagrant up
+    #   run: |
+    #     ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
+    #     vagrant up
