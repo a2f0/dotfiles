@@ -1,5 +1,5 @@
 - name: Receive the key
-  ansible.builtin.command: pacman-key --recv-keys F05E8C12131AEB5E
+  ansible.builtin.command: pacman-key --recv-keys F05E8C12131AEB5E --keyserver hkps://keyserver.ubuntu.com
 
 - name: Locally sign the key
   ansible.builtin.command: pacman-key --lsign-key F05E8C12131AEB5E
@@ -11,4 +11,4 @@
     update_cache: yes
 
 - name: reflector - run
-  ansible.builtin.command:  reflector --verbose --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
+  ansible.builtin.command: reflector --verbose --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
