@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell",
-    inline: "sudo pacman-key --init && sudo pacman-key --populate archlinux"
+    inline: "sudo pacman-key --init && sudo pacman-key --populate archlinux && sudo pacman-key --refresh-keys"
 
   config.vm.provision "shell",
     inline: "sudo pacman -S --noconfirm python"
