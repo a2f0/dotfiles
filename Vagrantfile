@@ -15,8 +15,6 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell",
     inline: "sudo pacman-key --init && sudo pacman-key --populate archlinux"
 
-  config.vm.provision "shell",
-    inline: "vagrant plugin install vagrant-vbguest"
 
   config.vm.provision "shell",
     inline: "sudo pacman -S --noconfirm python"
