@@ -12,9 +12,6 @@ Vagrant.configure("2") do |config|
     v.cpus = 2
   end
 
-  config.vbguest.auto_update = false
-  config.vbguest.no_remote = false
-
   config.vm.provision "shell",
     inline: "sudo pacman-key --init && sudo pacman-key --populate archlinux"
 
