@@ -1,7 +1,8 @@
-- name: reflector - install necessary keys
-  ansible.builtin.command:  |
-    pacman-key --recv-keys F05E8C12131AEB5E
-    pacman-key --lsign-key F05E8C12131AEB5E
+- name: Receive the key
+  ansible.builtin.command: pacman-key --recv-keys F05E8C12131AEB5E
+
+- name: Locally sign the key
+  ansible.builtin.command: pacman-key --lsign-key F05E8C12131AEB5E
 
 - name: reflector - install
   community.general.pacman:
