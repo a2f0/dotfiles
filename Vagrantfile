@@ -12,15 +12,16 @@ Vagrant.configure("2") do |config|
     v.cpus = 2
   end
   # Configure vbguest to run after the shell provisioner
-  config.vbguest.auto_update = true
+  config.vbguest.auto_update = false
   # Allows downloading the Guest Additions ISO if needed.
   config.vbguest.no_remote = false
 
   config.vm.provision "shell",
     inline: "sudo pacman-key --init && sudo pacman-key --populate archlinux"
 
-  # Ensure vbguest runs as a provisioner after updating the keyring
-  config.vm.provision :vbguest
+  config.vm.provision "shell",
+    inline: "vagrant plugin install vagrant-vbguest"
+
 
   # config.vm.provision "shell",
   #   inline: "sudo pacman -S --noconfirm python"
