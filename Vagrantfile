@@ -11,7 +11,11 @@ Vagrant.configure("2") do |config|
     v.cpus = 2
   end
   config.vm.provision "shell",
-      inline: "sudo pacman -S --noconfirm python"
+    inline: "sudo pacman-key --init && sudo pacman-key --populate archlinux"
+  end
+  config.vm.provision "shell",
+    inline: "sudo pacman -S --noconfirm python"
+  end
   config.vm.provision "ansible" do |ansible|
       ansible.playbook = "playbook-arch-linux-vm.yaml"
   end
