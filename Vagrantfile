@@ -12,16 +12,15 @@ Vagrant.configure("2") do |config|
     v.cpus = 2
   end
 
-
   config.vm.provision "shell",
     inline: "sudo pacman-key --init && sudo pacman-key --populate archlinux"
 
   config.vm.provision "shell",
     inline: "vagrant plugin install vagrant-vbguest"
 
-  # Manual provisioner
+  # Manual provisioner for vbguest dependencies
   config.vm.provision "shell",
-    sudo pacman -S --noconfirm gcc make dkms linux-headers
+    inline: "sudo pacman -S --noconfirm gcc make dkms linux-headers"
 
   # vbguest provisioner with fallback
   if Vagrant.has_plugin?("vagrant-vbguest")
