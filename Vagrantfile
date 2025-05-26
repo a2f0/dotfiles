@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell",
-    inline: "sudo pacman -S archlinux-keyring && sudo pacman-key --init && sudo pacman-key --populate archlinux && sudo pacman-key --refresh-keys"
+    inline: "echo 'auto-key-locate keyserver' >> ~/.gnupg/gpg.conf && sudo pacman-key --init && sudo pacman-key --populate archlinux && sudo pacman-key --refresh-keys"
 
   config.vm.provision "shell",
     inline: "sudo pacman -S --noconfirm python"
