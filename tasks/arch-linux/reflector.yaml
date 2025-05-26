@@ -1,5 +1,5 @@
 - name: Receive the key
-  ansible.builtin.command: pacman-key --recv-keys F05E8C12131AEB5E --keyserver hkps://keyserver.ubuntu.com
+  ansible.builtin.command: gpg --recv-keys --keyserver hkps://keyserver.ubuntu.com FBA220DFC880C036
 
 - name: Locally sign the key
   ansible.builtin.command: pacman-key --lsign-key F05E8C12131AEB5E
