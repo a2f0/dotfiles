@@ -1,6 +1,3 @@
-- name: Update package database and upgrade all packages
-  ansible.builtin.command: pacman -Syyu --noconfirm
-
 - name: Receive the key
   ansible.builtin.command: gpg --debug-level 9 --recv-keys --keyserver hkps://keyserver.ubuntu.com FBA220DFC880C036
 
