@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell",
-    inline: "sudo pacman -Sy archlinux-keyring --no-confirm && sudo pacman -Su"
+    inline: "sudo pacman -Sy archlinux-keyring --noconfirm && sudo pacman -Su"
 
   config.vm.provision "shell",
     inline: "sudo pacman -S --noconfirm python"
