@@ -13,7 +13,13 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell",
-    inline: "sudo pacman -Syu --noconfirm"
+    inline: "sudo pacman-key --recv-keys F05E8C12131AEB5E"
+
+  config.vm.provision "shell",
+    inline: "sudo pacman-key --lsign-key F05E8C12131AEB5E"
+
+  config.vm.provision "shell",
+    inline: "sudo pacman -Syu"
 
   config.vm.provision "shell",
     inline: "sudo pacman -S --noconfirm python"
