@@ -1,5 +1,9 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "generic/arch"
+  # https://stackoverflow.com/questions/37556968/vagrant-disable-guest-additions
+  if Vagrant.has_plugin?("vagrant-vbguest")
+    config.vbguest.auto_update = false
+  end
   config.vm.provider 'virtualbox' do |v|
     v.gui = false
     v.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
