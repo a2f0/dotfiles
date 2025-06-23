@@ -78,6 +78,9 @@ export AWS_PAGER="" # disable the use of a pager
 # custom compiled software (./configure --prefix=~/install, export PREFIX=~/install, etc.)
 export PATH=$PATH:~/install/bin
 
+# zed, daedalus
+export PATH=$HOME/.local/bin:$PATH
+
 # dotfiles scripts
 export PATH=$PATH:$HOME/dotfiles/files/shellcheck
 
