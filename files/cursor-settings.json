@@ -35,7 +35,7 @@
     },
     "window.openFoldersInNewWindow": "off",
     "window.restoreWindows": "none",
-    "window.titleBarStyle": "native",
+    "window.titleBarStyle": "custom",
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook"
     },
