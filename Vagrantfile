@@ -26,6 +26,4 @@ Vagrant.configure("2") do |config|
     # ansible.raw_arguments = ['-vvv']
   end
   config.vm.synced_folder ".", "/vagrant", type: "rsync"
-  config.vm.provision "shell",
-    inline: "sudo pacman -S --noconfirm virtualbox-guest-utils"
 end
