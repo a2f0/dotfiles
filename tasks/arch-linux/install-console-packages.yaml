@@ -15,7 +15,6 @@
     - dmenu
     - dmidecode
     - dmraid
-    - dstat
     - epic4
     - flex
     - git
@@ -26,7 +25,6 @@
     - imagemagick
     - iotop
     - iw
-    - jdk-openjdk
     - jq
     - jre-openjdk
     - keepass

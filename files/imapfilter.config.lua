@@ -17,15 +17,223 @@ thinkspan = IMAP {
     ssl = "tls1"
 }
 
+accounts = {
+    {name = "gmail", account = gmail},
+    {name = "thinkspan", account = thinkspan}
+}
+
+-- Operations that should be completed for every account.
+for _, acc in ipairs(accounts) do
+    local account = acc.account
+    local account_name = acc.name
+
+    print("Processing filters for account: " .. account_name)
+
+    -- GitHub
+    messages = account["INBOX"]:contain_from("github.com")
+    messages:move_messages(account["Keep/Notifications/GitHub"])
+    messages = account["Keep/Notifications/GitHub"]:is_older(30)
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Heroku
+    messages = account["INBOX"]:contain_from('bot@notifications.heroku.com')
+    messages:move_messages(account["Keep/Notifications/Heroku"])
+    messages = account["Keep/Notifications/Heroku"]:is_older(30)
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('team.notifications@herokumanager.com')
+    messages:move_messages(account["Keep/Notifications/Heroku"])
+    messages = account["INBOX"]:contain_from('noreply@salesforce.com')
+    messages:move_messages(account["Keep/Notifications/Heroku"])
+    messages = account["INBOX"]:contain_from('noreply@heroku.com')
+    messages:move_messages(account["Keep/Notifications/Heroku"])
+
+    -- Atlassian
+    messages = account["INBOX"]:contain_from('am.atlassian.com')
+    messages:move_messages(account["Keep/Notifications/Atlassian"])
+    messages = account["INBOX"]:contain_from('info@e.atlassian.com')
+    messages:move_messages(account["Keep/Notifications/Atlassian"])
+    messages = account["Keep/Notifications/Atlassian"]:is_older(30)
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Google
+    messages = account["INBOX"]:contain_from('payments-noreply@google.com')
+    messages:move_messages(account["Keep/Notifications/Google"])
+    messages = account["INBOX"]:contain_from('firebase-noreply@google.com')
+    messages:move_messages(account["Keep/Notifications/Google"])
+    messages = account["INBOX"]:contain_from('noreply-local-guides@google.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('workspace-noreply@google.com')
+    messages:move_messages(account["Keep/Notifications/Google"])
+    messages = account["INBOX"]:contain_from('voice-noreply@google.com')
+    messages:move_messages(account["[Gmail]/Trash"])
+    messages = account["INBOX"]:contain_from('no-reply@accounts.google.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('googledev-noreply@google.com')
+    messages:move_messages(account["Keep/Notifications/Google"])
+    messages = account["INBOX"]:contain_from('googleplay-developer-support@google.com')
+    messages:move_messages(account["Keep/Notifications/Google"])
+    messages = account["INBOX"]:contain_from('noreply@google.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('drive-shares-dm-noreply@google.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('comments-noreply@docs.google.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('CloudPlatform-noreply@google.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('noreply-play-developer-console@google.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('calendar-noreply@google.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_subject('^Invitation: '):match_body('https://calendar.google.com/calendar')
+    messages:move_messages(account["Keep/Notifications/Google"])
+    messages = account["INBOX"]:contain_subject('^Updated invitation:'):match_body('https://calendar.google.com/calendar')
+    messages:move_messages(account["Keep/Notifications/Google"])
+    messages = account["INBOX"]:contain_subject('^Canceled event:'):match_body('https://calendar.google.com/calendar')
+    messages:move_messages(account["Keep/Notifications/Google"])
+    messages = account["INBOX"]:contain_subject('^Canceled event with note:'):match_body('https://calendar.google.com/calendar')
+    messages:move_messages(account["Keep/Notifications/Google"])
+    messages = account["INBOX"]:contain_subject('^Accepted: '):match_body('https://calendar.google.com/calendar')
+    messages:move_messages(account["Keep/Notifications/Google"])
+
+    -- Facebook
+    messages = account["INBOX"]:contain_from('advertise-noreply@support.facebook.com')
+    messages:move_messages(account["Keep/Notifications/Facebook"])
+    messages = account["INBOX"]:contain_from('facebookmail.com')
+    messages:move_messages(account["Keep/Notifications/Facebook"])
+    messages = account["INBOX"]:contain_from('developers.facebook.com')
+    messages:move_messages(account["Keep/Notifications/Facebook"])
+
+    -- Apple
+    messages = account["INBOX"]:contain_from('no_reply@email.apple.com')
+    messages:move_messages(account["Keep/Notifications/Apple"])
+    messages = account["INBOX"]:contain_from('developer@insideapple.apple.com')
+    messages:move_messages(account["Keep/Notifications/Apple"])
+    messages = account["INBOX"]:contain_from('apple_ads@insideapple.apple.com')
+    messages:move_messages(account["Keep/Notifications/Apple"])
+    messages = account["INBOX"]:contain_from('searchads@insideapple.apple.com')
+    messages:move_messages(account["Keep/Notifications/Apple"])
+    messages = account["Keep/Notifications/Apple"]:is_older(30)
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- From Me
+    messages = account["INBOX"]:contain_from('dansullivan@gmail.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('dan@thinkspan.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Zoom
+    messages = account["INBOX"]:match_subject('^Please join Zoom meeting in progress')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('no-reply@zoom.us')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Thinkspan
+    messages = account["INBOX"]:contain_from('postmaster@send.thinkspan.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Sentry
+    messages = account["INBOX"]:contain_from('noreply@md.getsentry.com')
+    messages:move_messages(account["Keep/Notifications/Sentry"])
+    messages = account["INBOX"]:contain_from('updates@sentry.io')
+    messages:move_messages(account["Keep/Notifications/Sentry"])
+    messages = account["INBOX"]:contain_from('learn@sentry.io')
+    messages:move_messages(account["Keep/Notifications/Sentry"])
+    messages = account["INBOX"]:contain_from('help@sentry.io')
+    messages:move_messages(account["Keep/Notifications/Sentry"])
+    messages = account["INBOX"]:contain_from('support@sentry.io')
+    messages:move_messages(account["Keep/Notifications/Sentry"])
+    messages = account["Keep/Notifications/Sentry"]:is_older(30)
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Twilio
+    messages = account["INBOX"]:contain_from('twilio.com')
+    messages:move_messages(account["Keep/Notifications/Twilio"])
+
+    -- Airtable
+    messages = account["INBOX"]:contain_from('airtable.com')
+    messages:move_messages(account["Keep/Notifications/Airtable"])
+
+    -- Slack
+    messages = account["INBOX"]:contain_from('slack.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('slackhq.com')
+    messages:move_messages(gmail['[Gmail]/Trash'])
+
+    -- OpenAI
+    messages = account["INBOX"]:contain_from('openai.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Notion
+    messages = account["INBOX"]:contain_from('notion.io')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Bitwarden
+    messages = account["INBOX"]:contain_from('bitwarden.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- MongoDB
+    messages = account["INBOX"]:contain_from('cloud-manager-support@mongodb.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages = account["INBOX"]:contain_from('mongodb@alerts.mongodb.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- ClickUp
+    messages = account["INBOX"]:contain_from('notifications@tasks.clickup.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Stripe
+    messages = account["INBOX"]:contain_from('stripe.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- Hubspot
+    messages = account["INBOX"]:contain_from('hubspot.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+
+    -- SunIP
+    messages = account["INBOX"]:contain_from('sunip.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages:move_messages(account["Keep/Notifications/SunIP"])
+
+    -- Telynx
+    messages = account["INBOX"]:contain_from('telnyx.com')
+    messages:move_messages(account['[Gmail]/Trash'])
+    messages:move_messages(account["Keep/Notifications/Telynx"])
+
+end
+
+--
+-- Thinkspan
+--
+
+-- Atlassian
+messages = thinkspan["INBOX"]:contain_from('confluence@thinkspan.atlassian.net')
+messages:move_messages(thinkspan["Keep/Notifications/Atlassian"])
+messages = thinkspan["INBOX"]:contain_from('jira@thinkspan.atlassian.net')
+messages:move_messages(thinkspan["Keep/Notifications/Atlassian"])
+messages = thinkspan["Keep/Notifications/Atlassian"]:is_older(30)
+messages:move_messages(thinkspan['[Gmail]/Trash'])
+
+-- LiveContact
+messages = thinkspan["INBOX"]:contain_from('support@livecontact.ai')
+messages:move_messages(thinkspan['[Gmail]/Trash'])
+messages = thinkspan["INBOX"]:contain_from('support@livecontact.com')
+messages:move_messages(thinkspan['[Gmail]/Trash'])
+
+-- Invoices
+messages = thinkspan["INBOX"]:contain_from('support@livecontact.ai')
+messages:move_messages(thinkspan['[Gmail]/Trash'])
+messages = thinkspan["INBOX"]:contain_from('support@livecontact.com')
+messages:move_messages(thinkspan['[Gmail]/Trash'])
+
+--
+-- Personal
+--
 mailboxes, folders = gmail:list_all('*')
 print("=== mailboxes")
 for _, m in ipairs(mailboxes) do print(m) end
 print("=== folders")
 for _, f in ipairs(folders) do print(f) end
 
--- Thinkspan
-messages = thinkspan["INBOX"]:select_all()
-messages:move_messages(gmail["INBOX"])
 
 -- Alumni
 messages = gmail["INBOX"]:contain_from("masters-alumni@cs.uchicago.edu")
@@ -49,19 +257,8 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('americanexpress.com')
 messages:move_messages(gmail["Keep/Notifications/American Express"])
 
--- Apple
-messages = gmail["INBOX"]:contain_from('no_reply@email.apple.com')
-messages:move_messages(gmail["Keep/Notifications/Apple"])
-messages = gmail["INBOX"]:contain_from('developer@insideapple.apple.com')
-messages:move_messages(gmail["Keep/Notifications/Apple"])
 
--- Atlassian
-messages = gmail["INBOX"]:contain_from('am.atlassian.com')
-messages:move_messages(gmail["Keep/Notifications/Atlassian"])
-messages = gmail["INBOX"]:contain_from('info@e.atlassian.com')
-messages:move_messages(gmail["Keep/Notifications/Atlassian"])
-messages = gmail["Keep/Notifications/Atlassian"]:is_older(30)
-messages:move_messages(gmail['[Gmail]/Trash'])
+
 
 -- Axos
 messages = gmail["INBOX"]:contain_from('axosbank.com')
@@ -75,9 +272,7 @@ messages:move_messages(gmail["Keep/Notifications/Azure"])
 messages = gmail["INBOX"]:contain_from('BCBSIL_noreply@bcbsil.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Bitwarden
-messages = gmail["INBOX"]:contain_from('bitwarden.com')
-messages:move_messages(gmail["Keep/Notifications/Bitwarden"])
+
 
 -- Box
 messages = gmail["INBOX"]:contain_from('box.com')
@@ -183,67 +378,11 @@ messages:move_messages(gmail["Keep/Notifications/GitHub"])
 messages = gmail["INBOX"]:contain_from("no-reply@em.gemini.com")
 messages:move_messages(gmail["Keep/Notifications/GitHub"])
 
--- GitHub
-messages = gmail["INBOX"]:contain_from("github.com")
-messages:move_messages(gmail["Keep/Notifications/GitHub"])
-messages = gmail["Keep/Notifications/GitHub"]:is_older(30)
-messages:move_messages(gmail['[Gmail]/Trash'])
-
--- Google
-messages = gmail["INBOX"]:contain_from('payments-noreply@google.com')
-messages:move_messages(gmail["Keep/Notifications/Google"])
-messages = gmail["INBOX"]:contain_from('firebase-noreply@google.com')
-messages:move_messages(gmail["Keep/Notifications/Google"])
-messages = gmail["INBOX"]:contain_from('noreply-local-guides@google.com')
-messages:move_messages(gmail['[Gmail]/Trash'])
-messages = gmail["INBOX"]:contain_from('workspace-noreply@google.com')
-messages:move_messages(gmail["Keep/Notifications/Google"])
-messages = gmail["INBOX"]:contain_from('voice-noreply@google.com')
-messages:move_messages(gmail["[Gmail]/Trash"])
-messages = gmail["INBOX"]:contain_from('no-reply@accounts.google.com')
-messages:move_messages(gmail["[Gmail]/Trash"])
-messages = gmail["INBOX"]:contain_from('googledev-noreply@google.com')
-messages:move_messages(gmail["Keep/Notifications/Google"])
-messages = gmail["INBOX"]:contain_from('googleplay-developer-support@google.com')
-messages:move_messages(gmail["Keep/Notifications/Google"])
-messages = gmail["INBOX"]:contain_from('noreply@google.com')
-messages:move_messages(gmail["[Gmail]/Trash"])
-messages = gmail["INBOX"]:contain_from('drive-shares-dm-noreply@google.com')
-messages:move_messages(gmail["[Gmail]/Trash"])
-messages = gmail["INBOX"]:contain_from('comments-noreply@docs.google.com')
-messages:move_messages(gmail["[Gmail]/Trash"])
-messages = gmail["INBOX"]:contain_from('CloudPlatform-noreply@google.com')
-messages:move_messages(gmail["[Gmail]/Trash"])
-messages = gmail["INBOX"]:contain_from('noreply-play-developer-console@google.com')
-messages:move_messages(gmail["[Gmail]/Trash"])
-messages = gmail["INBOX"]:contain_from('calendar-noreply@google.com')
-messages:move_messages(gmail["[Gmail]/Trash"])
-messages = gmail["INBOX"]:contain_subject('^Invitation: '):match_body('https://calendar.google.com/calendar')
-messages:move_messages(gmail["Keep/Notifications/Google"])
-messages = gmail["INBOX"]:contain_subject('^Updated invitation:'):match_body('https://calendar.google.com/calendar')
-messages:move_messages(gmail["Keep/Notifications/Google"])
-messages = gmail["INBOX"]:contain_subject('^Canceled event:'):match_body('https://calendar.google.com/calendar')
-messages:move_messages(gmail["Keep/Notifications/Google"])
-messages = gmail["INBOX"]:contain_subject('^Canceled event with note:'):match_body('https://calendar.google.com/calendar')
-messages:move_messages(gmail["Keep/Notifications/Google"])
-messages = gmail["INBOX"]:contain_subject('^Accepted: '):match_body('https://calendar.google.com/calendar')
-messages:move_messages(gmail["Keep/Notifications/Google"])
 
 -- Home Depot
 messages = gmail["INBOX"]:contain_from('homedepot.com')
 messages:move_messages(gmail["Keep/Notifications/Home Depot"])
 
--- Heroku
-messages = gmail["INBOX"]:contain_from('bot@notifications.heroku.com')
-messages:move_messages(gmail["Keep/Notifications/Heroku"])
-messages = gmail["Keep/Notifications/Heroku"]:is_older(30)
-messages:move_messages(gmail['[Gmail]/Trash'])
-messages = gmail["INBOX"]:contain_from('team.notifications@herokumanager.com')
-messages:move_messages(gmail["Keep/Notifications/Heroku"])
-messages = gmail["INBOX"]:contain_from('noreply@salesforce.com')
-messages:move_messages(gmail["Keep/Notifications/Heroku"])
-messages = gmail["INBOX"]:contain_from('noreply@heroku.com')
-messages:move_messages(gmail["Keep/Notifications/Heroku"])
 
 -- Intuit
 messages = gmail["INBOX"]:contain_from('intuit@notifications.intuit.com')
@@ -299,17 +438,6 @@ messages:move_messages(gmail["Keep/Notifications/PayPal"])
 messages = gmail["INBOX"]:contain_from('email-safeco.com')
 messages:move_messages(gmail["Keep/Notifications/Safeco"])
 
--- Sentry
-messages = gmail["INBOX"]:contain_from('noreply@md.getsentry.com')
-messages:move_messages(gmail["Keep/Notifications/Sentry"])
-messages = gmail["INBOX"]:contain_from('updates@sentry.io')
-messages:move_messages(gmail["Keep/Notifications/Sentry"])
-messages = gmail["INBOX"]:contain_from('learn@sentry.io')
-messages:move_messages(gmail["Keep/Notifications/Sentry"])
-messages = gmail["INBOX"]:contain_from('help@sentry.io')
-messages:move_messages(gmail["Keep/Notifications/Sentry"])
-messages = gmail["Keep/Notifications/Sentry"]:is_older(30)
-messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Schwab
 messages = gmail["INBOX"]:contain_from('schwab.com')
@@ -343,19 +471,12 @@ messages:move_messages(gmail['[Gmail]/Trash'])
 messages = gmail["INBOX"]:contain_from('tzero.com')
 messages:move_messages(gmail["Keep/Notifications/tZERO"])
 
--- Slack
-messages = gmail["INBOX"]:contain_from('slack.com')
-messages:move_messages(gmail['[Gmail]/Trash'])
-messages = gmail["INBOX"]:contain_from('slackhq.com')
-messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Starbucks
 messages = gmail["INBOX"]:contain_from('starbucks.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Twilio
-messages = gmail["INBOX"]:contain_from('twilio.com')
-messages:move_messages(gmail["Keep/Notifications/Twilio"])
+
 
 -- Thinkspan
 messages = gmail["INBOX"]:contain_from('postmaster@send.thinkspanstaging.com')
@@ -391,16 +512,7 @@ messages:move_messages(gmail["Keep/Notifications/Webull"])
 messages = gmail["INBOX"]:contain_from('noreply@workablemail.com')
 messages:move_messages(gmail['[Gmail]/Trash'])
 
--- Zoom
-messages = gmail["INBOX"]:match_subject('^Please join Zoom meeting in progress')
-messages:move_messages(gmail['[Gmail]/Trash'])
 
 -- Sent
 messages = gmail["[Gmail]/Sent Mail"]:is_older(1095)
-messages:move_messages(gmail['[Gmail]/Trash'])
-
--- From Me
-messages = gmail["INBOX"]:contain_from('dansullivan@gmail.com')
-messages:move_messages(gmail['[Gmail]/Trash'])
-messages = gmail["INBOX"]:contain_from('dan@thinkspan.com')
 messages:move_messages(gmail['[Gmail]/Trash'])

@@ -221,3 +221,10 @@
     dest: ~/.tmux.conf
     state: link
     force: yes
+
+- name: ~/.npmrc
+  file:
+    src: "{{dotfiles_dir}}/files/npmrc"
+    dest: ~/.npmrc
+    state: link
+    force: yes
