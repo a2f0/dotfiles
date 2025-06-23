@@ -12,7 +12,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: '3.13'
         architecture: 'x64'
     - name: install shellcheck
       run: brew install shellcheck
@@ -35,7 +35,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.11'
+        python-version: '3.13'
         architecture: 'x64'
     - name: install and configure python dependencies
       run: pip install -r ./requirements.txt
@@ -65,7 +65,7 @@ jobs:
         cd vagrant-vbguest
         gem build vagrant-vbguest.gemspec
         vagrant plugin install vagrant-vbguest-0.32.1.gem
-    # - name: Run vagrant up
-    #   run: |
-    #     ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
-    #     vagrant up
+    - name: Run vagrant up
+      run: |
+        ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
+        vagrant up

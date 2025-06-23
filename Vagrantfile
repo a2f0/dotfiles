@@ -1,5 +1,9 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "archlinux/archlinux"
+  config.vm.box = "generic/arch"
+  # https://stackoverflow.com/questions/37556968/vagrant-disable-guest-additions
+  if Vagrant.has_plugin?("vagrant-vbguest")
+    config.vbguest.auto_update = false
+  end
   config.vm.provider 'virtualbox' do |v|
     v.gui = false
     v.customize ["modifyvm", :id, "--graphicscontroller", "vmsvga"]
@@ -10,6 +14,8 @@ Vagrant.configure("2") do |config|
     v.memory = 8192
     v.cpus = 2
   end
+  config.vm.provision "shell",
+    inline: "sudo pacman -Syy archlinux-keyring --noconfirm"
   config.vm.provision "shell",
     inline: "sudo pacman -S --noconfirm python"
   config.vm.provision "ansible" do |ansible|
