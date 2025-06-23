@@ -27,19 +27,45 @@ jobs:
           SKIP: no-commit-to-branch
     - name: Run ansible MacOS
       run: ansible-playbook -i inventory.yaml playbook-macos.yaml -l 127.0.0.1
-    # vagrant unavailable on macos-latest
-    # https://stackoverflow.com/questions/66261101/using-vagrant-on-github-actions-ideally-incl-virtualbox/66261102?noredirect=1#comment123531117_66261102
+  code-quality-linux:
+    runs-on: ubuntu-latest
+    continue-on-error: false
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        architecture: 'x64'
+    - name: install and configure python dependencies
+      run: pip install -r ./requirements.txt
+    - name: Run pre-commit
+      run: |
+        pre-commit install
+        pre-commit autoupdate
+        pre-commit run --all-files
+      env:
+          SKIP: no-commit-to-branch
+    - name: Run ansible Debian
+      run: ansible-playbook -i inventory.yaml playbook-debian-linux.yaml -l 127.0.0.1
+    - name: Install vagrant
+      run: |
+        wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+        sudo apt update && sudo apt install vagrant
+    - name: Install virtualbox
+      run: |
+        sudo apt install virtualbox
+    - name: Ruby version
+      run: |
+        ruby --version
+        which ruby
+        # https://github.com/dheerapat/vagrant-vbguest
+        git clone https://github.com/dheerapat/vagrant-vbguest
+        cd vagrant-vbguest
+        gem build vagrant-vbguest.gemspec
+        vagrant plugin install vagrant-vbguest-0.32.1.gem
     # - name: Run vagrant up
     #   run: |
     #     ssh-keygen -b 2048 -t rsa -f ~/.ssh/id_rsa -q -N ""
-    #     vagrant plugin install vagrant-vbguest
     #     vagrant up
-    - name: Post to slack
-      uses: 8398a7/action-slack@v3
-      if: ${{ failure() }}
-      with:
-        status: ${{ job.status }}
-        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

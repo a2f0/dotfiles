@@ -92,7 +92,7 @@ export IRCNAME="dps"
 # antigen, installed via curl
 source ~/install/bin/antigen.zsh
 antigen use oh-my-zsh
-antigen theme frontcube
+antigen theme agnoster
 antigen bundle vi-mode
 export NVM_AUTO_USE=true
 antigen bundle lukechilds/zsh-nvm
@@ -114,5 +114,8 @@ eval "$(pyenv init -)"
 # make sure to run 'jenv enable-plugin export' after installing to enable the JAVA_HOME export.
 export PATH="$HOME/.jenv/bin:$PATH"
 eval "$(jenv init -)"
+
+# rust installed using rustup
+. "$HOME/.cargo/env"
 
 export EDITOR="nvim"
