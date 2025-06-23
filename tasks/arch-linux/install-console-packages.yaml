@@ -38,6 +38,7 @@
     - mlocate
     - mutt
     - mysql
+    - neovim
     - net-snmp
     - nftables
     - nodejs
@@ -53,7 +54,6 @@
     - pkgfile
     - postgresql-libs
     - python-virtualenv
-    - reflector
     - rrdtool
     - rsync
     - ruby
