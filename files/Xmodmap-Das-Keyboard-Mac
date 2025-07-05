@@ -1,0 +1,11 @@
+! Clear existing modifiers to avoid conflicts
+clear mod1 ! Alt keys
+clear mod4 ! Super
+
+! Swap Super_L and Alt_L keycodes
+keycode 64 = Super_L NoSymbol Super_L
+keycode 133 = Alt_L NoSymbol Alt_L
+
+! Reassign mod1 to Alt_L and mod4 to Super_L
+add mod1 = Alt_L Alt_R
+add mod4 = Super_L Super_R
