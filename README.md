@@ -10,7 +10,7 @@ Install pre-commit
 
     pyenv install `cat .python-version`
     pyenv local `cat .python-version`
-    pip install pre-commit
+    pip install -r requirements.txt
     pre-commit install
     pre-commit run --all-files
 
