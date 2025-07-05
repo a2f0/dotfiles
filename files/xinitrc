@@ -1,9 +1,3 @@
-# keep the clipboard in sync with the primary buffer
-autocutsel -selection CLIPBOARD -fork
-
-# keep the primary in sync with the clipboard buffer
-autocutsel -selection PRIMARY -fork
-
 # disable power saving of capabilities of monitors (when not in use)
 xset -dpms
 
