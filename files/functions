@@ -56,12 +56,6 @@ rdpkill () {
     for i in `pgrep Microsoft Remote Desktop`; do kill $i; done
 }
 
-resetclip () {
-    kill `pgrep autocutsel`;
-    autocutsel -selection CLIPBOARD -fork;
-    autocutsel -selection PRIMARY -fork
-}
-
 killrdp () {
     rdpkill
 }
