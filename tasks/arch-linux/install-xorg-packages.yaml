@@ -24,11 +24,8 @@
     - xorg-xmodmap
     - xorg-xprop
     - xorg-xrdb
+    - xorg-xsetroot
     - xorg-xwininfo
     - xterm
-
-- name: xorg packages
-  community.general.pacman: name={{ item }} state=absent
-  with_items:
     - xfce4
     - xfce4-terminal
