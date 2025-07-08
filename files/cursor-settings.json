@@ -36,6 +36,7 @@
     "window.openFoldersInNewWindow": "off",
     "window.restoreWindows": "none",
     "window.titleBarStyle": "custom",
+    "window.title": "${rootName}${separator}${activeEditorShort}",
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook"
     },
