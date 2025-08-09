@@ -16,3 +16,8 @@ repos:
         entry: shellcheck
         language: system
         files: ^files/shellcheck*
+    -   id: luacheck
+        name: luacheck
+        entry: luacheck
+        language: system
+        files: \.lua$
