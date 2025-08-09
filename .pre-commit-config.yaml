@@ -20,4 +20,4 @@ repos:
         name: luacheck
         entry: luacheck
         language: system
-        files: \.lua$
+        types: [lua]
