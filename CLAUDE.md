@@ -18,7 +18,9 @@ pre-commit install
 
 # Install system dependencies for linting
 brew install shellcheck luacheck  # macOS
-sudo apt-get install shellcheck luacheck  # Linux
+# Linux: install via luarocks since luacheck isn't in apt repositories
+sudo apt-get install shellcheck lua5.3 lua5.3-dev luarocks
+sudo luarocks install luacheck
 ```
 
 ### Linting and Quality Checks

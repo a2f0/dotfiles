@@ -39,8 +39,10 @@ jobs:
       with:
         python-version: '3.13'
         architecture: 'x64'
-    - name: install luacheck
-      run: sudo apt-get update && sudo apt-get install -y luacheck
+    - name: install luacheck via luarocks
+      run: |
+        sudo apt-get update && sudo apt-get install -y lua5.3 lua5.3-dev luarocks
+        sudo luarocks install luacheck
     - name: install and configure python dependencies
       run: pip install -r ./requirements.txt
     - name: Run pre-commit
