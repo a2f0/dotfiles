@@ -15,6 +15,12 @@ pyenv install $(cat .python-version)
 pyenv local $(cat .python-version)
 pip install -r requirements.txt
 pre-commit install
+
+# Install system dependencies for linting
+brew install shellcheck luacheck  # macOS
+# Linux: install via luarocks since luacheck isn't in apt repositories
+sudo apt-get install shellcheck lua5.3 lua5.3-dev luarocks
+sudo luarocks install luacheck
 ```
 
 ### Linting and Quality Checks
@@ -24,6 +30,7 @@ pre-commit run --all-files
 
 # Run specific pre-commit hook
 pre-commit run shellcheck
+pre-commit run luacheck
 pre-commit run check-yaml
 ```
 
