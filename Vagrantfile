@@ -15,9 +15,32 @@ Vagrant.configure("2") do |config|
     v.cpus = 2
   end
   config.vm.provision "shell",
-    inline: "sudo pacman -Syy archlinux-keyring --noconfirm"
+    inline: <<-SHELL
+set -euo pipefail
+# Use a reliable mirror to avoid outdated package databases
+sudo cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.bak || true
+echo 'Server = https://geo.mirror.pkgbuild.com/$repo/os/$arch' | sudo tee /etc/pacman.d/mirrorlist >/dev/null
+
+# Reinitialize pacman keyring and populate Arch keys
+sudo rm -rf /etc/pacman.d/gnupg
+sudo pacman-key --init
+sudo pacman-key --populate archlinux
+
+# Refresh package databases and update keyring first
+sudo pacman -Syy --noconfirm
+sudo pacman -S --noconfirm archlinux-keyring
+
+# Optionally refresh keys (best-effort)
+sudo pacman-key --refresh-keys || true
+
+# Clean any stale/corrupted cached packages to avoid prompts
+sudo pacman -Scc --noconfirm || true
+
+# Full system upgrade
+sudo pacman -Syu --noconfirm
+SHELL
   config.vm.provision "shell",
-    inline: "sudo pacman -S --noconfirm python"
+    inline: "sudo pacman -S --noconfirm --needed python"
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "playbook-arch-linux-vm.yaml"
   end
