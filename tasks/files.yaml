@@ -221,25 +221,3 @@
     dest: ~/.tmux.conf
     state: link
     force: yes
-
-- name: ~/.npmrc
-  file:
-    src: "{{dotfiles_dir}}/files/npmrc"
-    dest: ~/.npmrc
-    state: link
-    force: yes
-
-# pnpm uses an INI-formatted global rc at ~/.config/pnpm/rc
-- name: make sure ~/.config/pnpm exists
-  file:
-    path: ~/.config/pnpm
-    state: directory
-    owner: "{{ ansible_user_id }}"
-    mode: 0700
-
-- name: ~/.config/pnpm/rc
-  file:
-    src: "{{dotfiles_dir}}/files/pnpmrc"
-    dest: ~/.config/pnpm/rc
-    state: link
-    force: yes
