@@ -1,6 +1,0 @@
-@tearleads:registry=https://npm.pkg.github.com
-@thinkspan:registry=https://npm.pkg.github.com
-registry=https://registry.npmjs.org/
-//npm.pkg.github.com/:_authToken=${GITHUB_ACCESS_TOKEN}
-loglevel=error
-update-notifier=false
