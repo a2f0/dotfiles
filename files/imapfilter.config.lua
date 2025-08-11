@@ -43,6 +43,17 @@ local function clean_old_messages(account, folder, days)
     messages:move_messages(account['[Gmail]/Trash'])
 end
 
+-- Helper function to apply filters to an account
+local function apply_filters(account, filters)
+    for _, filter in ipairs(filters) do
+        process_filter(account, "INBOX", filter.from, filter.to, filter.subject, filter.body)
+
+        if filter.clean_days and filter.to ~= '[Gmail]/Trash' then
+            clean_old_messages(account, filter.to, filter.clean_days)
+        end
+    end
+end
+
 -- Define filter rules for both accounts
 local common_filters = {
     -- GitHub
@@ -155,14 +166,7 @@ for _, acc in ipairs(accounts) do
     print("Processing filters for account: " .. account_name)
 
     -- Apply common filters
-    for _, filter in ipairs(common_filters) do
-        process_filter(account, "INBOX", filter.from, filter.to, filter.subject, filter.body)
-
-        -- Clean old messages if specified
-        if filter.clean_days and filter.to ~= '[Gmail]/Trash' then
-            clean_old_messages(account, filter.to, filter.clean_days)
-        end
-    end
+    apply_filters(account, common_filters)
 end
 
 --
@@ -172,7 +176,6 @@ end
 -- Atlassian
 process_filter(thinkspan, "INBOX", 'confluence@thinkspan.atlassian.net', "Keep/Notifications/Atlassian")
 process_filter(thinkspan, "INBOX", 'jira@thinkspan.atlassian.net', "Keep/Notifications/Atlassian")
-clean_old_messages(thinkspan, "Keep/Notifications/Atlassian", 30)
 
 -- LiveContact
 process_filter(thinkspan, "INBOX", 'support@livecontact.ai', '[Gmail]/Trash')
@@ -359,14 +362,7 @@ local gmail_filters = {
 }
 
 -- Apply Gmail-specific filters
-for _, filter in ipairs(gmail_filters) do
-    process_filter(gmail, "INBOX", filter.from, filter.to, filter.subject, filter.body)
-
-    -- Clean old messages if specified
-    if filter.clean_days and filter.to ~= '[Gmail]/Trash' then
-        clean_old_messages(gmail, filter.to, filter.clean_days)
-    end
-end
+apply_filters(gmail, gmail_filters)
 
 -- Special cases
 -- Chattanooga Gas with subject filter
