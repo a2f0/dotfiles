@@ -12,6 +12,7 @@ alias branches="git branches"
 alias vi="nvim"
 alias vim="nvim"
 alias adbize="adb devices | tail -n +2 | cut -f1 | xargs -I {} adb -s {} reverse tcp:3000 tcp:3000"
+alias unlockagent="echo 'test' | gpg --sign --default-key 6FFAEA28B304FA98E7521822827B8379F39A31F0 > /dev/null"
 
 if [ "$(uname -n)" = x1 ]; then
     # copy whatever was selected into the actual clipboard
