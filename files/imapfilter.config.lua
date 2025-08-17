@@ -28,7 +28,7 @@ local function process_filter(account, from_folder, from_address, to_folder, sub
     if from_address then
         messages = account[from_folder]:contain_from(from_address)
     elseif subject_pattern and body_pattern then
-        messages = account[from_folder]:contain_subject(subject_pattern):match_body(body_pattern)
+        messages = account[from_folder]:match_subject(subject_pattern):match_body(body_pattern)
     elseif subject_pattern then
         messages = account[from_folder]:match_subject(subject_pattern)
     end
@@ -176,6 +176,7 @@ end
 -- Atlassian
 process_filter(thinkspan, "INBOX", 'confluence@thinkspan.atlassian.net', "Keep/Notifications/Atlassian")
 process_filter(thinkspan, "INBOX", 'jira@thinkspan.atlassian.net', "Keep/Notifications/Atlassian")
+clean_old_messages(thinkspan, "Keep/Notifications/Atlassian", 30)
 
 -- LiveContact
 process_filter(thinkspan, "INBOX", 'support@livecontact.ai', '[Gmail]/Trash')
