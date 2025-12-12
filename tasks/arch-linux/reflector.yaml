@@ -15,4 +15,4 @@
     state: present
 
 - name: reflector - run
-  ansible.builtin.command:  reflector --verbose --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
+  ansible.builtin.command:  reflector --verbose --latest 5 --protocol https --protocol http --sort rate --save /etc/pacman.d/mirrorlist
