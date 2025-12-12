@@ -31,12 +31,10 @@ if [[ `uname` == Darwin ]]; then
   [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
   # android studio
-  export ANDROID_SDK=$HOME/Library/Android/sdk
-  export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
-  export PATH=$PATH:$HOME/Library/Android/sdk/tools/bin
-  export PATH=$PATH:$HOME/Library/Android/sdk/emulator
-  export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
-  export PATH=$PATH:$HOME/Library/Android/sdk/build-tools/30.0.3
+  export ANDROID_HOME="$HOME/Library/Android/sdk"
+  export ANDROID_SDK="$ANDROID_HOME"
+  export ANDROID_SDK_ROOT="$ANDROID_HOME"
+  export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
 
 
   # go - installed via brew
@@ -49,12 +47,10 @@ fi
 
 if [[ `uname -n` == x1 ]]; then
   # android studio
-  export ANDROID_SDK=$HOME/Android/Sdk
-  export ANDROID_SDK_ROOT=$HOME/Android/Sdk
-  export PATH=$PATH:$HOME/Android/Sdk/tools/bin
-  export PATH=$PATH:$HOME/Android/Sdk/emulator
-  export PATH=$PATH:$HOME/Android/Sdk/platform-tools
-  export PATH=$PATH:$HOME/Android/Sdk/build-tools/33.0.0i
+  export ANDROID_HOME="$HOME/Android/Sdk"
+  export ANDROID_SDK="$ANDROID_HOME"
+  export ANDROID_SDK_ROOT="$ANDROID_HOME"
+  export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
 
   # terraform virtual environment installed manually
   export PATH="$HOME/.tfenv/bin:$PATH"
@@ -119,3 +115,7 @@ eval "$(jenv init -)"
 . "$HOME/.cargo/env"
 
 export EDITOR="nvim"
+
+# Added by Antigravity
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+export PATH=$PATH:$HOME/.maestro/bin
