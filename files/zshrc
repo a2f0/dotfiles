@@ -33,10 +33,10 @@ if [[ `uname` == Darwin ]]; then
   # android studio
   export ANDROID_SDK=$HOME/Library/Android/sdk
   export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
-  export PATH=$PATH:$HOME/Library/Android/sdk/tools/bin
+  export ANDROID_HOME=$HOME/Library/Android/sdk
+  export PATH=$PATH:$HOME/Library/Android/sdk/cmdline-tools/latest/bin
   export PATH=$PATH:$HOME/Library/Android/sdk/emulator
   export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
-  export PATH=$PATH:$HOME/Library/Android/sdk/build-tools/30.0.3
 
 
   # go - installed via brew
@@ -51,10 +51,10 @@ if [[ `uname -n` == x1 ]]; then
   # android studio
   export ANDROID_SDK=$HOME/Android/Sdk
   export ANDROID_SDK_ROOT=$HOME/Android/Sdk
-  export PATH=$PATH:$HOME/Android/Sdk/tools/bin
+  export ANDROID_HOME=$HOME/Android/Sdk
+  export PATH=$PATH:$HOME/Android/Sdk/cmdline-tools/latest/bin
   export PATH=$PATH:$HOME/Android/Sdk/emulator
   export PATH=$PATH:$HOME/Android/Sdk/platform-tools
-  export PATH=$PATH:$HOME/Android/Sdk/build-tools/33.0.0i
 
   # terraform virtual environment installed manually
   export PATH="$HOME/.tfenv/bin:$PATH"
@@ -119,3 +119,7 @@ eval "$(jenv init -)"
 . "$HOME/.cargo/env"
 
 export EDITOR="nvim"
+
+# Added by Antigravity
+export PATH="/Users/a2f0/.antigravity/antigravity/bin:$PATH"
+export PATH=$PATH:$HOME/.maestro/bin
