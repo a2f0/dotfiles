@@ -69,12 +69,10 @@ if [ `uname` == Darwin ]; then
     export LC_ALL=en_US.UTF-8
 
     # android studio
-    export ANDROID_SDK=$HOME/Library/Android/sdk
-    export ANDROID_SDK_ROOT=$HOME/Library/Android/sdk
-    export ANDROID_HOME=$HOME/Library/Android/sdk
-    export PATH=$PATH:$HOME/Library/Android/sdk/cmdline-tools/latest/bin
-    export PATH=$PATH:$HOME/Library/Android/sdk/emulator
-    export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
+    export ANDROID_HOME="$HOME/Library/Android/sdk"
+    export ANDROID_SDK="$ANDROID_HOME"
+    export ANDROID_SDK_ROOT="$ANDROID_HOME"
+    export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
 
     # go, installed via brew
     export GOPATH=$HOME/go
@@ -109,12 +107,10 @@ elif [ `uname -n` == x1 ]; then
     export XDG_CACHE_HOME=$HOME/.cache
 
     # android studio
-    export ANDROID_SDK=$HOME/Android/Sdk
-    export ANDROID_SDK_ROOT=$HOME/Android/Sdk
-    export ANDROID_HOME=$HOME/Android/Sdk
-    export PATH=$PATH:$HOME/Android/Sdk/cmdline-tools/latest/bin
-    export PATH=$PATH:$HOME/Android/Sdk/emulator
-    export PATH=$PATH:$HOME/Android/Sdk/platform-tools
+    export ANDROID_HOME="$HOME/Android/Sdk"
+    export ANDROID_SDK="$ANDROID_HOME"
+    export ANDROID_SDK_ROOT="$ANDROID_HOME"
+    export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
 
     # fastboot, lineageos
     export PATH=$PATH:$HOME/platform-tools
