@@ -10,16 +10,8 @@ gmail = IMAP {
     ssl = "tls1"
 }
 
-thinkspan = IMAP {
-    server = "imap.gmail.com",
-    username = "dan@thinkspan.com",
-    password = os.getenv("THINKSPAN_GMAIL_APP_SPECIFIC_PASSWORD"),
-    ssl = "tls1"
-}
-
 accounts = {
-    {name = "gmail", account = gmail},
-    {name = "thinkspan", account = thinkspan}
+    {name = "gmail", account = gmail}
 }
 
 -- Helper function to process email filters
@@ -103,14 +95,10 @@ local common_filters = {
 
     -- From Me
     {from = 'dansullivan@gmail.com', to = '[Gmail]/Trash'},
-    {from = 'dan@thinkspan.com', to = '[Gmail]/Trash'},
 
     -- Zoom
     {subject = '^Please join Zoom meeting in progress', to = '[Gmail]/Trash'},
     {from = 'no-reply@zoom.us', to = '[Gmail]/Trash'},
-
-    -- Thinkspan
-    {from = 'postmaster@send.thinkspan.com', to = '[Gmail]/Trash'},
 
     -- Sentry
     {from = 'noreply@md.getsentry.com', to = "Keep/Notifications/Sentry", clean_days = 30},
@@ -168,19 +156,6 @@ for _, acc in ipairs(accounts) do
     -- Apply common filters
     apply_filters(account, common_filters)
 end
-
---
--- Thinkspan-specific filters
---
-
--- Atlassian
-process_filter(thinkspan, "INBOX", 'confluence@thinkspan.atlassian.net', "Keep/Notifications/Atlassian")
-process_filter(thinkspan, "INBOX", 'jira@thinkspan.atlassian.net', "Keep/Notifications/Atlassian")
-clean_old_messages(thinkspan, "Keep/Notifications/Atlassian", 30)
-
--- LiveContact
-process_filter(thinkspan, "INBOX", 'support@livecontact.ai', '[Gmail]/Trash')
-process_filter(thinkspan, "INBOX", 'support@livecontact.com', '[Gmail]/Trash')
 
 --
 -- Gmail personal account specific filters
@@ -337,10 +312,6 @@ local gmail_filters = {
 
     -- Starbucks
     {from = 'starbucks.com', to = '[Gmail]/Trash'},
-
-    -- Thinkspan staging
-    {from = 'postmaster@send.thinkspanstaging.com', to = '[Gmail]/Trash'},
-    {from = 'appfire.com', to = '[Gmail]/Trash'}, -- Sprint Estimation
 
     -- UPS
     {from = 'ups.com', to = "Keep/Notifications/UPS"},
