@@ -1,0 +1,19 @@
+---
+- name: Install openssl
+  community.general.pacman:
+    name: openssl
+    state: latest
+
+- name: Install ca-certificates
+  community.general.pacman:
+    name: ca-certificates
+    state: latest
+
+- name: Install reflector
+  community.general.pacman:
+    name: reflector
+    state: present
+
+- name: Run reflector to update mirrorlist
+  ansible.builtin.command: reflector --verbose --latest 5 --protocol https --protocol http --sort rate --save /etc/pacman.d/mirrorlist
+  changed_when: true

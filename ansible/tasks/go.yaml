@@ -1,0 +1,14 @@
+---
+- name: Make sure ~/go exists
+  ansible.builtin.file:
+    path: ~/go
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: "0700"
+
+- name: Make sure ~/go/bin exists
+  ansible.builtin.file:
+    path: ~/go/bin
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: "0700"

@@ -42,23 +42,23 @@ pre-commit run check-yaml
 
 ```bash
 # Configure macOS system via Ansible
-ansible-playbook -i inventory.yaml playbook-macos.yaml -l 127.0.0.1
+ansible-playbook -i ansible/inventory.yaml ansible/playbook-macos.yaml -l 127.0.0.1
 
 # Dry run to see what would change
-ansible-playbook -i inventory.yaml playbook-macos.yaml --check -l 127.0.0.1
+ansible-playbook -i ansible/inventory.yaml ansible/playbook-macos.yaml --check -l 127.0.0.1
 
 # Run only specific tasks (e.g., file symlinks)
-ansible-playbook -i inventory.yaml playbook-macos.yaml -l 127.0.0.1 --tags 'files'
+ansible-playbook -i ansible/inventory.yaml ansible/playbook-macos.yaml -l 127.0.0.1 --tags 'files'
 ```
 
 #### Arch Linux
 
 ```bash
 # Configure Arch Linux system via Ansible
-ansible-playbook -i inventory.yaml playbook-arch-linux.yaml -l 127.0.0.1
+ansible-playbook -i ansible/inventory.yaml ansible/playbook-arch-linux.yaml -l 127.0.0.1
 
 # Run only specific tasks
-ansible-playbook -i inventory.yaml playbook-arch-linux.yaml -l 127.0.0.1 --tags 'files'
+ansible-playbook -i ansible/inventory.yaml ansible/playbook-arch-linux.yaml -l 127.0.0.1 --tags 'files'
 ```
 
 #### Vagrant Development Environment
@@ -84,10 +84,11 @@ vagrant destroy
 
 ### Core Structure
 
+- **`ansible/`** - Contains all Ansible playbooks, inventory, and tasks
+  - **`playbook-*.yaml`** - Main Ansible playbooks for different operating systems
+  - **`inventory.yaml`** - Ansible inventory configuration for localhost
+  - **`tasks/`** - Ansible task files organized by operating system and functionality
 - **`files/`** - Contains all dotfiles and configuration files that get symlinked to home directory
-- **`tasks/`** - Ansible task files organized by operating system and functionality
-- **`playbook-*.yaml`** - Main Ansible playbooks for different operating systems
-- **`inventory.yaml`** - Ansible inventory configuration for localhost
 - **`Vagrantfile`** - VM configuration for testing Arch Linux setup
 
 ### Configuration Management
@@ -96,9 +97,9 @@ The system uses Ansible to create symbolic links from `files/` directory to appr
 
 ### Key Task Categories
 
-- **files.yaml** - Core dotfile symlinking (shell configs, git, vim, etc.)
-- **macos/files.yaml** - macOS-specific configurations
-- **arch-linux/** - Arch Linux specific tasks including package installation and system configuration
+- **ansible/tasks/files.yaml** - Core dotfile symlinking (shell configs, git, vim, etc.)
+- **ansible/tasks/macos/files.yaml** - macOS-specific configurations
+- **ansible/tasks/arch-linux/** - Arch Linux specific tasks including package installation and system configuration
 
 ### Shell Scripts and Functions
 
@@ -115,3 +116,4 @@ The repository uses pre-commit hooks for quality assurance:
 - End-of-file fixing
 - Merge conflict detection
 - Shellcheck linting for shell scripts in `files/shellcheck/`
+- Ansible-lint for Ansible playbooks and tasks in `ansible/`

@@ -1,0 +1,91 @@
+---
+- name: Make sure ~/.config/Code - OSS/User/ exists
+  ansible.builtin.file:
+    path: ~/.config/Code - OSS/User/
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: "0700"
+
+- name: Make sure ~/.config/Code/User/ exists
+  ansible.builtin.file:
+    path: ~/.config/Code/User/
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: "0700"
+
+- name: Create symlink for ~/.config/Code - OSS/User/settings.json
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/visual-studio-code-settings.json"
+    dest: ~/.config/Code - OSS/User/settings.json
+    state: link
+    force: true
+
+- name: Create symlink for ~/.config/Code - OSS/User/keybindings.json
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/visual-studio-code-keybindings.json"
+    dest: ~/.config/Code - OSS/User/keybindingsjson
+    state: link
+    force: true
+
+- name: Create symlink for ~/.config/Code/User/settings.json
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/visual-studio-code-settings.json"
+    dest: ~/.config/Code/User/settings.json
+    state: link
+    force: true
+
+- name: Create symlink for ~/.config/Code/User/keybindings.json
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/visual-studio-code-keybindings.json"
+    dest: ~/.config/Code/User/keybindings.json
+    state: link
+    force: true
+
+- name: Create symlink for ~/.xinitrc
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/xinitrc"
+    dest: ~/.xinitrc
+    state: link
+    force: true
+
+- name: Create symlink for ~/.Xresources
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/Xresources"
+    dest: ~/.Xresources
+    state: link
+    force: true
+
+- name: Make sure ~/.xmonad exists
+  ansible.builtin.file:
+    path: ~/.xmonad
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: "0700"
+
+- name: Create symlink for ~/.xmonad/xmonad.hs
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/xmonad.hs"
+    dest: ~/.xmonad/xmonad.hs
+    state: link
+    force: true
+
+- name: Create symlink for ~/.xmobarrc
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/xmobarrc.hs"
+    dest: ~/.xmobarrc
+    state: link
+    force: true
+
+- name: Make sure ~/.config/Cursor/User exists
+  ansible.builtin.file:
+    path: '~/.config/Cursor/User'
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: "0700"
+
+- name: Create symlink for ~/.config/Cursor/User/settings.json
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/cursor-settings.json"
+    dest: ~/.config/Cursor/User/settings.json
+    state: link
+    force: true

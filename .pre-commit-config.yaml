@@ -3,6 +3,7 @@ repos:
     rev: v4.2.0
     hooks:
     -   id: check-yaml
+        args: [--allow-multiple-documents]
     -   id: end-of-file-fixer
     -   id: trailing-whitespace
     -   id: check-merge-conflict
@@ -16,6 +17,11 @@ repos:
 
 -   repo: local
     hooks:
+    -   id: ansible-lint
+        name: ansible-lint
+        entry: ansible-lint
+        language: system
+        files: ^ansible/.*\.(yaml|yml)$
     -   id: shellcheck
         name: shellcheck
         entry: shellcheck
