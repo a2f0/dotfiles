@@ -1,0 +1,5 @@
+# markdownlint configuration
+# https://github.com/DavidAnson/markdownlint
+
+# Disable line length rule - too restrictive for documentation
+MD013: false
