@@ -169,6 +169,7 @@ local gmail_filters = {
     {from = 'payments-messages@amazon.com', to = "Keep/Notifications/Amazon"},
     {from = 'no-reply@amazon.com', to = "Keep/Notifications/Amazon"},
     {from = 'account-update@amazon.com', to = "Keep/Notifications/Amazon"},
+    {from = 'order-update@amazon.com', to = "Keep/Notifications/Amazon"},
 
     -- AMC Theatres
     {from = 'amctheaters.com', to = '[Gmail]/Trash'},
@@ -199,7 +200,7 @@ local gmail_filters = {
     {from = 'cgc@emailweb.southerncompgas.com', to = "Keep/Notifications/Chattanooga Gas"},
 
     -- CircleCI
-    {from = 'security@circleci.com', to = "Keep/Notifications/CircleCI"},
+    {from = 'circleci.com', to = '[Gmail]/Trash'},
 
     -- Coinbase
     {from = 'coinbase.com', to = "Keep/Notifications/Coinbase"},
@@ -240,8 +241,8 @@ local gmail_filters = {
     -- Firefox
     {from = 'firefox.com', to = "[Gmail]/Trash"},
 
-    -- Flynn's Barber Studio
-    {subject = 'Barber Studio', to = "[Gmail]/Trash"},
+    -- GEICO
+    {from = 'geico.com', to = "[Gmail]/Trash"},
 
     -- Gemini (fixed target folder)
     {from = "hello@news.gemini.com", to = "Keep/Notifications/Gemini"},
