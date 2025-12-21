@@ -1,31 +1,42 @@
-- hosts: all
+---
+- name: Configure Arch Linux
+  hosts: all
   vars:
     dotfiles_dir: ~/dotfiles
     ansible_python_interpreter: /usr/bin/python3
   pre_tasks:
-  - name: Ensure this playbook only runs on Arch Linux
-    fail:
-      msg: "This playbook is intended for Arch Linux systems only"
-    when: ansible_facts['os_family'] not in ['Archlinux']
-    tags:
-      - always
+    - name: Ensure this playbook only runs on Arch Linux
+      ansible.builtin.fail:
+        msg: "This playbook is intended for Arch Linux systems only"
+      when: ansible_facts['os_family'] not in ['Archlinux']
+      tags:
+        - always
   tasks:
-    - import_tasks: tasks/arch-linux/reflector.yaml
-      become: yes
-    - import_tasks: tasks/arch-linux/install-xorg-packages.yaml
-      become: yes
-    - import_tasks: tasks/arch-linux/install-console-packages.yaml
-      become: yes
-    - import_tasks: tasks/clone-dotfiles-into-home.yaml
-    - import_tasks: tasks/files.yaml
-      tags:
-         - files
-    - import_tasks: tasks/arch-linux/files.yaml
-      tags:
-         - files
-    - import_tasks: tasks/arch-linux/users.yaml
-      become: yes
-    - import_tasks: tasks/mcabber.yaml
+    - name: Import reflector task
+      ansible.builtin.import_tasks: tasks/arch-linux/reflector.yaml
+      become: true
+    - name: Import install xorg packages task
+      ansible.builtin.import_tasks: tasks/arch-linux/install-xorg-packages.yaml
+      become: true
+    - name: Import install console packages task
+      ansible.builtin.import_tasks: tasks/arch-linux/install-console-packages.yaml
+      become: true
+    - name: Import clone dotfiles task
+      ansible.builtin.import_tasks: tasks/clone-dotfiles-into-home.yaml
+    - name: Import files task
+      ansible.builtin.import_tasks: tasks/files.yaml
       tags:
         - files
-    - import_tasks: tasks/clone-anduril-into-home.yaml
+    - name: Import arch-linux files task
+      ansible.builtin.import_tasks: tasks/arch-linux/files.yaml
+      tags:
+        - files
+    - name: Import users task
+      ansible.builtin.import_tasks: tasks/arch-linux/users.yaml
+      become: true
+    - name: Import mcabber task
+      ansible.builtin.import_tasks: tasks/mcabber.yaml
+      tags:
+        - files
+    - name: Import clone anduril task
+      ansible.builtin.import_tasks: tasks/clone-anduril-into-home.yaml
