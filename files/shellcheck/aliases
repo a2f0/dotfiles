@@ -1,4 +1,6 @@
 #!/bin/sh
+alias adbize="adb devices | tail -n +2 | cut -f1 | xargs -I {} adb -s {} reverse tcp:3000 tcp:3000"
+alias branches="git branches"
 alias epoch="date +%s"
 alias listrunning="vboxmanage list runningvms"
 alias listvms="vboxmanage list vms"
@@ -6,30 +8,27 @@ alias lscreen="screen -ls"
 alias mscreen="screen -S mail -c ~/.mscreenrc"
 alias npatch="npm version patch --git-tag-version=false"
 alias offlineimap="offlineimap -c ~/.offlineimaprc"
+alias pn="pnpm"
 alias showrunning="vboxmanage list runningvms"
 alias showvminfo="vboxmanage metrics list"
-alias branches="git branches"
+alias unlockagent="echo 'test' | gpg --sign --default-key 6FFAEA28B304FA98E7521822827B8379F39A31F0 > /dev/null"
 alias vi="nvim"
 alias vim="nvim"
-alias adbize="adb devices | tail -n +2 | cut -f1 | xargs -I {} adb -s {} reverse tcp:3000 tcp:3000"
-alias unlockagent="echo 'test' | gpg --sign --default-key 6FFAEA28B304FA98E7521822827B8379F39A31F0 > /dev/null"
-alias pn="pnpm"
-alias gemini-confirm='echo "@gemini-code-assist can you confirm this is fixed in $(git log -n 1 --format=%h)?" | pbcopy'
 
 if [ "$(uname -n)" = x1 ]; then
-    # copy whatever was selected into the actual clipboard
     alias clipboard="xclip -out | xclip -selection clipboard"
     alias currentbranch="git branch --show-current | tr -d '\n' | xclip -selection clipboard"
+    alias gemini-confirm='echo "@gemini-code-assist can you confirm this is fixed in $(git log -n 1 --format=%h)?" | xclip -selection clipboard'
     alias lock="xlock -mode laser"
     alias windows="xwininfo -root -children"
 fi
 
 if [ "$(uname)" = Darwin ]; then
+    alias currentbranch="git branch --show-current | tee /dev/tty | tr -d '\n' | pbcopy"
     alias derived="rm -rf ~/Library/Developer/Xcode/DerivedData"
+    alias gemini-confirm='echo "@gemini-code-assist can you confirm this is fixed in $(git log -n 1 --format=%h)?" | pbcopy'
+    alias lock='open -a /System/Library/Frameworks/ScreenSaver.framework/Versions/A/Resources/ScreenSaverEngine.app'
     alias lsusb="system_profiler SPUSBDataType"
     alias md5sum="md5"
     alias resetwireless="sudo ifconfig en0 down;sudo ifconfig en0 up"
-    alias lock='open -a /System/Library/Frameworks/ScreenSaver.framework/Versions/A/Resources/ScreenSaverEngine.app'
-    alias currentbranch="git branch --show-current | tee /dev/tty | tr -d '\n' | pbcopy"
-    alias derived="rm -rf ~/Library/Developer/Xcode/DerivedData"
 fi
