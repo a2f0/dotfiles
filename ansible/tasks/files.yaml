@@ -160,6 +160,13 @@
     state: link
     force: true
 
+- name: Create symlink for ~/.offlineimap.py
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/offlineimap.py"
+    dest: ~/.offlineimap.py
+    state: link
+    force: true
+
 - name: Create symlink for ~/.pinerc
   ansible.builtin.file:
     src: "{{ dotfiles_dir }}/files/pinerc"
