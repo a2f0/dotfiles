@@ -3,24 +3,18 @@
   ansible.builtin.file:
     path: ~/.ssh
     state: directory
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
+    group: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
-- name: Copy private key to target
+- name: Copy SSH keys to target
   ansible.builtin.copy:
-    src: ~/.ssh/id_rsa
-    dest: ~/.ssh/id_rsa
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    src: "~/.ssh/{{ item }}"
+    dest: "~/.ssh/{{ item }}"
+    owner: "{{ ansible_facts['user_id'] }}"
+    group: "{{ ansible_facts['user_id'] }}"
     mode: "0600"
     local_follow: true
-
-- name: Copy public key to target
-  ansible.builtin.copy:
-    src: ~/.ssh/id_rsa.pub
-    dest: ~/.ssh/id_rsa.pub
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
-    mode: "0600"
-    local_follow: true
+  loop:
+    - id_rsa
+    - id_rsa.pub
