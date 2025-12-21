@@ -41,5 +41,8 @@ terraform.rc
 /terraform/main.tfvars
 /terraform/terraform.backend
 
+# ansible
+.ansible/
+
 # build artifacts
 a.out
