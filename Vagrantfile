@@ -42,10 +42,10 @@ SHELL
   config.vm.provision "shell",
     inline: "sudo pacman -S --noconfirm --needed python"
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "playbook-arch-linux-vm.yaml"
+    ansible.playbook = "ansible/playbook-arch-linux-vm.yaml"
   end
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "playbook-arch-linux.yaml"
+    ansible.playbook = "ansible/playbook-arch-linux.yaml"
     # ansible.raw_arguments = ['-vvv']
   end
   config.vm.synced_folder ".", "/vagrant", type: "rsync"
