@@ -1,4 +1,5 @@
-- name: virtualbox-guest-utils
+---
+- name: Install virtualbox-guest-utils
   community.general.pacman:
     name: virtualbox-guest-utils
     state: present

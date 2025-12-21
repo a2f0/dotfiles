@@ -1,33 +1,35 @@
+---
 - name: Make sure ~/src exists
-  file:
+  ansible.builtin.file:
     path: ~/src
     state: directory
     owner: "{{ ansible_user_id }}"
-    mode: 0700
+    mode: "0700"
 
 - name: Make sure ~/install exists
-  file:
+  ansible.builtin.file:
     path: ~/install
     state: directory
     owner: "{{ ansible_user_id }}"
-    mode: 0700
+    mode: "0700"
 
 - name: Clone Epic 4
   ansible.builtin.git:
     repo: 'http://git.epicsol.org/epic4.git'
     dest: ~/src/epic4
+    version: master
 
 - name: Configure Epic 4
   ansible.builtin.command: ./configure --prefix=~/install
   args:
     chdir: ~/src/epic4/
-    creates:  ~/src/epic4/config.log
+    creates: ~/src/epic4/config.log
 
 - name: Make Epic 4
   ansible.builtin.command: make
   args:
     chdir: ~/src/epic4/
-    creates:  ~/src/epic4/source/epic
+    creates: ~/src/epic4/source/epic
 
 - name: Install Epic 4
   ansible.builtin.command: make install

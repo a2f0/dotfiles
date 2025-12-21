@@ -1,5 +1,6 @@
+---
 - name: Rsync this repository to the target
-  synchronize:
+  ansible.posix.synchronize:
     src: "{{ playbook_dir }}"
     dest: ~/
     rsync_opts:

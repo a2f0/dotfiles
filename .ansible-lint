@@ -1,0 +1,14 @@
+---
+# Ansible-lint configuration
+# https://ansible.readthedocs.io/projects/lint/configuring/
+
+# Exclude paths from linting
+exclude_paths:
+  - .cache/
+
+# Warn-only rules (won't fail CI but will show warnings)
+warn_list:
+  - experimental
+
+# Enable offline mode to skip Galaxy dependencies
+offline: true
