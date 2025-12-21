@@ -1,23 +1,26 @@
+---
 - name: Clone xfce-panel configuration into home
   ansible.builtin.git:
     repo: 'git@github.com:a2f0/xfce4-panel.git'
     dest: ~/xfce4-panel
-    force: no
-    update: no
+    force: false
+    update: false
+    version: main
 
-- stat:
+- name: Check if panel directory exists
+  ansible.builtin.stat:
     path: ~/.config/xfce4/panel
   register: panel
 
-- name: remove the panel directory (only if it is a folder)
-  file:
+- name: Remove the panel directory (only if it is a folder)
+  ansible.builtin.file:
     path: ~/.config/xfce4/panel
     state: absent
   when: panel.stat.isdir is defined and panel.stat.isdir
 
-- name: ~/xfce4-panel
-  file:
+- name: Create symlink for xfce4-panel
+  ansible.builtin.file:
     src: "~/xfce4-panel"
     dest: ~/.config/xfce4/panel
     state: link
-    force: yes
+    force: true

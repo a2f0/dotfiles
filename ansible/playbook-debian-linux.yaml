@@ -1,20 +1,26 @@
-- hosts: all
+---
+- name: Configure Debian Linux
+  hosts: all
   vars:
     dotfiles_dir: ~/dotfiles
     ansible_python_interpreter: /usr/bin/python3
   pre_tasks:
-  - name: Ensure this playbook only runs on Debian
-    fail:
-      msg: "This playbook is intended for Debian systems only"
-    when: ansible_facts['os_family'] not in ['Debian']
-    tags:
-      - always
-  tasks:
-    - import_tasks: tasks/clone-dotfiles-into-home.yaml
-    - import_tasks: tasks/files.yaml
+    - name: Ensure this playbook only runs on Debian
+      ansible.builtin.fail:
+        msg: "This playbook is intended for Debian systems only"
+      when: ansible_facts['os_family'] not in ['Debian']
       tags:
-         - files
-    - import_tasks: tasks/mcabber.yaml
+        - always
+  tasks:
+    - name: Import clone dotfiles task
+      ansible.builtin.import_tasks: tasks/clone-dotfiles-into-home.yaml
+    - name: Import files task
+      ansible.builtin.import_tasks: tasks/files.yaml
       tags:
         - files
-    - import_tasks: tasks/clone-anduril-into-home.yaml
+    - name: Import mcabber task
+      ansible.builtin.import_tasks: tasks/mcabber.yaml
+      tags:
+        - files
+    - name: Import clone anduril task
+      ansible.builtin.import_tasks: tasks/clone-anduril-into-home.yaml

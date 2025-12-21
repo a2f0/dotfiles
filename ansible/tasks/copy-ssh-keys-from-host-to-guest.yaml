@@ -1,25 +1,26 @@
+---
 - name: Make sure SSH directory exists
-  file:
+  ansible.builtin.file:
     path: ~/.ssh
     state: directory
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
-    mode: 0700
+    mode: "0700"
 
 - name: Copy private key to target
-  copy:
+  ansible.builtin.copy:
     src: ~/.ssh/id_rsa
     dest: ~/.ssh/id_rsa
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
-    mode: 0600
+    mode: "0600"
     local_follow: true
 
 - name: Copy public key to target
-  copy:
+  ansible.builtin.copy:
     src: ~/.ssh/id_rsa.pub
-    dest:  ~/.ssh/id_rsa.pub
+    dest: ~/.ssh/id_rsa.pub
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
-    mode: 0600
+    mode: "0600"
     local_follow: true

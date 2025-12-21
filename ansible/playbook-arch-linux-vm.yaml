@@ -1,27 +1,37 @@
-- hosts: all
+---
+- name: Configure Arch Linux VM
+  hosts: all
   vars:
     dotfiles_dir: ~/dotfiles
     ansible_python_interpreter: /usr/bin/python3
   pre_tasks:
-  - name: Ensure this playbook only runs on Arch Linux
-    fail:
-      msg: "This playbook is intended for Arch Linux systems only"
-    when: ansible_facts['os_family'] not in ['Archlinux']
-    tags:
-      - always
+    - name: Ensure this playbook only runs on Arch Linux
+      ansible.builtin.fail:
+        msg: "This playbook is intended for Arch Linux systems only"
+      when: ansible_facts['os_family'] not in ['Archlinux']
+      tags:
+        - always
   tasks:
-    - import_tasks: tasks/copy-ssh-keys-from-host-to-guest.yaml
-    - import_tasks: tasks/arch-linux/update-pacman-database.yaml
-      become: yes
-    - import_tasks: tasks/arch-linux/reflector.yaml
-      become: yes
-    - import_tasks: tasks/arch-linux/update-pacman-database.yaml
-      become: yes
-    - import_tasks: tasks/arch-linux/update-the-entire-system.yaml
-      become: yes
-    - import_tasks: tasks/arch-linux/reboot.yaml
-      become: yes
-    - import_tasks: tasks/arch-linux/uninstall-default-vagrant-packages.yaml
-      become: yes
-    - import_tasks: tasks/arch-linux/install-xorg-virtualbox-guest-utils.yaml
-      become: yes
+    - name: Import copy SSH keys task
+      ansible.builtin.import_tasks: tasks/copy-ssh-keys-from-host-to-guest.yaml
+    - name: Import update pacman database task
+      ansible.builtin.import_tasks: tasks/arch-linux/update-pacman-database.yaml
+      become: true
+    - name: Import reflector task
+      ansible.builtin.import_tasks: tasks/arch-linux/reflector.yaml
+      become: true
+    - name: Import update pacman database task again
+      ansible.builtin.import_tasks: tasks/arch-linux/update-pacman-database.yaml
+      become: true
+    - name: Import update entire system task
+      ansible.builtin.import_tasks: tasks/arch-linux/update-the-entire-system.yaml
+      become: true
+    - name: Import reboot task
+      ansible.builtin.import_tasks: tasks/arch-linux/reboot.yaml
+      become: true
+    - name: Import uninstall default vagrant packages task
+      ansible.builtin.import_tasks: tasks/arch-linux/uninstall-default-vagrant-packages.yaml
+      become: true
+    - name: Import install xorg virtualbox guest utils task
+      ansible.builtin.import_tasks: tasks/arch-linux/install-xorg-virtualbox-guest-utils.yaml
+      become: true

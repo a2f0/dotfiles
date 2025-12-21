@@ -1,41 +1,42 @@
-- name: make sure ~/Library/Application Support/Code/User/ exists
-  file:
+---
+- name: Make sure ~/Library/Application Support/Code/User/ exists
+  ansible.builtin.file:
     path: '~/Library/Application Support/Code/User/'
     state: directory
     owner: "{{ ansible_user_id }}"
-    mode: 0700
+    mode: "0700"
 
-- name: ~/Library/Application Support/Code/User/settings.json
-  file:
-    src: "{{dotfiles_dir}}/files/visual-studio-code-settings.json"
+- name: Create symlink for ~/Library/Application Support/Code/User/settings.json
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/visual-studio-code-settings.json"
     dest: ~/Library/Application Support/Code/User/settings.json
     state: link
-    force: yes
+    force: true
 
-- name: make sure ~/Library/Application Support/Cursor/User/ exists
-  file:
+- name: Make sure ~/Library/Application Support/Cursor/User/ exists
+  ansible.builtin.file:
     path: '~/Library/Application Support/Cursor/User/'
     state: directory
     owner: "{{ ansible_user_id }}"
-    mode: 0700
+    mode: "0700"
 
-- name: ~/Library/Application Support/Cursor/User/settings.json
-  file:
-    src: "{{dotfiles_dir}}/files/cursor-settings.json"
+- name: Create symlink for ~/Library/Application Support/Cursor/User/settings.json
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/cursor-settings.json"
     dest: ~/Library/Application Support/Cursor/User/settings.json
     state: link
-    force: yes
+    force: true
 
-- name: make sure ~/Library/Application Support/com.mitchellh.ghostty/ exists
-  file:
+- name: Make sure ~/Library/Application Support/com.mitchellh.ghostty/ exists
+  ansible.builtin.file:
     path: '~/Library/Application Support/com.mitchellh.ghostty/'
     state: directory
     owner: "{{ ansible_user_id }}"
-    mode: 0700
+    mode: "0700"
 
-- name: "~/Library/Application Support/com.mitchellh.ghostty/config"
-  file:
+- name: Create symlink for ~/Library/Application Support/com.mitchellh.ghostty/config
+  ansible.builtin.file:
     src: "{{ dotfiles_dir }}/files/com.mitchellh.ghostty.config"
     dest: "~/Library/Application Support/com.mitchellh.ghostty/config"
     state: link
-    force: yes
+    force: true
