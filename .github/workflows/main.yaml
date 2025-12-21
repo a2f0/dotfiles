@@ -28,7 +28,7 @@ jobs:
       env:
           SKIP: no-commit-to-branch
     - name: Run ansible MacOS
-      run: ansible-playbook -i inventory.yaml playbook-macos.yaml -l 127.0.0.1
+      run: ansible-playbook -i ansible/inventory.yaml ansible/playbook-macos.yaml -l 127.0.0.1
   code-quality-linux:
     runs-on: ubuntu-latest
     continue-on-error: false
@@ -53,7 +53,7 @@ jobs:
       env:
           SKIP: no-commit-to-branch
     - name: Run ansible Debian
-      run: ansible-playbook -i inventory.yaml playbook-debian-linux.yaml -l 127.0.0.1
+      run: ansible-playbook -i ansible/inventory.yaml ansible/playbook-debian-linux.yaml -l 127.0.0.1
     - name: Install vagrant
       run: |
         wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
