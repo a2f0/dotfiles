@@ -1,9 +1,11 @@
-- name: virtualbox-guest-utils-nox
+---
+- name: Remove virtualbox-guest-utils-nox
   community.general.pacman:
     name: virtualbox-guest-utils-nox
     state: absent
     extra_args: --recursive
 
-- name: Perform cleanup
+- name: Perform cleanup of VirtualBox binaries
   ansible.builtin.command:
     cmd: rm -rf /usr/bin/VBoxClient /usr/bin/VBoxDRMClient /usr/bin/VBoxAudioTest
+  changed_when: true

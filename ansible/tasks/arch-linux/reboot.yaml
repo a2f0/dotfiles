@@ -1,3 +1,4 @@
+---
 - name: Reboot the machine
-  reboot:
+  ansible.builtin.reboot:
     msg: "Rebooting the machine"

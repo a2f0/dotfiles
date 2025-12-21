@@ -6,23 +6,6 @@
 exclude_paths:
   - .cache/
 
-# Skip these rules initially - can be enabled incrementally
-skip_list:
-  - name[play]          # All plays should be named
-  - name[missing]       # All tasks should be named
-  - name[casing]        # All names should start with an uppercase letter
-  - fqcn[action-core]   # Use FQCN for builtin module actions
-  - fqcn[action]        # Use FQCN for module actions
-  - yaml[truthy]        # Truthy value should be one of [false, true]
-  - yaml[indentation]   # Wrong indentation
-  - yaml[octal-values]  # Forbid implicit octal values
-  - yaml[empty-lines]   # Too many blank lines
-  - yaml[colons]        # Too many spaces after colon
-  - jinja[spacing]      # Jinja2 spacing improvements
-  - no-free-form        # Avoid free-form when calling modules
-  - no-changed-when     # Commands should not change things if nothing needs doing
-  - latest[git]         # Result of git command may vary on subsequent runs
-
 # Warn-only rules (won't fail CI but will show warnings)
 warn_list:
   - experimental

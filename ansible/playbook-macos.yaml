@@ -1,28 +1,34 @@
 ---
-- hosts: 127.0.0.1
+- name: Configure macOS
+  hosts: 127.0.0.1
   connection: local
-  become: no
+  become: false
   vars:
     dotfiles_dir: "{{ playbook_dir }}"
     ansible_python_interpreter: /usr/bin/python3
   pre_tasks:
     - name: Ensure this playbook only runs on macOS
-      fail:
+      ansible.builtin.fail:
         msg: "This playbook is intended for macOS systems only"
       when: ansible_facts['os_family'] != 'Darwin'
       tags:
         - always
   tasks:
-    - import_tasks: tasks/clone-anduril-into-home.yaml
-    - import_tasks: tasks/files.yaml
+    - name: Import clone anduril task
+      ansible.builtin.import_tasks: tasks/clone-anduril-into-home.yaml
+    - name: Import files task
+      ansible.builtin.import_tasks: tasks/files.yaml
       tags:
         - files
-    - import_tasks: tasks/macos/files.yaml
+    - name: Import macos files task
+      ansible.builtin.import_tasks: tasks/macos/files.yaml
       tags:
         - files
-    - import_tasks: tasks/mcabber.yaml
+    - name: Import mcabber task
+      ansible.builtin.import_tasks: tasks/mcabber.yaml
       tags:
         - files
-    - import_tasks: tasks/go.yaml
+    - name: Import go task
+      ansible.builtin.import_tasks: tasks/go.yaml
       tags:
         - files
