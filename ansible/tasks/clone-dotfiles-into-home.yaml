@@ -1,5 +1,7 @@
+---
 - name: Clone dotfiles into home
   ansible.builtin.git:
     repo: 'https://github.com/a2f0/dotfiles.git'
     dest: ~/dotfiles
-    force: no
+    force: false
+    version: main
