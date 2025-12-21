@@ -10,6 +10,11 @@ repos:
     -   id: forbid-new-submodules
     -   id: mixed-line-ending
 
+-   repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.17.2
+    hooks:
+    -   id: markdownlint-cli2
+
 -   repo: local
     hooks:
     -   id: ansible-lint
