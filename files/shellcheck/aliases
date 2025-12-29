@@ -14,7 +14,7 @@ alias showvminfo="vboxmanage metrics list"
 alias unlockagent="echo 'test' | gpg --sign --default-key 6FFAEA28B304FA98E7521822827B8379F39A31F0 > /dev/null"
 alias vi="nvim"
 alias vim="nvim"
-alias remain="git checkout main && git pull"
+alias remain="git switch main && git pull"
 
 if [ "$(uname -n)" = x1 ]; then
     alias clipboard="xclip -out | xclip -selection clipboard"

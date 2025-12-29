@@ -28,4 +28,4 @@ Commit and push the current changes following these rules:
 
 5. **Push**: After successful commit, push to the current branch's remote.
 
-6. **Open PR**: If a PR doesn't already exist for this branch, create one using `gh pr create`. Skip if already on `main` or PR exists.
+6. **Open PR**: If a PR doesn't already exist for this branch, create one using `gh pr create --fill`. Skip if already on `main` or PR exists.
