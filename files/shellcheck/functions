@@ -22,16 +22,11 @@ ide () {
 # To reattach: tmux attach
 tearleads () {
     tmux new-session -d -c "$HOME/github/rapid" -n rapid
-    tmux new-window -c "$HOME/github/rapid2" -n rapid2
-    tmux new-window -c "$HOME/github/rapid3" -n rapid3
-    tmux new-window -c "$HOME/github/rapid4" -n rapid4
-    tmux new-window -c "$HOME/github/rapid5" -n rapid5
-    tmux new-window -c "$HOME/github/rapid6" -n rapid6
-    tmux new-window -c "$HOME/github/rapid7" -n rapid7
-    tmux new-window -c "$HOME/github/rapid8" -n rapid8
-    tmux new-window -c "$HOME/github/rapid9" -n rapid9
-    tmux new-window -c "$HOME/github/rapid10" -n rapid10
-    tmux new-window -c "$HOME/github/rapid11" -n rapid11
+    i=2
+    while [ "$i" -le 11 ]; do
+        tmux new-window -c "$HOME/github/rapid${i}" -n "rapid${i}"
+        i=$((i + 1))
+    done
     tmux select-window -t 0
     tmux attach-session -d
 }
