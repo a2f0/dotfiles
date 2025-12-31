@@ -21,9 +21,9 @@ ide () {
 
 # To reattach: tmux attach
 tearleads () {
-    tmux new-session -d -c "$HOME/github/rapid" -n rapid
+    tmux new-session -d -c "$HOME/github/tearleads-main" -n tearleads-main
     i=2
-    while [ "$i" -le 11 ]; do
+    while [ "$i" -le 20 ]; do
         tmux new-window -c "$HOME/github/rapid${i}" -n "rapid${i}"
         i=$((i + 1))
     done
