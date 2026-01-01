@@ -19,18 +19,6 @@ ide () {
     tmux attach-session -d
 }
 
-# To reattach: tmux attach
-tearleads () {
-    tmux new-session -d -c "$HOME/github/tearleads-main" -n tearleads-main
-    i=2
-    while [ "$i" -le 20 ]; do
-        tmux new-window -c "$HOME/github/rapid${i}" -n "rapid${i}"
-        i=$((i + 1))
-    done
-    tmux select-window -t 0
-    tmux attach-session -d
-}
-
 killport () {
     if ! lsof -i :"$1" >/dev/null 2>&1; then
         echo "No process found listening on port $1"
