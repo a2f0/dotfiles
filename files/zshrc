@@ -34,12 +34,12 @@ if [[ `uname` == Darwin ]]; then
   export ANDROID_HOME="$HOME/Library/Android/sdk"
   export ANDROID_SDK="$ANDROID_HOME"
   export ANDROID_SDK_ROOT="$ANDROID_HOME"
-  export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
+  export PATH="${PATH:+${PATH}:}$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
 
 
   # go - installed via brew
-  export GOPATH=$HOME/go
-  export PATH="$PATH:${GOPATH}/bin"
+  export GOPATH="$HOME/go"
+  export PATH="${PATH:+${PATH}:}${GOPATH}/bin"
 
   # for git gpg signature verification
   export GPG_TTY=$(tty)
@@ -50,10 +50,10 @@ if [[ `uname -n` == x1 ]]; then
   export ANDROID_HOME="$HOME/Android/Sdk"
   export ANDROID_SDK="$ANDROID_HOME"
   export ANDROID_SDK_ROOT="$ANDROID_HOME"
-  export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
+  export PATH="${PATH:+${PATH}:}$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
 
   # terraform virtual environment installed manually
-  export PATH="$HOME/.tfenv/bin:$PATH"
+  export PATH="$HOME/.tfenv/bin${PATH:+:${PATH}}"
 
   # rbenv, installed via git
   eval "$(~/.rbenv/bin/rbenv init - zsh)"
@@ -72,13 +72,13 @@ export LC_ALL=en_US.UTF-8
 export AWS_PAGER="" # disable the use of a pager
 
 # custom compiled software (./configure --prefix=~/install, export PREFIX=~/install, etc.)
-export PATH=$PATH:~/install/bin
+export PATH="${PATH:+${PATH}:}~/install/bin"
 
 # zed, daedalus
-export PATH=$HOME/.local/bin:$PATH
+export PATH="$HOME/.local/bin${PATH:+:${PATH}}"
 
 # dotfiles scripts
-export PATH=$PATH:$HOME/dotfiles/files/shellcheck
+export PATH="${PATH:+${PATH}:}$HOME/dotfiles/files/shellcheck"
 
 # also see efnet/freenode functions in ~/.functions
 export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
@@ -103,12 +103,12 @@ unsetopt share_history      # don't share history across terminals
 alias history="history 1"   # display all entries from entry number 1
 
 export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin${PATH:+:${PATH}}"
 eval "$(pyenv init -)"
 
 # jenv, installed via git
 # make sure to run 'jenv enable-plugin export' after installing to enable the JAVA_HOME export.
-export PATH="$HOME/.jenv/bin:$PATH"
+export PATH="$HOME/.jenv/bin${PATH:+:${PATH}}"
 eval "$(jenv init -)"
 
 # rust installed using rustup
@@ -117,5 +117,8 @@ eval "$(jenv init -)"
 export EDITOR="nvim"
 
 # Added by Antigravity
-export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
-export PATH=$PATH:$HOME/.maestro/bin
+export PATH="$HOME/.antigravity/antigravity/bin${PATH:+:${PATH}}"
+export PATH="${PATH:+${PATH}:}$HOME/.maestro/bin"
+
+# opencode
+export PATH="$HOME/.opencode/bin${PATH:+:${PATH}}"
