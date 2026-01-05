@@ -3,7 +3,7 @@
   ansible.builtin.file:
     path: '~/Library/Application Support/Code/User/'
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Create symlink for ~/Library/Application Support/Code/User/settings.json
@@ -17,7 +17,7 @@
   ansible.builtin.file:
     path: '~/Library/Application Support/Cursor/User/'
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Create symlink for ~/Library/Application Support/Cursor/User/settings.json
@@ -31,12 +31,26 @@
   ansible.builtin.file:
     path: '~/Library/Application Support/com.mitchellh.ghostty/'
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Create symlink for ~/Library/Application Support/com.mitchellh.ghostty/config
   ansible.builtin.file:
     src: "{{ dotfiles_dir }}/files/com.mitchellh.ghostty.config"
     dest: "~/Library/Application Support/com.mitchellh.ghostty/config"
+    state: link
+    force: true
+
+- name: Create symlink for iTerm2 preferences
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/com.googlecode.iterm2.plist"
+    dest: ~/Library/Preferences/com.googlecode.iterm2.plist
+    state: link
+    force: true
+
+- name: Create symlink for Terminal.app preferences
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/com.apple.Terminal.plist"
+    dest: ~/Library/Preferences/com.apple.Terminal.plist
     state: link
     force: true
