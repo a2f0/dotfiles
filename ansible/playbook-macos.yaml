@@ -32,7 +32,3 @@
       ansible.builtin.import_tasks: tasks/go.yaml
       tags:
         - files
-    - name: Import fonts task
-      ansible.builtin.import_tasks: tasks/macos/fonts.yaml
-      tags:
-        - fonts

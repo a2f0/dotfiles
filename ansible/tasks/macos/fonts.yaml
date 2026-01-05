@@ -1,5 +1,0 @@
----
-- name: Install JetBrains Mono Nerd Font via Homebrew
-  community.general.homebrew_cask:
-    name: font-jetbrains-mono-nerd-font
-    state: present
