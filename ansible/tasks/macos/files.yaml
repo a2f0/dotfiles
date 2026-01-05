@@ -41,16 +41,12 @@
     state: link
     force: true
 
-- name: Create symlink for iTerm2 preferences
+- name: Create symlinks for terminal preferences
   ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/com.googlecode.iterm2.plist"
-    dest: ~/Library/Preferences/com.googlecode.iterm2.plist
+    src: "{{ dotfiles_dir }}/files/{{ item }}"
+    dest: "~/Library/Preferences/{{ item }}"
     state: link
     force: true
-
-- name: Create symlink for Terminal.app preferences
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/com.apple.Terminal.plist"
-    dest: ~/Library/Preferences/com.apple.Terminal.plist
-    state: link
-    force: true
+  loop:
+    - com.googlecode.iterm2.plist
+    - com.apple.Terminal.plist
