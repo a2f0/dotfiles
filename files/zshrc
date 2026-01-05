@@ -38,7 +38,7 @@ if [[ `uname` == Darwin ]]; then
 
 
   # go - installed via brew
-  export GOPATH=$HOME/go
+  export GOPATH="$HOME/go"
   export PATH="$PATH:${GOPATH}/bin"
 
   # for git gpg signature verification
@@ -72,13 +72,13 @@ export LC_ALL=en_US.UTF-8
 export AWS_PAGER="" # disable the use of a pager
 
 # custom compiled software (./configure --prefix=~/install, export PREFIX=~/install, etc.)
-export PATH=$PATH:~/install/bin
+export PATH="$PATH:~/install/bin"
 
 # zed, daedalus
-export PATH=$HOME/.local/bin:$PATH
+export PATH="$HOME/.local/bin:$PATH"
 
 # dotfiles scripts
-export PATH=$PATH:$HOME/dotfiles/files/shellcheck
+export PATH="$PATH:$HOME/dotfiles/files/shellcheck"
 
 # also see efnet/freenode functions in ~/.functions
 export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
@@ -118,4 +118,7 @@ export EDITOR="nvim"
 
 # Added by Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
-export PATH=$PATH:$HOME/.maestro/bin
+export PATH="$PATH:$HOME/.maestro/bin"
+
+# opencode
+export PATH="$HOME/.opencode/bin:$PATH"
