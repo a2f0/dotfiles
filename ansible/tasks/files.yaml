@@ -6,10 +6,10 @@
     owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
   loop:
-    - ~/install/bin
-    - ~/.bundle
-    - ~/.imapfilter
-    - ~/.config/nvim
+    - '~/install/bin'
+    - '~/.bundle'
+    - '~/.imapfilter'
+    - '~/.config/nvim'
 
 - name: Create symlinks
   ansible.builtin.file:
