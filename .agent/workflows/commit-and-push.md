@@ -22,10 +22,10 @@ Commit and push the current changes following these rules:
    - Add emoji or "Generated with Antigravity" footers
    - Use `--no-gpg-sign` or skip signing
 
-5. **GPG signing**: The commit MUST be signed. Use a 5-second timeout. For multi-line messages, pipe the content to `git commit`:
+5. **GPG signing**: The commit MUST be signed. Use a 15-second timeout. For multi-line messages, pipe the content to `git commit`:
 
    ```bash
-   printf "subject\n\nbody" | timeout 5 git commit -S -F -
+   printf "subject\n\nbody" | timeout 15 git commit -S -F -
    ```
 
 6. **Push**: After successful commit, push to the current branch's remote.
