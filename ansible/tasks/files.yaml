@@ -97,13 +97,6 @@
     state: link
     force: true
 
-- name: Create symlink for ~/.gitconfig-thinkspan
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/gitconfig-thinkspan"
-    dest: ~/.gitconfig-thinkspan
-    state: link
-    force: true
-
 - name: Create symlink for ~/.global.ircrc
   ansible.builtin.file:
     src: "{{ dotfiles_dir }}/files/global.ircrc"
