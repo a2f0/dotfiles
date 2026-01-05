@@ -3,7 +3,7 @@
   ansible.builtin.file:
     path: ~/install/bin
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Create symlink for ~/.aliases
@@ -38,7 +38,7 @@
   ansible.builtin.file:
     path: ~/.bundle
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Create symlink for ~/.bundle/config
@@ -115,7 +115,7 @@
   ansible.builtin.file:
     path: ~/.imapfilter
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Create symlink for ~/.imapfilter/config.lua
@@ -213,7 +213,7 @@
   ansible.builtin.file:
     path: ~/.config/nvim
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Create symlink for ~/.config/nvim/init.lua
