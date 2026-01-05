@@ -4,7 +4,7 @@
   connection: local
   become: false
   vars:
-    dotfiles_dir: "{{ playbook_dir }}"
+    dotfiles_dir: "{{ playbook_dir | dirname }}"
     ansible_python_interpreter: /usr/bin/python3
   pre_tasks:
     - name: Ensure this playbook only runs on macOS
