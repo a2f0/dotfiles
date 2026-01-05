@@ -3,14 +3,14 @@
   ansible.builtin.file:
     path: ~/src
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Make sure ~/install exists
   ansible.builtin.file:
     path: ~/install
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Clone Epic 4
