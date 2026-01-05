@@ -3,14 +3,14 @@
   ansible.builtin.file:
     path: ~/.config/Code - OSS/User/
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Make sure ~/.config/Code/User/ exists
   ansible.builtin.file:
     path: ~/.config/Code/User/
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Create symlink for ~/.config/Code - OSS/User/settings.json
@@ -59,7 +59,7 @@
   ansible.builtin.file:
     path: ~/.xmonad
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Create symlink for ~/.xmonad/xmonad.hs
@@ -80,7 +80,7 @@
   ansible.builtin.file:
     path: '~/.config/Cursor/User'
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Create symlink for ~/.config/Cursor/User/settings.json
