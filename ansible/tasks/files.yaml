@@ -1,224 +1,48 @@
 ---
-- name: Make sure ~/install/bin exists
+- name: Make sure directories exist
   ansible.builtin.file:
-    path: ~/install/bin
+    path: "{{ item }}"
     state: directory
     owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
+  loop:
+    - ~/install/bin
+    - ~/.bundle
+    - ~/.imapfilter
+    - ~/.config/nvim
 
-- name: Create symlink for ~/.aliases
+- name: Create symlinks
   ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/shellcheck/aliases"
-    dest: ~/.aliases
+    src: "{{ dotfiles_dir }}/files/{{ item.src }}"
+    dest: "{{ item.dest }}"
     state: link
     force: true
-
-- name: Create symlink for ~/.aspell.en.pws
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/aspell.en.pws"
-    dest: ~/.aspell.en.pws
-    state: link
-    force: true
-
-- name: Create symlink for ~/.bash_profile
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/bash_profile"
-    dest: ~/.bash_profile
-    state: link
-    force: true
-
-- name: Create symlink for ~/.bashrc
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/bashrc"
-    dest: ~/.bashrc
-    state: link
-    force: true
-
-- name: Make sure ~/.bundle exists
-  ansible.builtin.file:
-    path: ~/.bundle
-    state: directory
-    owner: "{{ ansible_facts['user_id'] }}"
-    mode: "0700"
-
-- name: Create symlink for ~/.bundle/config
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/bundler"
-    dest: ~/.bundle/config
-    state: link
-    force: true
-
-- name: Create symlink for ~/.efnet.ircrc
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/efnet.ircrc"
-    dest: ~/.efnet.ircrc
-    state: link
-    force: true
-
-- name: Create symlink for ~/.freenode.ircrc
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/freenode.ircrc"
-    dest: ~/.freenode.ircrc
-    state: link
-    force: true
-
-- name: Create symlink for ~/.functions
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/functions"
-    dest: ~/.functions
-    state: link
-    force: true
-
-- name: Create symlink for ~/.functions-posix
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/shellcheck/functions"
-    dest: ~/.functions-posix
-    state: link
-    force: true
-
-- name: Create symlink for ~/.functions-zsh
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/functions-zsh"
-    dest: ~/.functions-zsh
-    state: link
-    force: true
-
-- name: Create symlink for ~/.gemrc
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/gemrc"
-    dest: ~/.gemrc
-    state: link
-    force: true
-
-- name: Create symlink for ~/.gitconfig
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/gitconfig"
-    dest: ~/.gitconfig
-    state: link
-    force: true
-
-- name: Create symlink for ~/.global.ircrc
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/global.ircrc"
-    dest: ~/.global.ircrc
-    state: link
-    force: true
-
-- name: Make sure ~/.imapfilter exists
-  ansible.builtin.file:
-    path: ~/.imapfilter
-    state: directory
-    owner: "{{ ansible_facts['user_id'] }}"
-    mode: "0700"
-
-- name: Create symlink for ~/.imapfilter/config.lua
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/imapfilter.config.lua"
-    dest: ~/.imapfilter/config.lua
-    state: link
-    force: true
-
-- name: Create symlink for ~/.inputrc
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/inputrc"
-    dest: ~/.inputrc
-    state: link
-    force: true
-
-- name: Create symlink for ~/.mailcap
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/mailcap"
-    dest: ~/.mailcap
-    state: link
-    force: true
-
-- name: Create symlink for ~/.muttrc
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/muttrc"
-    dest: ~/.muttrc
-    state: link
-    force: true
-
-- name: Create symlink for ~/.muttrc-imap
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/muttrc-imap"
-    dest: ~/.muttrc-imap
-    state: link
-    force: true
-
-- name: Create symlink for ~/.offlineimaprc
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/offlineimaprc.ini"
-    dest: ~/.offlineimaprc
-    state: link
-    force: true
-
-- name: Create symlink for ~/.offlineimap.py
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/offlineimap.py"
-    dest: ~/.offlineimap.py
-    state: link
-    force: true
-
-- name: Create symlink for ~/.pinerc
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/pinerc"
-    dest: ~/.pinerc
-    state: link
-    force: true
-
-- name: Create symlink for ~/.profile
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/profile"
-    dest: ~/.profile
-    state: link
-    force: true
-
-- name: Create symlink for ~/.screenrc
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/screenrc"
-    dest: ~/.screenrc
-    state: link
-    force: true
-
-- name: Create symlink for ~/.vimrc
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/vimrc"
-    dest: ~/.vimrc
-    state: link
-    force: true
-
-- name: Create symlink for ~/.zprofile
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/zprofile"
-    dest: ~/.zprofile
-    state: link
-    force: true
-
-- name: Create symlink for ~/.zshrc
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/zshrc"
-    dest: ~/.zshrc
-    state: link
-    force: true
-
-- name: Make sure ~/.config/nvim exists
-  ansible.builtin.file:
-    path: ~/.config/nvim
-    state: directory
-    owner: "{{ ansible_facts['user_id'] }}"
-    mode: "0700"
-
-- name: Create symlink for ~/.config/nvim/init.lua
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/nvim.init.lua"
-    dest: ~/.config/nvim/init.lua
-    state: link
-    force: true
-
-- name: Create symlink for ~/.tmux.conf
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/tmux.conf"
-    dest: ~/.tmux.conf
-    state: link
-    force: true
+  loop:
+    - { src: 'shellcheck/aliases', dest: '~/.aliases' }
+    - { src: 'aspell.en.pws', dest: '~/.aspell.en.pws' }
+    - { src: 'bash_profile', dest: '~/.bash_profile' }
+    - { src: 'bashrc', dest: '~/.bashrc' }
+    - { src: 'bundler', dest: '~/.bundle/config' }
+    - { src: 'efnet.ircrc', dest: '~/.efnet.ircrc' }
+    - { src: 'freenode.ircrc', dest: '~/.freenode.ircrc' }
+    - { src: 'functions', dest: '~/.functions' }
+    - { src: 'shellcheck/functions', dest: '~/.functions-posix' }
+    - { src: 'functions-zsh', dest: '~/.functions-zsh' }
+    - { src: 'gemrc', dest: '~/.gemrc' }
+    - { src: 'gitconfig', dest: '~/.gitconfig' }
+    - { src: 'global.ircrc', dest: '~/.global.ircrc' }
+    - { src: 'imapfilter.config.lua', dest: '~/.imapfilter/config.lua' }
+    - { src: 'inputrc', dest: '~/.inputrc' }
+    - { src: 'mailcap', dest: '~/.mailcap' }
+    - { src: 'muttrc', dest: '~/.muttrc' }
+    - { src: 'muttrc-imap', dest: '~/.muttrc-imap' }
+    - { src: 'offlineimaprc.ini', dest: '~/.offlineimaprc' }
+    - { src: 'offlineimap.py', dest: '~/.offlineimap.py' }
+    - { src: 'pinerc', dest: '~/.pinerc' }
+    - { src: 'profile', dest: '~/.profile' }
+    - { src: 'screenrc', dest: '~/.screenrc' }
+    - { src: 'vimrc', dest: '~/.vimrc' }
+    - { src: 'zprofile', dest: '~/.zprofile' }
+    - { src: 'zshrc', dest: '~/.zshrc' }
+    - { src: 'nvim.init.lua', dest: '~/.config/nvim/init.lua' }
+    - { src: 'tmux.conf', dest: '~/.tmux.conf' }

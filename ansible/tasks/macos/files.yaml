@@ -1,45 +1,25 @@
 ---
-- name: Make sure ~/Library/Application Support/Code/User/ exists
+- name: Make sure directories exist
   ansible.builtin.file:
-    path: '~/Library/Application Support/Code/User/'
+    path: "{{ item }}"
     state: directory
     owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
+  loop:
+    - '~/Library/Application Support/Code/User/'
+    - '~/Library/Application Support/Cursor/User/'
+    - '~/Library/Application Support/com.mitchellh.ghostty/'
 
-- name: Create symlink for ~/Library/Application Support/Code/User/settings.json
+- name: Create symlinks
   ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/visual-studio-code-settings.json"
-    dest: ~/Library/Application Support/Code/User/settings.json
+    src: "{{ dotfiles_dir }}/files/{{ item.src }}"
+    dest: "{{ item.dest }}"
     state: link
     force: true
-
-- name: Make sure ~/Library/Application Support/Cursor/User/ exists
-  ansible.builtin.file:
-    path: '~/Library/Application Support/Cursor/User/'
-    state: directory
-    owner: "{{ ansible_facts['user_id'] }}"
-    mode: "0700"
-
-- name: Create symlink for ~/Library/Application Support/Cursor/User/settings.json
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/cursor-settings.json"
-    dest: ~/Library/Application Support/Cursor/User/settings.json
-    state: link
-    force: true
-
-- name: Make sure ~/Library/Application Support/com.mitchellh.ghostty/ exists
-  ansible.builtin.file:
-    path: '~/Library/Application Support/com.mitchellh.ghostty/'
-    state: directory
-    owner: "{{ ansible_facts['user_id'] }}"
-    mode: "0700"
-
-- name: Create symlink for ~/Library/Application Support/com.mitchellh.ghostty/config
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/com.mitchellh.ghostty.config"
-    dest: "~/Library/Application Support/com.mitchellh.ghostty/config"
-    state: link
-    force: true
+  loop:
+    - { src: 'visual-studio-code-settings.json', dest: '~/Library/Application Support/Code/User/settings.json' }
+    - { src: 'cursor-settings.json', dest: '~/Library/Application Support/Cursor/User/settings.json' }
+    - { src: 'com.mitchellh.ghostty.config', dest: '~/Library/Application Support/com.mitchellh.ghostty/config' }
 
 - name: Create symlinks for terminal preferences
   ansible.builtin.file:
