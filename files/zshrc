@@ -19,8 +19,8 @@ if [[ `uname` == Darwin ]]; then
 
   # rbenv - installed via brew
   if [[ -z "$RBENV_SHELL" ]]; then
-    if hash rbenv 2>/dev/null; then
-      eval "$(rbenv init -)"
+    if command -v rbenv >/dev/null 2>&1; then
+      eval "$(rbenv init - zsh)"
     fi
   fi
 
@@ -59,7 +59,12 @@ if [[ `uname -n` == x1 ]]; then
 
   # rbenv, installed via git
   if [[ -z "$RBENV_SHELL" ]]; then
-    eval "$(~/.rbenv/bin/rbenv init - zsh)"
+    if [[ -d "$HOME/.rbenv/bin" ]]; then
+      export PATH="$HOME/.rbenv/bin${PATH:+:${PATH}}"
+    fi
+    if command -v rbenv >/dev/null 2>&1; then
+      eval "$(rbenv init - zsh)"
+    fi
   fi
 fi
 
