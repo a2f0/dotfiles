@@ -45,8 +45,7 @@
     "workbench.activityBar.orientation": "vertical",
     "workbench.startupEditor": "none",
     "[javascript][typescript]": {
-        "editor.tabSize": 2,
-        "tabWidth": 2
+        "editor.tabSize": 2
     },
     "[shellscript]": {
         "editor.defaultFormatter": "foxundermoon.shell-format"
