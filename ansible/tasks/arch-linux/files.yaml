@@ -89,3 +89,17 @@
     dest: ~/.config/Cursor/User/settings.json
     state: link
     force: true
+
+- name: Make sure ~/.config/Antigravity/User exists
+  ansible.builtin.file:
+    path: '~/.config/Antigravity/User'
+    state: directory
+    owner: "{{ ansible_facts['user_id'] }}"
+    mode: "0700"
+
+- name: Create symlink for ~/.config/Antigravity/User/settings.json
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/antigravity-settings.json"
+    dest: ~/.config/Antigravity/User/settings.json
+    state: link
+    force: true

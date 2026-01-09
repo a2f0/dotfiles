@@ -8,6 +8,7 @@
   loop:
     - '~/Library/Application Support/Code/User/'
     - '~/Library/Application Support/Cursor/User/'
+    - '~/Library/Application Support/Antigravity/User/'
     - '~/Library/Application Support/com.mitchellh.ghostty/'
 
 - name: Create symlinks
@@ -19,6 +20,7 @@
   loop:
     - { src: 'visual-studio-code-settings.json', dest: '~/Library/Application Support/Code/User/settings.json' }
     - { src: 'cursor-settings.json', dest: '~/Library/Application Support/Cursor/User/settings.json' }
+    - { src: 'antigravity-settings.json', dest: '~/Library/Application Support/Antigravity/User/settings.json' }
     - { src: 'com.mitchellh.ghostty.config', dest: '~/Library/Application Support/com.mitchellh.ghostty/config' }
 
 - name: Create symlinks for terminal preferences

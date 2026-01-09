@@ -6,6 +6,8 @@
     "editor.renderControlCharacters": true,
     "editor.renderWhitespace": "all",
     "editor.tabSize": 2,
+    "extensions.autoCheckUpdates": true,
+    "extensions.autoUpdate": true,
     "extensions.ignoreRecommendations": true,
     "files.autoSave": "onFocusChange",
     "flow.pathToFlow": "flow",
