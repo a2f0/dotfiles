@@ -8,7 +8,7 @@ dlob () {
 
 rip () {
     # Update yt-dlp nightly:
-    #   python -m pip install -U --pre yt-dlp
+    #   python3 -m pip install -U --pre yt-dlp
     #   yt-dlp --version
     yt-dlp --extract-audio --audio-format mp3 "$1" --add-metadata "$1" --embed-thumbnail
 }
