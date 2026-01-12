@@ -24,6 +24,10 @@
       ansible.builtin.import_tasks: tasks/macos/files.yaml
       tags:
         - files
+    - name: Import macos defaults task
+      ansible.builtin.import_tasks: tasks/macos/defaults.yaml
+      tags:
+        - defaults
     - name: Import mcabber task
       ansible.builtin.import_tasks: tasks/mcabber.yaml
       tags:
@@ -32,3 +36,6 @@
       ansible.builtin.import_tasks: tasks/go.yaml
       tags:
         - files
+  handlers:
+    - name: Import macos handlers
+      ansible.builtin.import_tasks: handlers/macos.yaml
