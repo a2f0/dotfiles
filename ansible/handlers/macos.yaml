@@ -1,0 +1,8 @@
+---
+- name: Restart Finder and SystemUIServer
+  ansible.builtin.command: "{{ item }}"
+  loop:
+    - killall Finder
+    - killall SystemUIServer
+  changed_when: false
+  failed_when: false
