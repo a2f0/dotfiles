@@ -1,0 +1,39 @@
+---
+- name: Read global AppleShowAllFiles
+  ansible.builtin.command: defaults read NSGlobalDomain AppleShowAllFiles
+  register: apple_show_all_files
+  changed_when: false
+  failed_when: false
+
+- name: Show hidden files in open/save panels
+  ansible.builtin.command: defaults write NSGlobalDomain AppleShowAllFiles -bool true
+  when: apple_show_all_files.rc != 0 or (apple_show_all_files.stdout | trim | lower) not in ["1", "true", "yes"]
+  changed_when: true
+  notify:
+    - Restart Finder and SystemUIServer
+
+- name: Read login window reopen state
+  ansible.builtin.command: defaults read com.apple.loginwindow TALLogoutSavesState
+  register: loginwindow_logout_saves_state
+  changed_when: false
+  failed_when: false
+
+- name: Do not reopen windows after reboot/login
+  ansible.builtin.command: defaults write com.apple.loginwindow TALLogoutSavesState -bool false
+  when: loginwindow_logout_saves_state.rc != 0 or (loginwindow_logout_saves_state.stdout | trim | lower) not in ["0", "false", "no"]
+  changed_when: true
+  notify:
+    - Restart Finder and SystemUIServer
+
+- name: Read app window restoration state
+  ansible.builtin.command: defaults read NSGlobalDomain NSQuitAlwaysKeepsWindows
+  register: nsquit_always_keeps_windows
+  changed_when: false
+  failed_when: false
+
+- name: Do not restore app windows on relaunch
+  ansible.builtin.command: defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool false
+  when: nsquit_always_keeps_windows.rc != 0 or (nsquit_always_keeps_windows.stdout | trim | lower) not in ["0", "false", "no"]
+  changed_when: true
+  notify:
+    - Restart Finder and SystemUIServer
