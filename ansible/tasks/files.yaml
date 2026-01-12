@@ -19,6 +19,7 @@
     force: true
   loop:
     - { src: 'shellcheck/aliases', dest: '~/.aliases' }
+    - { src: 'ansible.cfg', dest: '~/.ansible.cfg' }
     - { src: 'aspell.en.pws', dest: '~/.aspell.en.pws' }
     - { src: 'bash_profile', dest: '~/.bash_profile' }
     - { src: 'bashrc', dest: '~/.bashrc' }
