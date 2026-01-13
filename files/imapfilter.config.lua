@@ -15,7 +15,7 @@ accounts = {
 }
 
 -- Helper function to process email filters
-local function process_filter(account, from_folder, from_address, to_folder, subject_pattern, body_pattern)
+local function process_filter(account, from_folder, from_address, to_folder, subject_pattern, body_pattern, mark_read)
     local messages
     if from_address then
         messages = account[from_folder]:contain_from(from_address)
@@ -25,6 +25,9 @@ local function process_filter(account, from_folder, from_address, to_folder, sub
         messages = account[from_folder]:match_subject(subject_pattern)
     end
     if messages then
+        if mark_read then
+            messages:mark_seen()
+        end
         messages:move_messages(account[to_folder])
     end
 end
@@ -38,7 +41,7 @@ end
 -- Helper function to apply filters to an account
 local function apply_filters(account, filters)
     for _, filter in ipairs(filters) do
-        process_filter(account, "INBOX", filter.from, filter.to, filter.subject, filter.body)
+        process_filter(account, "INBOX", filter.from, filter.to, filter.subject, filter.body, filter.mark_read)
 
         if filter.clean_days and filter.to ~= '[Gmail]/Trash' then
             clean_old_messages(account, filter.to, filter.clean_days)
@@ -99,6 +102,9 @@ local common_filters = {
     -- Zoom
     {subject = '^Please join Zoom meeting in progress', to = '[Gmail]/Trash'},
     {from = 'no-reply@zoom.us', to = '[Gmail]/Trash'},
+
+    -- Thinkspan
+    {from = 'postmaster@send.thinkspan.com', to = '[Gmail]/Trash', mark_read = true},
 
     -- Sentry
     {from = 'noreply@md.getsentry.com', to = "Keep/Notifications/Sentry", clean_days = 30},
