@@ -16,7 +16,7 @@ rip () {
 }
 
 ripvideo () {
-    yt-dlp --format "bv*+ba/b" --merge-output-format mp4 "$1" --add-metadata --embed-thumbnail
+    yt-dlp --format "bestvideo*+bestaudio/best" --merge-output-format mp4 --recode-video mp4 "$1" --add-metadata --embed-thumbnail
 }
 
 ide () {
