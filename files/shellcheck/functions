@@ -7,7 +7,10 @@ dlob () {
 }
 
 ytdlp_install () {
-    python3 -m pip install -U --pre yt-dlp
+    if ! python3 -m pip install -U --pre yt-dlp; then
+        echo "Failed to install/update yt-dlp." >&2
+        return 1
+    fi
     yt-dlp --version
 }
 
