@@ -27,11 +27,6 @@ if [[ `uname` == Darwin ]]; then
   # jenv - installed via brew
   eval "$(jenv init -)"
 
-  # nvm - installed via brew
-  export NVM_DIR="$HOME/.nvm"
-  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
   # android studio
   export ANDROID_HOME="$HOME/Library/Android/sdk"
   export ANDROID_SDK="$ANDROID_HOME"
