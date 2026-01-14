@@ -6,11 +6,28 @@ dlob () {
     git branch | grep -v "$(git branch --show-current)" | xargs git branch -D
 }
 
+ytdlp_install () {
+    if ! python3 -m pip install -U --pre yt-dlp; then
+        echo "Failed to install/update yt-dlp." >&2
+        return 1
+    fi
+    yt-dlp --version
+}
+
 rip () {
-    # Update yt-dlp nightly:
-    #   python3 -m pip install -U --pre yt-dlp
-    #   yt-dlp --version
-    yt-dlp --extract-audio --audio-format mp3 "$1" --add-metadata "$1" --embed-thumbnail
+    if [ -z "$1" ]; then
+        echo "Usage: rip <url>" >&2
+        return 1
+    fi
+    yt-dlp --extract-audio --audio-format mp3 "$1" --add-metadata --embed-thumbnail
+}
+
+ripvideo () {
+    if [ -z "$1" ]; then
+        echo "Usage: ripvideo <url>" >&2
+        return 1
+    fi
+    yt-dlp --format "bestvideo*+bestaudio/best" --merge-output-format mp4 --recode-video mp4 "$1" --add-metadata --embed-thumbnail
 }
 
 ide () {
