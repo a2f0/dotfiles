@@ -1,3 +1,6 @@
+# zshrc - sourced for INTERACTIVE shells only
+# Environment setup (PATH, version managers) is in zshenv for agent compatibility
+
 source ~/.aliases
 source ~/.aliases-private
 source ~/.functions-posix
@@ -13,26 +16,11 @@ if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/
 if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 
 if [[ `uname` == Darwin ]]; then
-
-  # brew
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-
-  # rbenv - installed via brew
-  if [[ -z "$RBENV_SHELL" ]]; then
-    if command -v rbenv >/dev/null 2>&1; then
-      eval "$(rbenv init - zsh)"
-    fi
-  fi
-
-  # jenv - installed via brew
-  eval "$(jenv init -)"
-
   # android studio
   export ANDROID_HOME="$HOME/Library/Android/sdk"
   export ANDROID_SDK="$ANDROID_HOME"
   export ANDROID_SDK_ROOT="$ANDROID_HOME"
   export PATH="${PATH:+${PATH}:}$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
-
 
   # go - installed via brew
   export GOPATH="$HOME/go"
@@ -51,16 +39,6 @@ if [[ `uname -n` == x1 ]]; then
 
   # terraform virtual environment installed manually
   export PATH="$HOME/.tfenv/bin${PATH:+:${PATH}}"
-
-  # rbenv, installed via git
-  if [[ -z "$RBENV_SHELL" ]]; then
-    if [[ -d "$HOME/.rbenv/bin" ]]; then
-      export PATH="$HOME/.rbenv/bin${PATH:+:${PATH}}"
-    fi
-    if command -v rbenv >/dev/null 2>&1; then
-      eval "$(rbenv init - zsh)"
-    fi
-  fi
 fi
 
 alias vi="nvim"
@@ -77,9 +55,6 @@ export AWS_PAGER="" # disable the use of a pager
 
 # custom compiled software (./configure --prefix=~/install, export PREFIX=~/install, etc.)
 export PATH="${PATH:+${PATH}:}~/install/bin"
-
-# zed, daedalus
-export PATH="$HOME/.local/bin${PATH:+:${PATH}}"
 
 # dotfiles scripts
 export PATH="${PATH:+${PATH}:}$HOME/dotfiles/files/shellcheck"
@@ -98,6 +73,14 @@ export NVM_AUTO_USE=true
 antigen bundle lukechilds/zsh-nvm
 antigen apply
 
+# nvm bash completion (fallback if zsh-nvm plugin doesn't provide it)
+# Support both Apple Silicon (/opt/homebrew) and Intel (/usr/local) Macs
+if [[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ]]; then
+  . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+elif [[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ]]; then
+  . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
+fi
+
 # history settings
 HISTSIZE=1000               # how many lines of history to keep in memory
 HISTFILE=~/.zsh_history     # where to save history to disk
@@ -105,18 +88,6 @@ SAVEHIST=1000               # number of history entries to save to disk
 setopt no_share_history     # don't share history across terminals
 unsetopt share_history      # don't share history across terminals
 alias history="history 1"   # display all entries from entry number 1
-
-export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin${PATH:+:${PATH}}"
-eval "$(pyenv init -)"
-
-# jenv, installed via git
-# make sure to run 'jenv enable-plugin export' after installing to enable the JAVA_HOME export.
-export PATH="$HOME/.jenv/bin${PATH:+:${PATH}}"
-eval "$(jenv init -)"
-
-# rust installed using rustup
-. "$HOME/.cargo/env"
 
 export EDITOR="nvim"
 
