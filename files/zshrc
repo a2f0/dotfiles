@@ -77,7 +77,7 @@ export LC_ALL=en_US.UTF-8
 export AWS_PAGER="" # disable the use of a pager
 
 # custom compiled software (./configure --prefix=~/install, export PREFIX=~/install, etc.)
-path_append "~/install/bin"
+path_append "$HOME/install/bin"
 
 # dotfiles scripts
 path_append "$HOME/dotfiles/files/shellcheck"
