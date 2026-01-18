@@ -11,6 +11,25 @@ source ~/.quick
 # to group members or others
 umask 0077
 
+if ! typeset -f path_prepend >/dev/null 2>&1; then
+  # Avoid duplicate PATH entries to keep PATH deterministic and reduce shadowing risks.
+  path_prepend() {
+    case ":$PATH:" in
+      *":$1:"*) return ;;
+      *) PATH="$1${PATH:+:${PATH}}" ;;
+    esac
+  }
+
+  path_append() {
+    case ":$PATH:" in
+      *":$1:"*) return ;;
+      *) PATH="${PATH:+${PATH}:}$1" ;;
+    esac
+  }
+fi
+
+export PATH
+
 # gcloud
 if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
@@ -20,11 +39,13 @@ if [[ `uname` == Darwin ]]; then
   export ANDROID_HOME="$HOME/Library/Android/sdk"
   export ANDROID_SDK="$ANDROID_HOME"
   export ANDROID_SDK_ROOT="$ANDROID_HOME"
-  export PATH="${PATH:+${PATH}:}$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
+  path_append "$ANDROID_HOME/cmdline-tools/latest/bin"
+  path_append "$ANDROID_HOME/emulator"
+  path_append "$ANDROID_HOME/platform-tools"
 
   # go - installed via brew
   export GOPATH="$HOME/go"
-  export PATH="${PATH:+${PATH}:}${GOPATH}/bin"
+  path_append "${GOPATH}/bin"
 
   # for git gpg signature verification
   export GPG_TTY=$(tty)
@@ -35,10 +56,12 @@ if [[ `uname -n` == x1 ]]; then
   export ANDROID_HOME="$HOME/Android/Sdk"
   export ANDROID_SDK="$ANDROID_HOME"
   export ANDROID_SDK_ROOT="$ANDROID_HOME"
-  export PATH="${PATH:+${PATH}:}$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
+  path_append "$ANDROID_HOME/cmdline-tools/latest/bin"
+  path_append "$ANDROID_HOME/emulator"
+  path_append "$ANDROID_HOME/platform-tools"
 
   # terraform virtual environment installed manually
-  export PATH="$HOME/.tfenv/bin${PATH:+:${PATH}}"
+  path_prepend "$HOME/.tfenv/bin"
 fi
 
 alias vi="nvim"
@@ -54,10 +77,10 @@ export LC_ALL=en_US.UTF-8
 export AWS_PAGER="" # disable the use of a pager
 
 # custom compiled software (./configure --prefix=~/install, export PREFIX=~/install, etc.)
-export PATH="${PATH:+${PATH}:}~/install/bin"
+path_append "~/install/bin"
 
 # dotfiles scripts
-export PATH="${PATH:+${PATH}:}$HOME/dotfiles/files/shellcheck"
+path_append "$HOME/dotfiles/files/shellcheck"
 
 # also see efnet/freenode functions in ~/.functions
 export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
@@ -74,11 +97,8 @@ antigen bundle lukechilds/zsh-nvm
 antigen apply
 
 # nvm bash completion (fallback if zsh-nvm plugin doesn't provide it)
-# Support both Apple Silicon (/opt/homebrew) and Intel (/usr/local) Macs
 if [[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ]]; then
   . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-elif [[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ]]; then
-  . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
 fi
 
 # history settings
@@ -92,8 +112,8 @@ alias history="history 1"   # display all entries from entry number 1
 export EDITOR="nvim"
 
 # Added by Antigravity
-export PATH="$HOME/.antigravity/antigravity/bin${PATH:+:${PATH}}"
-export PATH="${PATH:+${PATH}:}$HOME/.maestro/bin"
+path_prepend "$HOME/.antigravity/antigravity/bin"
+path_append "$HOME/.maestro/bin"
 
 # opencode
-export PATH="$HOME/.opencode/bin${PATH:+:${PATH}}"
+path_prepend "$HOME/.opencode/bin"
