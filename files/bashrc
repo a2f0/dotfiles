@@ -101,7 +101,7 @@ if [ `uname` == Darwin ]; then
     source /opt/homebrew/etc/bash_completion.d/az
 
     # fastlane
-    path_append "$HOME/.fastlane/bin"
+    path_prepend "$HOME/.fastlane/bin"
 
     # gcloud
     if [ -f "$HOME/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/google-cloud-sdk/path.bash.inc"; fi
