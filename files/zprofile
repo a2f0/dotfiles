@@ -5,5 +5,5 @@
 # macOS /etc/zprofile uses path_helper after zshenv, which can drop shims/PATH.
 if [[ "$(uname)" == Darwin ]]; then
   unset __ZSHENV_SOURCED
-  source "$HOME/.zshenv"
+  . "${ZDOTDIR:-$HOME}/.zshenv"
 fi
