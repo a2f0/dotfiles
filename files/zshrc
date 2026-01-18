@@ -73,6 +73,14 @@ export NVM_AUTO_USE=true
 antigen bundle lukechilds/zsh-nvm
 antigen apply
 
+# nvm bash completion (fallback if zsh-nvm plugin doesn't provide it)
+# Support both Apple Silicon (/opt/homebrew) and Intel (/usr/local) Macs
+if [[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ]]; then
+  . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+elif [[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ]]; then
+  . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
+fi
+
 # history settings
 HISTSIZE=1000               # how many lines of history to keep in memory
 HISTFILE=~/.zsh_history     # where to save history to disk

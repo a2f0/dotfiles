@@ -9,8 +9,13 @@ fi
 __ZSHENV_SOURCED=1
 
 # Homebrew - must come first to set up PATH for other tools
-if [[ "$(uname)" == Darwin ]] && [[ -x /opt/homebrew/bin/brew ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+# Support both Apple Silicon (/opt/homebrew) and Intel (/usr/local) Macs
+if [[ "$(uname)" == Darwin ]]; then
+  if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [[ -x /usr/local/bin/brew ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
 fi
 
 # pyenv - installed via brew or git
@@ -31,9 +36,12 @@ if command -v rbenv >/dev/null 2>&1; then
 fi
 
 # nvm - set up NVM_DIR and load nvm for version file support
+# Support both Apple Silicon (/opt/homebrew) and Intel (/usr/local) Macs
 export NVM_DIR="$HOME/.nvm"
 if [[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]]; then
   \. "/opt/homebrew/opt/nvm/nvm.sh"
+elif [[ -s "/usr/local/opt/nvm/nvm.sh" ]]; then
+  \. "/usr/local/opt/nvm/nvm.sh"
 elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
   \. "$NVM_DIR/nvm.sh"
 fi
