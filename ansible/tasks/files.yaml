@@ -44,6 +44,7 @@
     - { src: 'screenrc', dest: '~/.screenrc' }
     - { src: 'vimrc', dest: '~/.vimrc' }
     - { src: 'zprofile', dest: '~/.zprofile' }
+    - { src: 'zshenv', dest: '~/.zshenv' }
     - { src: 'zshrc', dest: '~/.zshrc' }
     - { src: 'nvim.init.lua', dest: '~/.config/nvim/init.lua' }
     - { src: 'tmux.conf', dest: '~/.tmux.conf' }
