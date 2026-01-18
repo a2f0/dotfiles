@@ -44,7 +44,7 @@ path_append() {
 export PATH
 
 # custom compiled software (./configure --prefix=~/install)
-path_append "~/install/bin"
+path_append "$HOME/install/bin"
 
 # from ~/.functions
 bash_prompt
@@ -116,7 +116,7 @@ if [ `uname` == Darwin ]; then
     export GPG_TTY=$(tty)
 
 elif [ `uname -n` == x1 ]; then
-    path_append "~/.cabal/bin"
+    path_append "$HOME/.cabal/bin"
 
     # vendor perl, for perlbrew
     path_append "/usr/bin/vendor_perl"
