@@ -56,8 +56,15 @@ if [[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]]; then
 elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
   \. "$NVM_DIR/nvm.sh"
 fi
-if typeset -f nvm >/dev/null 2>&1 && [[ -f .nvmrc ]]; then
-  nvm use --silent >/dev/null 2>&1
+if typeset -f nvm >/dev/null 2>&1; then
+  if typeset -f nvm_find_nvmrc >/dev/null 2>&1; then
+    nvmrc_path="$(nvm_find_nvmrc)"
+    if [[ -n "$nvmrc_path" ]]; then
+      nvm use --silent "$(<"$nvmrc_path")" >/dev/null 2>&1
+    fi
+  elif [[ -f .nvmrc ]]; then
+    nvm use --silent "$(<.nvmrc)" >/dev/null 2>&1
+  fi
 fi
 
 # jenv - installed via brew or git
