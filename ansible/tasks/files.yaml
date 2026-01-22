@@ -8,6 +8,7 @@
   loop:
     - '~/install/bin'
     - '~/.bundle'
+    - '~/.codex'
     - '~/.imapfilter'
     - '~/.config/nvim'
 
@@ -24,6 +25,7 @@
     - { src: 'bash_profile', dest: '~/.bash_profile' }
     - { src: 'bashrc', dest: '~/.bashrc' }
     - { src: 'bundler', dest: '~/.bundle/config' }
+    - { src: '.codex/config.toml', dest: '~/.codex/config.toml' }
     - { src: 'efnet.ircrc', dest: '~/.efnet.ircrc' }
     - { src: 'freenode.ircrc', dest: '~/.freenode.ircrc' }
     - { src: 'functions', dest: '~/.functions' }
