@@ -1,0 +1,3 @@
+# Inherit full shell environment so version managers (rbenv, pyenv, nvm) work
+[shell_environment_policy]
+inherit = "all"
