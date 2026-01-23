@@ -18,7 +18,9 @@
     "github.gitProtocol": "ssh",
     "gradle.autoDetect": "on",
     "gradle.debug": true,
-    "gradle.nestedProjects": ["android"],
+    "gradle.nestedProjects": [
+        "android"
+    ],
     "html.trace.server": "messages",
     "files.insertFinalNewline": true,
     "javascript.validate.enable": false,
@@ -35,14 +37,15 @@
     },
     "window.openFoldersInNewWindow": "off",
     "window.restoreWindows": "none",
-    "window.titleBarStyle": "native",
+    "window.titleBarStyle": "custom",
+    "window.title": "${rootName}${separator}${activeEditorShort}",
     "workbench.editorAssociations": {
         "*.ipynb": "jupyter-notebook"
     },
+    "workbench.activityBar.orientation": "vertical",
     "workbench.startupEditor": "none",
     "[javascript][typescript]": {
-        "editor.tabSize": 2,
-        "tabWidth": 2
+        "editor.tabSize": 2
     },
     "[shellscript]": {
         "editor.defaultFormatter": "foxundermoon.shell-format"
@@ -51,6 +54,6 @@
     "javascript.updateImportsOnFileMove.enabled": "always",
     "editor.accessibilitySupport": "off",
     "window.zoomLevel": 1,
-    "window.title": "${activeRepositoryBranchName}${separator}${folderName}",
-    "workbench.colorTheme": "Tokyo Night"
+    "workbench.colorTheme": "Visual Studio Dark",
+    "git.openRepositoryInParentFolders": "never"
 }

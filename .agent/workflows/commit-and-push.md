@@ -19,13 +19,13 @@ Commit and push the current changes following these rules:
 
 4. **DO NOT**:
    - Add `Co-Authored-By` headers
-   - Add emoji or "Generated with Claude Code" footers
+   - Add emoji or "Generated with Antigravity" footers
    - Use `--no-gpg-sign` or skip signing
 
-5. **GPG signing**: The commit MUST be signed. Use a 5-second timeout. For multi-line messages, pipe the content to `git commit`:
+5. **GPG signing**: The commit MUST be signed. Use a 15-second timeout. For multi-line messages, pipe the content to `git commit`:
 
    ```bash
-   printf "subject\n\nbody" | timeout 5 git commit -S -F -
+   printf "subject\n\nbody" | timeout 15 git commit -S -F -
    ```
 
 6. **Push**: After successful commit, push to the current branch's remote.
@@ -43,5 +43,3 @@ Commit and push the current changes following these rules:
    EOF
    )"
    ```
-
-8. **Enter merge queue**: Run `/enter-merge-queue` to automate the merge process. This will continuously update from base, fix CI issues, address reviews, and wait until the PR is actually merged.

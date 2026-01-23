@@ -1,0 +1,84 @@
+# zshenv - sourced for ALL zsh invocations (interactive, non-interactive, login, non-login)
+# Keep this minimal and fast - no output, no interactive features
+
+# Guard against double-sourcing within the same shell instance
+# Use a non-exported variable so child shells still get initialized
+if [[ -n "$__ZSHENV_SOURCED" ]]; then
+  return
+fi
+__ZSHENV_SOURCED=1
+
+# PATH helpers - avoid duplicates to keep PATH deterministic and reduce shadowing risks
+path_prepend() {
+  case ":$PATH:" in
+    *":$1:"*) return ;;
+    *) PATH="$1${PATH:+:${PATH}}" ;;
+  esac
+}
+
+path_append() {
+  case ":$PATH:" in
+    *":$1:"*) return ;;
+    *) PATH="${PATH:+${PATH}:}$1" ;;
+  esac
+}
+
+export PATH
+
+# Homebrew - must come first to set up PATH for other tools
+if [[ "$(uname)" == Darwin ]]; then
+  if [[ -x /opt/homebrew/bin/brew ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
+fi
+
+# pyenv - installed via brew or git
+export PYENV_ROOT="$HOME/.pyenv"
+if [[ -d "$PYENV_ROOT/bin" ]]; then
+  path_prepend "$PYENV_ROOT/bin"
+fi
+if command -v pyenv >/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
+# rbenv - installed via brew or git
+if [[ -d "$HOME/.rbenv/bin" ]]; then
+  path_prepend "$HOME/.rbenv/bin"
+fi
+if command -v rbenv >/dev/null 2>&1; then
+  eval "$(rbenv init - zsh)"
+fi
+
+# nvm - set up NVM_DIR and load nvm for version file support
+export NVM_DIR="$HOME/.nvm"
+if [[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]]; then
+  \. "/opt/homebrew/opt/nvm/nvm.sh"
+elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
+  \. "$NVM_DIR/nvm.sh"
+fi
+if typeset -f nvm >/dev/null 2>&1; then
+  if typeset -f nvm_find_nvmrc >/dev/null 2>&1; then
+    nvmrc_path="$(nvm_find_nvmrc)"
+    if [[ -n "$nvmrc_path" ]]; then
+      nvm use --silent "$(<"$nvmrc_path")" >/dev/null 2>&1
+    fi
+  elif [[ -f .nvmrc ]]; then
+    nvm use --silent "$(<.nvmrc)" >/dev/null 2>&1
+  fi
+fi
+
+# jenv - installed via brew or git
+if [[ -d "$HOME/.jenv/bin" ]]; then
+  path_prepend "$HOME/.jenv/bin"
+fi
+if command -v jenv >/dev/null 2>&1; then
+  eval "$(jenv init -)"
+fi
+
+# rust/cargo - installed via rustup
+if [[ -f "$HOME/.cargo/env" ]]; then
+  . "$HOME/.cargo/env"
+fi
+
+# Essential PATH additions
+path_prepend "$HOME/.local/bin"
