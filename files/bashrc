@@ -26,8 +26,25 @@ export EDITOR="vim"
 # to group members or others
 umask 0077
 
+# Avoid duplicate PATH entries to keep PATH deterministic and reduce shadowing risks.
+path_prepend() {
+    case ":$PATH:" in
+        *":$1:"*) return ;;
+        *) PATH="$1${PATH:+:${PATH}}" ;;
+    esac
+}
+
+path_append() {
+    case ":$PATH:" in
+        *":$1:"*) return ;;
+        *) PATH="${PATH:+${PATH}:}$1" ;;
+    esac
+}
+
+export PATH
+
 # custom compiled software (./configure --prefix=~/install)
-export PATH=$PATH:~/install/bin
+path_append "$HOME/install/bin"
 
 # from ~/.functions
 bash_prompt
@@ -44,7 +61,7 @@ export HISTCONTROL=ignorespace
 
 # pyenv, installed via brew
 export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+command -v pyenv >/dev/null || path_prepend "$PYENV_ROOT/bin"
 eval "$(pyenv init -)"
 
 # use UTF-8 - Ansible requires this.
@@ -52,7 +69,7 @@ export LC_ALL=en_US.UTF-8
 
 # jenv, installed via git
 # make sure to run 'jenv enable-plugin export' after installing to enable the JAVA_HOME export.
-export PATH="$HOME/.jenv/bin:$PATH"
+path_prepend "$HOME/.jenv/bin"
 eval "$(jenv init -)"
 
 # rbenv installed via git
@@ -72,17 +89,19 @@ if [ `uname` == Darwin ]; then
     export ANDROID_HOME="$HOME/Library/Android/sdk"
     export ANDROID_SDK="$ANDROID_HOME"
     export ANDROID_SDK_ROOT="$ANDROID_HOME"
-    export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
+    path_append "$ANDROID_HOME/cmdline-tools/latest/bin"
+    path_append "$ANDROID_HOME/emulator"
+    path_append "$ANDROID_HOME/platform-tools"
 
     # go, installed via brew
-    export GOPATH=$HOME/go
-    export PATH="$PATH:${GOPATH}/bin"
+    export GOPATH="$HOME/go"
+    path_append "${GOPATH}/bin"
 
     # az cli, installed via brew
-    source /usr/local/etc/bash_completion.d/az
+    source /opt/homebrew/etc/bash_completion.d/az
 
     # fastlane
-    export PATH="$HOME/.fastlane/bin:$PATH"
+    path_prepend "$HOME/.fastlane/bin"
 
     # gcloud
     if [ -f "$HOME/google-cloud-sdk/path.bash.inc" ]; then . "$HOME/google-cloud-sdk/path.bash.inc"; fi
@@ -90,39 +109,41 @@ if [ `uname` == Darwin ]; then
 
     # nvm, installed via brew
     export NVM_DIR="$HOME/.nvm"
-    [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
-    [ -s "/usr/local/opt/nvm/etc/bash_completion" ] && . "/usr/local/opt/nvm/etc/bash_completion"  # This loads nvm bash_completion
+    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion"  # This loads nvm bash_completion
 
     # for git gpg signature verification
     export GPG_TTY=$(tty)
 
 elif [ `uname -n` == x1 ]; then
-    PATH=$PATH:~/.cabal/bin
+    path_append "$HOME/.cabal/bin"
 
     # vendor perl, for perlbrew
-    PATH=$PATH:/usr/bin/vendor_perl
+    path_append "/usr/bin/vendor_perl"
 
     # X Desktop Group Configuration Paths
-    export XDG_CONFIG_HOME=$HOME/.config
-    export XDG_CACHE_HOME=$HOME/.cache
+    export XDG_CONFIG_HOME="$HOME/.config"
+    export XDG_CACHE_HOME="$HOME/.cache"
 
     # android studio
     export ANDROID_HOME="$HOME/Android/Sdk"
     export ANDROID_SDK="$ANDROID_HOME"
     export ANDROID_SDK_ROOT="$ANDROID_HOME"
-    export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools"
+    path_append "$ANDROID_HOME/cmdline-tools/latest/bin"
+    path_append "$ANDROID_HOME/emulator"
+    path_append "$ANDROID_HOME/platform-tools"
 
     # fastboot, lineageos
-    export PATH=$PATH:$HOME/platform-tools
+    path_append "$HOME/platform-tools"
 
     # dotfiles scripts
-    export PATH=$PATH:$HOME/dotfiles/files/shellcheck
+    path_append "$HOME/dotfiles/files/shellcheck"
 
     # rust installed using rustup
     . "$HOME/.cargo/env"
 
     # terraform virtual environment installed manually
-    export PATH="$HOME/.tfenv/bin:$PATH"
+    path_prepend "$HOME/.tfenv/bin"
 
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"

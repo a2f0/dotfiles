@@ -1,45 +1,29 @@
 ---
-- name: Make sure ~/.config/Code - OSS/User/ exists
+- name: Make sure editor config directories exist
   ansible.builtin.file:
-    path: ~/.config/Code - OSS/User/
+    path: "{{ item }}"
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
+  loop:
+    - ~/.config/Code - OSS/User/
+    - ~/.config/Code/User/
+    - ~/.config/Cursor/User
+    - ~/.config/Antigravity/User
 
-- name: Make sure ~/.config/Code/User/ exists
+- name: Create editor config symlinks
   ansible.builtin.file:
-    path: ~/.config/Code/User/
-    state: directory
-    owner: "{{ ansible_user_id }}"
-    mode: "0700"
-
-- name: Create symlink for ~/.config/Code - OSS/User/settings.json
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/visual-studio-code-settings.json"
-    dest: ~/.config/Code - OSS/User/settings.json
+    src: "{{ dotfiles_dir }}/files/{{ item.src }}"
+    dest: "{{ item.dest }}"
     state: link
     force: true
-
-- name: Create symlink for ~/.config/Code - OSS/User/keybindings.json
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/visual-studio-code-keybindings.json"
-    dest: ~/.config/Code - OSS/User/keybindingsjson
-    state: link
-    force: true
-
-- name: Create symlink for ~/.config/Code/User/settings.json
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/visual-studio-code-settings.json"
-    dest: ~/.config/Code/User/settings.json
-    state: link
-    force: true
-
-- name: Create symlink for ~/.config/Code/User/keybindings.json
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/visual-studio-code-keybindings.json"
-    dest: ~/.config/Code/User/keybindings.json
-    state: link
-    force: true
+  loop:
+    - { src: 'visual-studio-code-settings.json', dest: '~/.config/Code - OSS/User/settings.json' }
+    - { src: 'visual-studio-code-keybindings.json', dest: '~/.config/Code - OSS/User/keybindings.json' }
+    - { src: 'visual-studio-code-settings.json', dest: '~/.config/Code/User/settings.json' }
+    - { src: 'visual-studio-code-keybindings.json', dest: '~/.config/Code/User/keybindings.json' }
+    - { src: 'cursor-settings.json', dest: '~/.config/Cursor/User/settings.json' }
+    - { src: 'antigravity-settings.json', dest: '~/.config/Antigravity/User/settings.json' }
 
 - name: Create symlink for ~/.xinitrc
   ansible.builtin.file:
@@ -59,7 +43,7 @@
   ansible.builtin.file:
     path: ~/.xmonad
     state: directory
-    owner: "{{ ansible_user_id }}"
+    owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Create symlink for ~/.xmonad/xmonad.hs
@@ -73,19 +57,5 @@
   ansible.builtin.file:
     src: "{{ dotfiles_dir }}/files/xmobarrc.hs"
     dest: ~/.xmobarrc
-    state: link
-    force: true
-
-- name: Make sure ~/.config/Cursor/User exists
-  ansible.builtin.file:
-    path: '~/.config/Cursor/User'
-    state: directory
-    owner: "{{ ansible_user_id }}"
-    mode: "0700"
-
-- name: Create symlink for ~/.config/Cursor/User/settings.json
-  ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/cursor-settings.json"
-    dest: ~/.config/Cursor/User/settings.json
     state: link
     force: true

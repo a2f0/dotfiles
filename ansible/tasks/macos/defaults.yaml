@@ -1,0 +1,25 @@
+---
+- name: Show hidden files in open/save panels
+  community.general.osx_defaults:
+    domain: NSGlobalDomain
+    key: AppleShowAllFiles
+    type: bool
+    value: true
+  notify:
+    - Restart Finder
+
+- name: Do not reopen windows after reboot/login
+  community.general.osx_defaults:
+    domain: com.apple.loginwindow
+    key: TALLogoutSavesState
+    type: bool
+    value: false
+
+- name: Do not restore app windows on relaunch
+  community.general.osx_defaults:
+    domain: NSGlobalDomain
+    key: NSQuitAlwaysKeepsWindows
+    type: bool
+    value: false
+  notify:
+    - Restart Finder

@@ -1,0 +1,9 @@
+# zprofile - sourced for LOGIN shells only, after zshenv
+# Environment setup (PATH, version managers) is in zshenv for agent compatibility
+# Keep login-shell-specific setup here (if any)
+
+# macOS /etc/zprofile uses path_helper after zshenv, which can drop shims/PATH.
+if [[ "$(uname)" == Darwin ]]; then
+  unset __ZSHENV_SOURCED
+  . "${ZDOTDIR:-$HOME}/.zshenv"
+fi
