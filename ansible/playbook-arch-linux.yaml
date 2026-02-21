@@ -38,5 +38,3 @@
       ansible.builtin.import_tasks: tasks/mcabber.yaml
       tags:
         - files
-    - name: Import clone anduril task
-      ansible.builtin.import_tasks: tasks/clone-anduril-into-home.yaml

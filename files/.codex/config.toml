@@ -1,3 +1,11 @@
+model = "gpt-5.3-codex"
 # Inherit full shell environment so version managers (rbenv, pyenv, nvm) work
 [shell_environment_policy]
 inherit = "all"
+
+[notice.model_migrations]
+"gpt-5.2-codex" = "gpt-5.3-codex"
+
+[mcp_servers.serena]
+command = "uvx"
+args = ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--context", "codex", "--open-web-dashboard", "false"]
