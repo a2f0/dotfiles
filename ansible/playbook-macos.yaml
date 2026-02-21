@@ -14,8 +14,6 @@
       tags:
         - always
   tasks:
-    - name: Import clone anduril task
-      ansible.builtin.import_tasks: tasks/clone-anduril-into-home.yaml
     - name: Import files task
       ansible.builtin.import_tasks: tasks/files.yaml
       tags:

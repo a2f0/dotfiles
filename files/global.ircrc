@@ -1,4 +1,3 @@
-/load ~/anduril/anduril.irc
 /skin pretty
 /alias wnh { window new hide }
 /alias wl { window list }
