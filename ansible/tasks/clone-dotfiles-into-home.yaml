@@ -1,8 +1,35 @@
 ---
-- name: Clone dotfiles into home
+- name: Check dotfiles directory state
+  ansible.builtin.stat:
+    path: "{{ dotfiles_dir | default('~/dotfiles') }}"
+  register: dotfiles_dir_stat
+  when: clone_dotfiles | default(true) | bool
+
+- name: Ensure dotfiles destination is a directory when present
+  ansible.builtin.fail:
+    msg: "dotfiles_dir exists but is not a directory: {{ dotfiles_dir | default('~/dotfiles') }}"
+  when:
+    - clone_dotfiles | default(true) | bool
+    - dotfiles_dir_stat.stat.exists
+    - not dotfiles_dir_stat.stat.isdir
+
+- name: Count top-level entries in dotfiles directory
+  ansible.builtin.find:
+    paths: "{{ dotfiles_dir | default('~/dotfiles') }}"
+    recurse: false
+    hidden: true
+  register: dotfiles_dir_entries
+  when:
+    - clone_dotfiles | default(true) | bool
+    - dotfiles_dir_stat.stat.exists
+    - dotfiles_dir_stat.stat.isdir
+
+- name: Clone dotfiles into home when destination is missing or empty
   ansible.builtin.git:
     repo: 'https://github.com/a2f0/dotfiles.git'
     dest: "{{ dotfiles_dir | default('~/dotfiles') }}"
     force: false
     version: main
-  when: clone_dotfiles | default(true) | bool
+  when:
+    - clone_dotfiles | default(true) | bool
+    - (not dotfiles_dir_stat.stat.exists) or (dotfiles_dir_entries.matched | int == 0)
