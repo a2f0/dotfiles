@@ -1,14 +1,18 @@
 ---
-- name: Configure Ubuntu 24.04 Linux
+- name: Configure Ubuntu 24.04 / Linux Mint 22 Linux
   hosts: all
   vars:
     dotfiles_dir: ~/dotfiles
     ansible_python_interpreter: /usr/bin/python3
   pre_tasks:
-    - name: Ensure this playbook only runs on Ubuntu 24.04
+    - name: Ensure this playbook only runs on Ubuntu 24.04 or Linux Mint 22
       ansible.builtin.fail:
-        msg: "This playbook is intended for Ubuntu 24.04 systems only"
-      when: ansible_facts['distribution'] != 'Ubuntu' or ansible_facts['distribution_version'] is version('24.04', '!=')
+        msg: "This playbook is intended for Ubuntu 24.04 or Linux Mint 22 systems only"
+      when: >
+        not (
+          (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_version'] is version('24.04', '==')) or
+          (ansible_facts['distribution'] == 'Linux Mint' and ansible_facts['distribution_major_version'] is version('22', '=='))
+        )
       tags:
         - always
   tasks:
