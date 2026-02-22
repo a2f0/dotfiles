@@ -1,14 +1,14 @@
 ---
-- name: Configure Debian Linux
+- name: Configure Ubuntu 24.04 Linux
   hosts: all
   vars:
     dotfiles_dir: ~/dotfiles
     ansible_python_interpreter: /usr/bin/python3
   pre_tasks:
-    - name: Ensure this playbook only runs on Debian
+    - name: Ensure this playbook only runs on Ubuntu 24.04
       ansible.builtin.fail:
-        msg: "This playbook is intended for Debian systems only"
-      when: ansible_facts['os_family'] not in ['Debian']
+        msg: "This playbook is intended for Ubuntu 24.04 systems only"
+      when: ansible_facts['distribution'] != 'Ubuntu' or ansible_facts['distribution_version'] is version('24.04', '!=')
       tags:
         - always
   tasks:
