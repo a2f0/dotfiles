@@ -29,3 +29,18 @@ jobs:
           SKIP: no-commit-to-branch
     - name: Run ansible MacOS
       run: ansible-playbook -i ansible/inventory.yaml ansible/playbook-macos.yaml -l 127.0.0.1
+
+  ansible-ubuntu:
+    runs-on: ubuntu-24.04
+    continue-on-error: false
+    steps:
+    - uses: actions/checkout@v6
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.13'
+        architecture: 'x64'
+    - name: install and configure python dependencies
+      run: pip install -r ./requirements.txt
+    - name: Run ansible Ubuntu 24.04
+      run: ansible-playbook -i ansible/inventory.yaml ansible/playbook-ubuntu-linux.yaml -l 127.0.0.1 -e "dotfiles_dir=${GITHUB_WORKSPACE} clone_dotfiles=false"
