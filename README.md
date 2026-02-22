@@ -18,25 +18,25 @@ Install pre-commit
 
 Configure via Ansible
 
-    ansible-playbook -i ansible/inventory.yaml ansible/playbook-macos.yaml -l 127.0.0.1
+    ./runAnsible.sh
 
 Configure via Ansible (dry run)
 
-    ansible-playbook -i ansible/inventory.yaml ansible/playbook-macos.yaml --check -l 127.0.0.1
+    ./runAnsible.sh --check
 
 Run specific tags in the playbook
 
-    ansible-playbook -i ansible/inventory.yaml ansible/playbook-macos.yaml -l 127.0.0.1 --tags 'files'
+    ./runAnsible.sh --tags 'files'
 
 ## Arch Linux
 
 Configure via Ansible
 
-    ansible-playbook -i ansible/inventory.yaml ansible/playbook-arch-linux.yaml -l 127.0.0.1
+    ./runAnsible.sh
 
 Run specific tags in the playbook
 
-    ansible-playbook -i ansible/inventory.yaml ansible/playbook-arch-linux.yaml -l 127.0.0.1 --tags 'files'
+    ./runAnsible.sh --tags 'files'
 
 ### Vagrant
 
