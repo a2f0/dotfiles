@@ -100,13 +100,13 @@ bindkey '^a' beginning-of-line     # ctrl-a
 bindkey '^e' end-of-line           # ctrl-e
 
 # mise - full activation for interactive shells (overrides --shims from zshenv)
-if command -v mise >/dev/null 2>&1; then
+if (( $+commands[mise] )); then
   eval "$(mise activate zsh)"
 fi
 
 # starship prompt (replaces antigen theme agnoster)
 # Install: curl -sS https://starship.rs/install.sh | sh (or brew install starship)
-if command -v starship >/dev/null 2>&1; then
+if (( $+commands[starship] )); then
   eval "$(starship init zsh)"
 fi
 
