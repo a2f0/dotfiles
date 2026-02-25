@@ -33,66 +33,13 @@ if [[ "$(uname)" == Darwin ]]; then
   fi
 fi
 
-# pyenv - installed via brew or git
-export PYENV_ROOT="$HOME/.pyenv"
-if [[ -d "$PYENV_ROOT/bin" ]]; then
-  path_prepend "$PYENV_ROOT/bin"
-fi
-if command -v pyenv >/dev/null 2>&1; then
-  eval "$(pyenv init --no-rehash -)"
+# mise - universal version manager (replaces pyenv, rbenv, nvm, jenv)
+# Install: curl https://mise.run | sh (or brew install mise)
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh --shims)"
 fi
 
-# rbenv - installed via brew or git
-if [[ -d "$HOME/.rbenv/bin" ]]; then
-  path_prepend "$HOME/.rbenv/bin"
-fi
-if command -v rbenv >/dev/null 2>&1; then
-  eval "$(rbenv init --no-rehash - zsh)"
-fi
-
-# nvm - set up NVM_DIR and load nvm for version file support
-export NVM_DIR="$HOME/.nvm"
-if [[ -s "/opt/homebrew/opt/nvm/nvm.sh" ]]; then
-  \. "/opt/homebrew/opt/nvm/nvm.sh"
-elif [[ -s "$NVM_DIR/nvm.sh" ]]; then
-  \. "$NVM_DIR/nvm.sh"
-fi
-if typeset -f nvm >/dev/null 2>&1; then
-  nvmrc_path=""
-  nvm_requested_version=""
-  if typeset -f nvm_find_nvmrc >/dev/null 2>&1; then
-    nvmrc_path="$(nvm_find_nvmrc)"
-    if [[ -n "$nvmrc_path" ]]; then
-      nvm_requested_version="$(<"$nvmrc_path")"
-      nvm use --silent "$nvm_requested_version" >/dev/null 2>&1
-    fi
-  elif [[ -f .nvmrc ]]; then
-    nvm_requested_version="$(<.nvmrc)"
-    nvm use --silent "$nvm_requested_version" >/dev/null 2>&1
-  fi
-
-  # Keep the requested nvm version first on PATH, even when brew shellenv is loaded.
-  if [[ -n "$nvm_requested_version" ]]; then
-    nvm_requested_version="${nvm_requested_version#v}"
-    nvm_requested_bin="$NVM_DIR/versions/node/v${nvm_requested_version}/bin"
-    if [[ -d "$nvm_requested_bin" ]]; then
-      PATH="${PATH//:$nvm_requested_bin:/:}"
-      PATH="${PATH/#$nvm_requested_bin:/}"
-      PATH="${PATH/%:$nvm_requested_bin/}"
-      path_prepend "$nvm_requested_bin"
-    fi
-  fi
-fi
-
-# jenv - installed via brew or git
-if [[ -d "$HOME/.jenv/bin" ]]; then
-  path_prepend "$HOME/.jenv/bin"
-fi
-if command -v jenv >/dev/null 2>&1; then
-  eval "$(jenv init --no-rehash -)"
-fi
-
-# rust/cargo - installed via rustup
+# rust/cargo - installed via rustup (not managed by mise to preserve rustup workflow)
 if [[ -f "$HOME/.cargo/env" ]]; then
   . "$HOME/.cargo/env"
 fi

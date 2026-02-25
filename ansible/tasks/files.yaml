@@ -9,6 +9,7 @@
     - '~/install/bin'
     - '~/.bundle'
     - '~/.codex'
+    - '~/.config'
     - '~/.imapfilter'
     - '~/.config/nvim'
 
@@ -49,4 +50,5 @@
     - { src: 'zshenv', dest: '~/.zshenv' }
     - { src: 'zshrc', dest: '~/.zshrc' }
     - { src: 'nvim.init.lua', dest: '~/.config/nvim/init.lua' }
+    - { src: 'starship.toml', dest: '~/.config/starship.toml' }
     - { src: 'tmux.conf', dest: '~/.tmux.conf' }
