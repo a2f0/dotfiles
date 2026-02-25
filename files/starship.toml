@@ -1,0 +1,106 @@
+# Starship prompt configuration
+# Migrated from oh-my-zsh agnoster theme
+
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_status\
+$python\
+$nodejs\
+$ruby\
+$java\
+$rust\
+$golang\
+$cmd_duration\
+$jobs\
+$character"""
+
+# Timeout for commands executed by starship (ms)
+command_timeout = 500
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
+vimcmd_replace_one_symbol = "[❮](bold purple)"
+vimcmd_replace_symbol = "[❮](bold purple)"
+vimcmd_visual_symbol = "[❮](bold yellow)"
+
+[username]
+show_always = false
+format = "[$user]($style)@"
+style_user = "bold blue"
+
+[hostname]
+ssh_only = true
+format = "[$hostname]($style):"
+style = "bold blue"
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+format = "[$path]($style)[$read_only]($read_only_style) "
+style = "bold cyan"
+read_only = " "
+read_only_style = "red"
+
+[git_branch]
+format = "[$symbol$branch(:$remote_branch)]($style) "
+symbol = " "
+style = "bold purple"
+
+[git_status]
+format = '([$all_status$ahead_behind]($style) )'
+style = "bold yellow"
+conflicted = "="
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked = "?"
+stashed = "$"
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✘"
+
+[python]
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style) '
+symbol = " "
+style = "yellow"
+
+[nodejs]
+format = "[$symbol($version )]($style) "
+symbol = " "
+style = "green"
+
+[ruby]
+format = "[$symbol($version )]($style) "
+symbol = " "
+style = "red"
+
+[java]
+format = "[$symbol($version )]($style) "
+symbol = " "
+style = "red"
+
+[rust]
+format = "[$symbol($version )]($style) "
+symbol = " "
+style = "red"
+
+[golang]
+format = "[$symbol($version )]($style) "
+symbol = " "
+style = "cyan"
+
+[cmd_duration]
+min_time = 2000
+format = "[$duration]($style) "
+style = "yellow"
+
+[jobs]
+symbol = "✦"
+format = "[$symbol$number]($style) "
+style = "bold blue"
