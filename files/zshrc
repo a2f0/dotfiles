@@ -87,12 +87,23 @@ export IRCSERVER="irc.servercentral.net 9999 IRC-SSL"
 export IRCNICK="dps"
 export IRCNAME="dps"
 
-# antigen, installed via curl
-source ~/install/bin/antigen.zsh
-antigen use oh-my-zsh
-antigen theme agnoster
-antigen bundle vi-mode
-antigen apply
+# vi-mode (native zsh - replaces antigen bundle vi-mode)
+bindkey -v
+export KEYTIMEOUT=1  # reduce mode switch delay (10ms)
+
+# Better vi-mode keybindings
+bindkey '^?' backward-delete-char  # backspace works in insert mode
+bindkey '^h' backward-delete-char  # ctrl-h backspace
+bindkey '^w' backward-kill-word    # ctrl-w delete word
+bindkey '^r' history-incremental-search-backward  # ctrl-r history search
+bindkey '^a' beginning-of-line     # ctrl-a
+bindkey '^e' end-of-line           # ctrl-e
+
+# starship prompt (replaces antigen theme agnoster)
+# Install: curl -sS https://starship.rs/install.sh | sh (or brew install starship)
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+fi
 
 # history settings
 HISTSIZE=1000               # how many lines of history to keep in memory

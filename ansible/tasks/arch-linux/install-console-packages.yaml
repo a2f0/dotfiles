@@ -36,6 +36,7 @@
       - lynx
       - mcabber
       - memcached
+      - mise
       - mlocate
       - mutt
       - mysql
@@ -61,6 +62,7 @@
       - screen
       - shellcheck
       - sof-firmware        # provides audio support for x1
+      - starship
       - sshfs
       - strace
       - svn
