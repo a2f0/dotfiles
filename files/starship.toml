@@ -66,32 +66,32 @@ renamed = "»"
 deleted = "✘"
 
 [python]
-format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style) '
 symbol = " "
 style = "yellow"
 
 [nodejs]
-format = "[$symbol($version )]($style)"
+format = "[$symbol($version )]($style) "
 symbol = " "
 style = "green"
 
 [ruby]
-format = "[$symbol($version )]($style)"
+format = "[$symbol($version )]($style) "
 symbol = " "
 style = "red"
 
 [java]
-format = "[$symbol($version )]($style)"
+format = "[$symbol($version )]($style) "
 symbol = " "
 style = "red"
 
 [rust]
-format = "[$symbol($version )]($style)"
+format = "[$symbol($version )]($style) "
 symbol = " "
 style = "red"
 
 [golang]
-format = "[$symbol($version )]($style)"
+format = "[$symbol($version )]($style) "
 symbol = " "
 style = "cyan"
 
