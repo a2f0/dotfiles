@@ -1,4 +1,5 @@
 model = "gpt-5.3-codex"
+# Controls the amount of reasoning the model does ("low", "medium", "high")
 model_reasoning_effort = "medium"
 # Inherit full shell environment so version managers (rbenv, pyenv, nvm) work
 [shell_environment_policy]
