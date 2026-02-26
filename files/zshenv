@@ -36,7 +36,7 @@ fi
 # mise - universal version manager (replaces pyenv, rbenv, nvm, jenv)
 # Install: curl https://mise.run | sh (or brew install mise)
 if command -v mise >/dev/null 2>&1; then
-  eval "$(mise activate zsh --shims)"
+  eval "$(mise activate zsh)"
 fi
 
 # rust/cargo - installed via rustup (not managed by mise to preserve rustup workflow)
