@@ -12,6 +12,7 @@
     - '~/.config'
     - '~/.imapfilter'
     - '~/.config/nvim'
+    - '~/.config/weechat'
 
 - name: Create symlinks
   ansible.builtin.file:
@@ -52,3 +53,5 @@
     - { src: 'nvim.init.lua', dest: '~/.config/nvim/init.lua' }
     - { src: 'starship.toml', dest: '~/.config/starship.toml' }
     - { src: 'tmux.conf', dest: '~/.tmux.conf' }
+    - { src: 'weechat/weechat.conf', dest: '~/.config/weechat/weechat.conf' }
+    - { src: 'weechat/irc.conf', dest: '~/.config/weechat/irc.conf' }
