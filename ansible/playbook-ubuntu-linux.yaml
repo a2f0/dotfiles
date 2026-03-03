@@ -26,3 +26,7 @@
       ansible.builtin.import_tasks: tasks/mcabber.yaml
       tags:
         - files
+    - name: Import weechat task
+      ansible.builtin.import_tasks: tasks/weechat.yaml
+      tags:
+        - files

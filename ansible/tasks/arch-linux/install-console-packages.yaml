@@ -74,6 +74,7 @@
       - traceroute
       - unzip
       - vim
+      - weechat
       - whois
       - wpa_supplicant
       - zsh
