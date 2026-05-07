@@ -37,6 +37,7 @@ fi
 # Install: curl https://mise.run | sh (or brew install mise)
 if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate zsh)"
+  path_prepend "$HOME/.local/share/mise/shims"
 fi
 
 # rust/cargo - installed via rustup (not managed by mise to preserve rustup workflow)
