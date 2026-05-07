@@ -44,5 +44,9 @@ terraform.rc
 # ansible
 .ansible/
 
+# codex
+/files/.codex/config.toml
+/files/.codex/skills/.system/
+
 # build artifacts
 a.out
