@@ -1,0 +1,4 @@
+interface:
+  display_name: "De-slopify Refactor"
+  short_description: "Behavior-preserving simplification"
+  default_prompt: "Use $deslopify-refactor to simplify this codebase while proving behavior is unchanged."
