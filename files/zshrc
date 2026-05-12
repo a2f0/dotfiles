@@ -1,6 +1,4 @@
-# zshrc - sourced for INTERACTIVE shells only
-# Environment setup (PATH, version managers) is in zshenv for agent compatibility
-
+# Interactive shells
 source ~/.aliases
 source ~/.aliases-private
 source ~/.functions-posix
