@@ -9,7 +9,6 @@
     - '~/install/bin'
     - '~/.bundle'
     - '~/.codex'
-    - '~/.codex/skills'
     - '~/.config'
     - '~/.imapfilter'
     - '~/.config/nvim'
@@ -28,7 +27,6 @@
     - { src: 'bash_profile', dest: '~/.bash_profile' }
     - { src: 'bashrc', dest: '~/.bashrc' }
     - { src: 'bundler', dest: '~/.bundle/config' }
-    - { src: '.codex/skills/deslopify-refactor', dest: '~/.codex/skills/deslopify-refactor' }
     - { src: 'efnet.ircrc', dest: '~/.efnet.ircrc' }
     - { src: 'freenode.ircrc', dest: '~/.freenode.ircrc' }
     - { src: 'functions', dest: '~/.functions' }
