@@ -1,4 +1,5 @@
 import json
+import os
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
@@ -306,12 +307,13 @@ class PreviewTests(unittest.TestCase):
             run.assert_not_called()
 
     def test_guard_blocks_apply_when_preview_fails(self):
+        path, _ = self.safe_directory_plan()
         with patch(
             "scripts.ansible_safe_run.subprocess.run",
             return_value=subprocess.CompletedProcess([], 1, "", ""),
         ) as run:
             with self.assertRaises(UnsafePreview):
-                main(["ansible/playbook-macos.yaml"])
+                main([str(path)])
             self.assertEqual(run.call_count, 1)
             self.assertIn("--check", run.call_args.args[0])
             self.assertIn("--diff", run.call_args.args[0])
@@ -384,6 +386,45 @@ class PreviewTests(unittest.TestCase):
             with self.assertRaises(UnsafePreview):
                 main([str(path)])
             self.assertEqual(run.call_count, 1)
+
+    def test_inherited_ansible_and_python_plugins_are_removed(self):
+        path, preview = self.safe_directory_plan()
+        with patch.dict(os.environ, {"ANSIBLE_LIBRARY": "/tmp/foreign", "PYTHONPATH": "/tmp/foreign"}), patch(
+            "scripts.ansible_safe_run.subprocess.run",
+            return_value=subprocess.CompletedProcess([], 0, preview, ""),
+        ) as run:
+            self.assertEqual(main([str(path), "--check"]), 0)
+        environment = run.call_args.kwargs["env"]
+        self.assertNotIn("ANSIBLE_LIBRARY", environment)
+        self.assertNotIn("PYTHONPATH", environment)
+        self.assertEqual(environment["ANSIBLE_COLLECTIONS_SCAN_SYS_PATH"], "False")
+
+    def test_preference_drift_after_preview_blocks_apply(self):
+        path = self.root / "preference.yaml"
+        path.write_text(
+            "- hosts: all\n  tasks:\n    - name: Set preference\n"
+            "      community.general.osx_defaults:\n"
+            "        domain: test.domain\n        key: SafeFlag\n"
+            "        type: bool\n        value: true\n"
+        )
+        ref = str(path) + ":3"
+        plan = {
+            "stats": {"127.0.0.1": {"failures": 0, "unreachable": 0, "ignored": 0, "rescued": 0}},
+            "plays": [{"tasks": [{"task": {"path": ref}, "hosts": {"127.0.0.1": {"action": "community.general.osx_defaults", "changed": True}}}]}],
+        }
+        with patch(
+            "scripts.ansible_safe_run.subprocess.run",
+            side_effect=[
+                subprocess.CompletedProcess([], 0, "0", ""),
+                subprocess.CompletedProcess([], 0, json.dumps(plan), ""),
+                subprocess.CompletedProcess([], 0, "0", ""),
+                subprocess.CompletedProcess([], 0, "1", ""),
+            ],
+        ) as run:
+            with self.assertRaisesRegex(UnsafePreview, "preference state changed after preview"):
+                main([str(path)])
+        self.assertEqual(run.call_count, 4)
+        self.assertEqual(run.call_args.args[0], ["/usr/bin/defaults", "read", "test.domain", "SafeFlag"])
 
     def test_restart_preview_sends_no_signal(self):
         with patch("scripts.ansible_safe_run.sys.platform", "darwin"), patch(

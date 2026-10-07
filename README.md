@@ -55,8 +55,10 @@ that `-s` sends no signals. The subsequent apply retains the normal handlers.
 The wrapper uses the active Python environment, including PyYAML from
 `requirements.txt`, and accepts `--check`, `--diff`, `--tags`, `--skip-tags`,
 and `-e`/`--extra-vars`. It fixes the repository Ansible configuration and
-collection path so the audited tasks cannot change through a user-level
-Ansible configuration or collection shadowing.
+collection path to that Python's installed packages, removes inherited Ansible
+and Python plugin overrides, and rechecks selected macOS preferences before
+applying. A user-level configuration or collection cannot shadow the audited
+tasks.
 
 For isolated functional tests, set an absolute `dotfiles_home` and the Python
 interpreter used by the controller:

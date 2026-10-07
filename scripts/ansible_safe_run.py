@@ -9,6 +9,7 @@ import re
 import shlex
 import subprocess
 import sys
+import sysconfig
 
 try:
     import yaml
@@ -155,6 +156,11 @@ def audit(playbook, include, exclude, variables=None):
                     not isinstance(value, dict)
                     or value.get("state", "present") != "present"
                     or value.get("type") != "bool"
+                    or not isinstance(value.get("domain"), str)
+                    or not isinstance(value.get("key"), str)
+                    or not isinstance(value.get("value"), bool)
+                    or "{{" in value["domain"]
+                    or "{{" in value["key"]
                 ):
                     raise UnsafePreview(
                         "Only in-place boolean macOS preferences are audited"
@@ -243,6 +249,54 @@ def fingerprint(path):
         return ("directory", stat.st_dev, stat.st_ino, stat.st_mode, stat.st_uid, stat.st_gid)
     digest = hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
     return (stat.st_mode, stat.st_uid, stat.st_gid, stat.st_mtime_ns, digest)
+
+
+def trusted_runtime():
+    """Use only audited configuration and this Python's installed Ansible."""
+    config = Path("ansible/ansible.cfg").resolve()
+    inventory = Path("ansible/inventory.yaml").resolve()
+    if config.read_text().strip() != "[defaults]\ndeprecation_warnings = True":
+        raise UnsafePreview("Ansible configuration contains unaudited settings")
+    if yaml.safe_load(inventory.read_text()) != {
+        "localhost": {"hosts": {"127.0.0.1": {"ansible_connection": "local"}}}
+    }:
+        raise UnsafePreview("Ansible inventory contains unaudited settings")
+    scripts = Path(sysconfig.get_path("scripts")).resolve()
+    executable = scripts / "ansible-playbook"
+    packages = Path(sysconfig.get_path("purelib")).resolve()
+    implementations = [
+        executable,
+        packages / "ansible/plugins/callback/default.py",
+        packages / "ansible_collections/ansible/posix/plugins/callback/json.py",
+        packages / "ansible_collections/community/general/plugins/modules/osx_defaults.py",
+    ]
+    if not all(
+        path.is_file()
+        and path.resolve().is_relative_to(scripts if path == executable else packages)
+        for path in implementations
+    ):
+        raise UnsafePreview("Required Ansible implementation is outside the installed environment")
+    return executable, packages, {config, inventory, *implementations}
+
+
+def preference_snapshot(expected):
+    """Read selected macOS boolean preferences without writing them."""
+    preferences = set()
+    for action, task in expected.values():
+        if action == "community.general.osx_defaults":
+            value = task[action]
+            preferences.add((value["domain"], value["key"]))
+    snapshot = {}
+    for domain, key in sorted(preferences):
+        result = subprocess.run(
+            ["/usr/bin/defaults", "read", domain, key],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode not in (0, 1):
+            raise UnsafePreview("Cannot read macOS preference state")
+        snapshot[(domain, key)] = (result.returncode, result.stdout.strip())
+    return snapshot
 
 
 def inspect_preview(plan, expected, handlers):
@@ -443,14 +497,14 @@ def main(argv=None):
     expected, handlers, files = audit(
         args.playbook, set(args.tags.split(",")), set(args.skip_tags.split(",")), variables
     )
-    files.add(Path("ansible/inventory.yaml").resolve())
-    files.add(Path("ansible/ansible.cfg").resolve())
+    executable, packages, runtime_files = trusted_runtime()
+    files.update(runtime_files)
     files.add(Path(__file__).resolve())
     config = {str(path): fingerprint(path) for path in files}
     source_dir = Path(variables.get("dotfiles_dir", Path.cwd())).resolve()
     config[str(source_dir)] = fingerprint(source_dir)
     command = [
-        "ansible-playbook",
+        str(executable),
         "-i",
         "ansible/inventory.yaml",
         str(args.playbook),
@@ -464,12 +518,15 @@ def main(argv=None):
     command.extend(["-e", json.dumps(variables)])
     # Keep the audited module and collection graph independent of user config.
     environment = dict(
-        os.environ,
+        ((key, value) for key, value in os.environ.items()
+         if not key.startswith(("ANSIBLE_", "PYTHON"))),
         ANSIBLE_CONFIG=str(Path("ansible/ansible.cfg").resolve()),
-        ANSIBLE_COLLECTIONS_PATH=str(Path(".ansible/collections").resolve()),
+        ANSIBLE_COLLECTIONS_PATH=str(packages),
+        ANSIBLE_COLLECTIONS_SCAN_SYS_PATH="False",
         ANSIBLE_STDOUT_CALLBACK="ansible.posix.json",
         ANSIBLE_NOCOLOR="1",
     )
+    preferences = preference_snapshot(expected)
     preview = subprocess.run(
         command + ["--check", "--diff"], env=environment, capture_output=True, text=True
     )
@@ -479,6 +536,8 @@ def main(argv=None):
         raise UnsafePreview("Ansible preview failed; apply was not started")
     plan = json.loads(preview.stdout)
     snapshots, restarts = inspect_preview(plan, expected, handlers)
+    if preference_snapshot(expected) != preferences:
+        raise UnsafePreview("macOS preference state changed during preview")
     preview_restarts(restarts)
     if args.diff:
         describe_changes(plan, expected, handlers)
@@ -492,6 +551,8 @@ def main(argv=None):
             raise UnsafePreview(
                 "Configuration or target state changed after the preview"
             )
+    if preference_snapshot(expected) != preferences:
+        raise UnsafePreview("macOS preference state changed after preview")
     print(
         "Applying the same playbook, inventory, variables, and selected tasks",
         flush=True,
