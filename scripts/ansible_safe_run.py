@@ -24,6 +24,7 @@ class UnsafePreview(ValueError):
 
 READ_ONLY = {"ansible.builtin.stat", "ansible.builtin.find", "ansible.builtin.fail"}
 RESTARTS = {"/usr/bin/killall Finder", "/usr/bin/killall SystemUIServer"}
+TRUSTED_PATH = "/usr/bin:/bin:/usr/sbin:/sbin"
 TASK_KEYS = {
     "name",
     "register",
@@ -280,6 +281,11 @@ def audit(playbook, include, exclude, variables=None):
     for play, play_node in zip(data, nodes.value, strict=True):
         if not isinstance(play, dict) or set(play) - PLAY_KEYS:
             raise UnsafePreview("Unaudited playbook execution controls")
+        if "name" in play and (
+            not isinstance(play["name"], str)
+            or any(token in play["name"] for token in ("{{", "{%", "{#"))
+        ):
+            raise UnsafePreview("Play names cannot evaluate templates during preview")
         if play.get("hosts") not in ("all", "127.0.0.1") or play.get("gather_facts", True) not in (True, False):
             raise UnsafePreview("Playbook host or fact selection is not fixed")
         if play.get("connection", "local") != "local" or play.get("become", False) is not False:
@@ -665,6 +671,7 @@ def main(argv=None):
             ANSIBLE_VARS_ENABLED="",
             ANSIBLE_STDOUT_CALLBACK="ansible.posix.json",
             ANSIBLE_NOCOLOR="1",
+            PATH=TRUSTED_PATH,
             **{name: str(path) for name, path in plugin_paths.items()},
         )
         preferences = preference_snapshot(expected)

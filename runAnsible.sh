@@ -3,7 +3,7 @@
 set -eu
 
 detect_playbook() {
-  os_name="$(uname -s)"
+  os_name="$(/usr/bin/uname -s)"
 
   case "$os_name" in
     Darwin)

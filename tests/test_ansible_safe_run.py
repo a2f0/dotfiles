@@ -479,6 +479,19 @@ class PreviewTests(unittest.TestCase):
                 main([str(path), "--check"])
             run.assert_not_called()
 
+    def test_play_name_lookup_cannot_run_during_preview(self):
+        path = self.root / "play-name.yaml"
+        path.write_text(
+            "- name: \"{{ lookup('pipe', 'touch /tmp/should-not-run') }}\"\n"
+            "  hosts: all\n  gather_facts: false\n  tasks:\n"
+            "    - name: Read state\n      ansible.builtin.stat:\n"
+            "        path: /tmp/preview-only\n"
+        )
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Play names"):
+                main([str(path), "--check"])
+            run.assert_not_called()
+
     def test_guard_blocks_apply_when_preview_fails(self):
         path, _ = self.safe_directory_plan()
         with patch(
@@ -574,7 +587,7 @@ class PreviewTests(unittest.TestCase):
 
     def test_inherited_ansible_and_python_plugins_are_removed(self):
         path, preview = self.safe_directory_plan()
-        with patch.dict(os.environ, {"ANSIBLE_LIBRARY": "/tmp/foreign", "ANSIBLE_FILTER_PLUGINS": "/tmp/foreign", "PYTHONPATH": "/tmp/foreign"}), patch(
+        with patch.dict(os.environ, {"ANSIBLE_LIBRARY": "/tmp/foreign", "ANSIBLE_FILTER_PLUGINS": "/tmp/foreign", "PYTHONPATH": "/tmp/foreign", "PATH": f"{self.root}/shadow:/usr/bin"}), patch(
             "scripts.ansible_safe_run.subprocess.run",
             return_value=subprocess.CompletedProcess([], 0, preview, ""),
         ) as run:
@@ -587,6 +600,7 @@ class PreviewTests(unittest.TestCase):
         self.assertEqual(environment["ANSIBLE_VARS_ENABLED"], "")
         self.assertNotIn("PYTHONPATH", environment)
         self.assertEqual(environment["ANSIBLE_COLLECTIONS_SCAN_SYS_PATH"], "False")
+        self.assertEqual(environment["PATH"], "/usr/bin:/bin:/usr/sbin:/sbin")
 
     def test_adjacent_group_vars_cannot_run_a_template_during_preview(self):
         playbook = self.root / "playbook.yaml"
@@ -607,8 +621,8 @@ class PreviewTests(unittest.TestCase):
         )
         bin_dir = self.root / "bin"
         bin_dir.mkdir()
-        collectors = [self.root / "facter-ran", self.root / "ohai-ran"]
-        for name, effect in zip(("facter", "ohai"), collectors, strict=True):
+        collectors = [self.root / f"{name}-ran" for name in ("facter", "ohai", "uname", "defaults")]
+        for name, effect in zip(("facter", "ohai", "uname", "defaults"), collectors, strict=True):
             executable = bin_dir / name
             executable.write_text(f"#!/bin/sh\n/usr/bin/touch {effect}\n")
             executable.chmod(0o755)
