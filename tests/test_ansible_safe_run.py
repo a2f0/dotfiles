@@ -133,6 +133,34 @@ class PreviewTests(unittest.TestCase):
         with self.assertRaisesRegex(UnsafePreview, "Conflicting planned file states"):
             inspect_preview(plan, expected, {})
 
+    def test_alias_parents_cannot_plan_different_links_to_one_destination(self):
+        directory = self.root / "actual"
+        directory.mkdir()
+        alias = self.root / "alias"
+        alias.symlink_to(directory)
+        other = self.root / "other-source"
+        other.write_text("other\n")
+        second_ref = str(self.root / "playbook.yaml") + ":6"
+        def item(path, source):
+            return {
+                "action": "ansible.builtin.file", "changed": True, "src": str(source),
+                "diff": {"before": {"path": str(path), "state": "absent"},
+                         "after": {"path": str(path), "state": "link"}},
+            }
+        plan = {
+            "stats": {"127.0.0.1": {"failures": 0, "unreachable": 0, "ignored": 0, "rescued": 0}},
+            "plays": [{"tasks": [
+                {"task": {"path": self.ref}, "hosts": {"127.0.0.1": item(directory / "link", self.source)}},
+                {"task": {"path": second_ref}, "hosts": {"127.0.0.1": item(alias / "link", other)}},
+            ]}],
+        }
+        expected = {
+            self.ref: ("ansible.builtin.file", self.task),
+            second_ref: ("ansible.builtin.file", self.task),
+        }
+        with self.assertRaisesRegex(UnsafePreview, "Conflicting planned file states"):
+            inspect_preview(plan, expected, {})
+
     def test_planned_parent_snapshots_intermediate_symlink_ancestors(self):
         first = self.root / "first"
         second = self.root / "second"
@@ -341,6 +369,18 @@ class PreviewTests(unittest.TestCase):
                 main([
                     "ansible/playbook-macos.yaml", "--check", "-e",
                     "ansible_python_interpreter=/tmp/foreign-python",
+                ])
+            run.assert_not_called()
+
+    def test_sibling_virtualenv_python_cannot_run_during_preview(self):
+        interpreter = self.root / "other-venv" / "bin" / "python3"
+        interpreter.parent.mkdir(parents=True)
+        interpreter.symlink_to(Path(sysconfig.get_path("scripts")) / "python3")
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "active Python environment"):
+                main([
+                    "ansible/playbook-macos.yaml", "--check", "-e",
+                    f"ansible_python_interpreter={interpreter}",
                 ])
             run.assert_not_called()
 

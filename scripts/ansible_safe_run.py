@@ -490,7 +490,11 @@ def inspect_preview(plan, expected, handlers):
                     else None
                 )
                 proposed = (state, target)
-                destination = os.path.normpath(path)
+                normalized = os.path.normpath(path)
+                destination = os.path.join(
+                    os.path.realpath(os.path.dirname(normalized)),
+                    os.path.basename(normalized),
+                )
                 if destination in planned and planned[destination] != proposed:
                     raise UnsafePreview("Conflicting planned file states would replace a path")
                 planned[destination] = proposed
@@ -614,8 +618,12 @@ def main(argv=None):
             raise UnsafePreview(f"{key} must be an absolute path")
     if (
         "ansible_python_interpreter" in variables
-        and Path(variables["ansible_python_interpreter"]).resolve()
-        != Path(sys.executable).resolve()
+        and (
+            Path(variables["ansible_python_interpreter"]).parent
+            != Path(sys.executable).parent
+            or Path(variables["ansible_python_interpreter"]).resolve()
+            != Path(sys.executable).resolve()
+        )
     ):
         raise UnsafePreview("Ansible target Python must be the active Python environment")
     for root in {args.playbook.resolve().parent, Path("ansible/inventory.yaml").resolve().parent, Path.cwd()}:
