@@ -9,6 +9,6 @@
     "agents:sync": "agent-tool skills install --apply"
   },
   "devDependencies": {
-    "@a2f0/agent-tool": "0.1.6"
+    "@a2f0/agent-tool": "0.1.7"
   }
 }
