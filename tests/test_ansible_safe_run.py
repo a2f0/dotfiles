@@ -221,9 +221,54 @@ class PreviewTests(unittest.TestCase):
         path.write_text(
             "- hosts: all\n  tasks:\n    - name: Clone\n"
             "      ansible.builtin.git: repo=https://example.invalid dest=/tmp/repo\n"
+            "      when:\n        - clone_dotfiles | default(true) | bool\n"
         )
         with self.assertRaisesRegex(UnsafePreview, "Git check mode"):
-            audit(path, {"all"}, set())
+            audit(path, {"all"}, set(), {"clone_dotfiles": "false"})
+
+    def test_check_mode_template_cannot_choose_an_apply_only_target(self):
+        path = self.root / "mode-target.yaml"
+        path.write_text(
+            "- hosts: all\n  tasks:\n    - name: Unstable target\n"
+            "      ansible.builtin.file:\n"
+            "        path: \"{{ '/tmp/safe' if ansible_check_mode else '/tmp/victim' }}\"\n"
+            "        state: directory\n"
+        )
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Check-mode-dependent"):
+                main([str(path), "--check"])
+            run.assert_not_called()
+
+    def test_dynamic_play_source_cannot_change_between_preview_and_apply(self):
+        path = self.root / "dynamic-source.yaml"
+        path.write_text(
+            "- hosts: all\n  vars:\n"
+            "    dotfiles_dir: \"{{ lookup('env', 'TARGET') }}\"\n"
+            "  tasks:\n    - name: New directory\n"
+            "      ansible.builtin.file:\n"
+            "        path: /tmp/preview-only\n        state: directory\n"
+        )
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "source and interpreter"):
+                main([str(path), "--check"])
+            run.assert_not_called()
+
+    def test_conditional_link_after_stat_is_rejected_before_preview(self):
+        path = self.root / "conditional.yaml"
+        path.write_text(
+            "- hosts: all\n  tasks:\n"
+            "    - name: Create directory\n      ansible.builtin.file:\n"
+            "        path: /tmp/new-parent\n        state: directory\n"
+            "    - name: Recheck parent\n      ansible.builtin.stat:\n"
+            "        path: /tmp/new-parent\n      register: parent_state\n"
+            "    - name: Link conditionally\n      ansible.builtin.file:\n"
+            "        path: /tmp/new-parent/link\n        src: /tmp/source\n"
+            "        state: link\n      when: parent_state.stat.exists\n"
+        )
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Conditional file changes"):
+                main([str(path), "--check"])
+            run.assert_not_called()
 
     def test_extra_vars_cannot_disable_check_mode(self):
         with patch("scripts.ansible_safe_run.subprocess.run") as run:
@@ -377,7 +422,10 @@ class PreviewTests(unittest.TestCase):
     def test_repository_playbooks_are_audited(self):
         for name in ("macos", "ubuntu-linux"):
             expected, _, _ = audit(
-                Path(f"ansible/playbook-{name}.yaml"), {"all"}, set()
+                Path(f"ansible/playbook-{name}.yaml"),
+                {"all"},
+                set(),
+                {"clone_dotfiles": "false"},
             )
             self.assertGreater(len(expected), 5)
         with self.assertRaises(UnsafePreview):

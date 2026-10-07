@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shlex
 import subprocess
 import sys
@@ -46,12 +47,24 @@ PLAY_KEYS = {
     "post_tasks",
     "handlers",
 }
+STABLE_EXPRESSIONS = {
+    "dotfiles_dir",
+    "dotfiles_dir | default('~/dotfiles')",
+    "dotfiles_home | default(ansible_facts['user_dir'])",
+    "ansible_facts['user_id']",
+    "item",
+    "item.src",
+    "item.dest",
+}
+CLONE_CONDITION = "clone_dotfiles | default(true) | bool"
 
 
 def normalized_tags(tags):
     if isinstance(tags, str):
-        return {tags}
+        tags = [tags]
     if isinstance(tags, list) and all(isinstance(tag, str) for tag in tags):
+        if any("{{" in tag or "{%" in tag for tag in tags):
+            raise UnsafePreview("Dynamic tags cannot establish task selection")
         return set(tags)
     raise UnsafePreview("Tags must be a string or list of strings")
 
@@ -67,8 +80,9 @@ def selected(tags, include, exclude):
     )
 
 
-def audit(playbook, include, exclude):
+def audit(playbook, include, exclude, variables=None):
     """Audit even unselected tasks before invoking check mode; imports are static."""
+    variables = variables or {}
     expected, handlers, files = {}, {}, set()
 
     def tasks(path, data, nodes, inherited=(), handler=False):
@@ -78,12 +92,17 @@ def audit(playbook, include, exclude):
             actions = [key for key in task if key not in TASK_KEYS]
             if len(actions) != 1 or task.get("check_mode", True) is not True:
                 raise UnsafePreview("Unknown task controls or check_mode override")
-            if "ansible_check_mode" in str(task.get("when", "")):
-                raise UnsafePreview("Check-mode conditions cannot hide apply effects")
+            if "ansible_check_mode" in str(task):
+                raise UnsafePreview("Check-mode-dependent tasks cannot match the apply")
+            for expression in re.findall(r"\{\{(.*?)\}\}", str(task), flags=re.DOTALL):
+                if expression.strip() not in STABLE_EXPRESSIONS:
+                    raise UnsafePreview("Task template can change between preview and apply")
             if "loop" in task and not isinstance(task["loop"], list):
                 raise UnsafePreview(
                     "Dynamic loops cannot establish complete item previews"
                 )
+            if "loop" in task and "{{" in str(task["loop"]):
+                raise UnsafePreview("Loop items must be literal")
             action = actions[0]
             value = task[action]
             tags = set(inherited) | normalized_tags(task.get("tags", []))
@@ -97,6 +116,8 @@ def audit(playbook, include, exclude):
             if action in READ_ONLY:
                 pass
             elif action == "ansible.builtin.file":
+                if "when" in task:
+                    raise UnsafePreview("Conditional file changes cannot be previewed safely")
                 if not isinstance(value, dict) or value.get("state") not in {
                     "directory",
                     "link",
@@ -111,6 +132,13 @@ def audit(playbook, include, exclude):
                     raise UnsafePreview("File tasks cannot hide changes or failures")
             elif action == "ansible.builtin.git":
                 if (
+                    variables.get("clone_dotfiles") not in (False, "false")
+                    or not isinstance(task.get("when"), list)
+                    or not task["when"]
+                    or task["when"][0] != CLONE_CONDITION
+                ):
+                    raise UnsafePreview("Conditional clone needs an explicit fixed skip")
+                if (
                     not isinstance(value, dict)
                     or value.get("force") is not False
                     or value.get("update") is not False
@@ -119,6 +147,8 @@ def audit(playbook, include, exclude):
                         "Git check mode must not force or fetch updates"
                     )
             elif action == "community.general.osx_defaults":
+                if "when" in task:
+                    raise UnsafePreview("Conditional preference changes cannot be previewed safely")
                 if (
                     not isinstance(value, dict)
                     or value.get("state", "present") != "present"
@@ -130,6 +160,7 @@ def audit(playbook, include, exclude):
             elif action == "ansible.builtin.command":
                 if (
                     not handler
+                    or "when" in task
                     or value not in RESTARTS
                     or task.get("changed_when") is not False
                 ):
@@ -157,6 +188,8 @@ def audit(playbook, include, exclude):
     for play, play_node in zip(data, nodes.value, strict=True):
         if not isinstance(play, dict) or set(play) - PLAY_KEYS:
             raise UnsafePreview("Unaudited playbook execution controls")
+        if play.get("hosts") not in ("all", "127.0.0.1") or play.get("gather_facts", True) not in (True, False):
+            raise UnsafePreview("Playbook host or fact selection is not fixed")
         if play.get("connection", "local") != "local" or play.get("become", False) is not False:
             raise UnsafePreview("Playbooks must use local execution without privilege escalation")
         if not isinstance(play.get("vars", {}), dict) or set(play.get("vars", {})) - {
@@ -164,6 +197,20 @@ def audit(playbook, include, exclude):
             "ansible_python_interpreter",
         }:
             raise UnsafePreview("Unaudited playbook variables")
+        if "ansible_check_mode" in str(play.get("vars", {})):
+            raise UnsafePreview("Check-mode-dependent play variables")
+        play_vars = play.get("vars", {})
+        if (
+            "dotfiles_dir" in play_vars
+            and play_vars["dotfiles_dir"] not in (
+                "{{ playbook_dir | dirname }}",
+                "~/dotfiles",
+            )
+        ) or (
+            "ansible_python_interpreter" in play_vars
+            and play_vars["ansible_python_interpreter"] != "/usr/bin/python3"
+        ):
+            raise UnsafePreview("Playbook source and interpreter must remain fixed")
         if play.get("check_mode", True) is not True:
             raise UnsafePreview("Playbook check_mode override")
         node_map = {key.value: value for key, value in play_node.value}
@@ -372,7 +419,7 @@ def main(argv=None):
         if key in variables and not Path(variables[key]).is_absolute():
             raise UnsafePreview(f"{key} must be an absolute path")
     expected, handlers, files = audit(
-        args.playbook, set(args.tags.split(",")), set(args.skip_tags.split(","))
+        args.playbook, set(args.tags.split(",")), set(args.skip_tags.split(",")), variables
     )
     files.add(Path("ansible/inventory.yaml").resolve())
     files.add(Path("ansible/ansible.cfg").resolve())
