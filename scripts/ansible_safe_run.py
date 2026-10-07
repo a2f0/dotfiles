@@ -116,7 +116,10 @@ def audit(playbook, include, exclude, variables=None):
                 child_data, child_node = load(child)
                 tasks(child, child_data, child_node, tags, handler)
                 continue
-            if action in READ_ONLY:
+            if action == "ansible.builtin.setup":
+                if value != {"fact_path": "/dev/null"} or "when" in task:
+                    raise UnsafePreview("Fact gathering must disable executable local facts")
+            elif action in READ_ONLY:
                 pass
             elif action == "ansible.builtin.file":
                 if "when" in task:
@@ -231,6 +234,8 @@ def audit(playbook, include, exclude, variables=None):
                     normalized_tags(play.get("tags", [])),
                     section == "handlers",
                 )
+        if play.get("gather_facts") is not False:
+            raise UnsafePreview("Implicit fact gathering can execute local scripts")
     if not expected:
         raise UnsafePreview("No selected tasks")
     return expected, handlers, files
@@ -249,6 +254,10 @@ def fingerprint(path):
         return ("directory", stat.st_dev, stat.st_ino, stat.st_mode, stat.st_uid, stat.st_gid)
     digest = hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
     return (stat.st_mode, stat.st_uid, stat.st_gid, stat.st_mtime_ns, digest)
+
+
+def normalized_link_target(path, target):
+    return os.path.normpath(os.path.join(os.path.dirname(path), target))
 
 
 def trusted_runtime():
@@ -387,6 +396,7 @@ def inspect_preview(plan, expected, handlers):
                     raise UnsafePreview(
                         "Preview would replace or remove an existing path"
                     )
+                current = fingerprint(path)
                 if state == "link":
                     if "src" in before or "src" in after:
                         raise UnsafePreview(
@@ -397,6 +407,13 @@ def inspect_preview(plan, expected, handlers):
                         raise UnsafePreview(
                             "Symlink source does not exist during the preview"
                         )
+                    if (
+                        previous == "link"
+                        and current[0] == "link"
+                        and normalized_link_target(path, current[1])
+                        != normalized_link_target(path, source)
+                    ):
+                        raise UnsafePreview("Symlink target changed during preview")
                     snapshots[source] = fingerprint(source)
                     parent = Path(path).parent
                     if not parent.is_dir() and parent not in directories:
@@ -407,7 +424,6 @@ def inspect_preview(plan, expected, handlers):
                 else:
                     parent = Path(path)
                     directories.update([parent, *parent.parents])
-                current = fingerprint(path)
                 if previous == "absent" and current != ("absent",):
                     raise UnsafePreview(
                         "A destination appeared after its absent-state preview"

@@ -81,6 +81,15 @@ class PreviewTests(unittest.TestCase):
             self.inspect()
         self.assertEqual(self.target.readlink(), self.source)
 
+    def test_symlink_retargeted_during_preview_is_rejected(self):
+        other = self.root / "other-source"
+        other.write_text("unexpected target")
+        self.target.symlink_to(other)
+        self.result["diff"]["before"]["state"] = "link"
+        with self.assertRaisesRegex(UnsafePreview, "Symlink target changed during preview"):
+            self.inspect()
+        self.assertEqual(self.target.readlink(), other)
+
     def test_deletion_is_rejected(self):
         self.result["diff"]["after"]["state"] = "absent"
         with self.assertRaisesRegex(UnsafePreview, "replace or remove"):
@@ -197,7 +206,7 @@ class PreviewTests(unittest.TestCase):
     def test_string_tags_select_the_complete_tag(self):
         path = self.root / "tags.yaml"
         path.write_text(
-            "- hosts: all\n  tags: system\n  tasks:\n"
+            "- hosts: all\n  gather_facts: false\n  tags: system\n  tasks:\n"
             "    - name: New directory\n      ansible.builtin.file:\n"
             "        path: /tmp/preview-only\n        state: directory\n"
             "      tags: files\n"
@@ -318,10 +327,22 @@ class PreviewTests(unittest.TestCase):
             self.assertIn("--check", run.call_args.args[0])
             self.assertIn("--diff", run.call_args.args[0])
 
+    def test_implicit_fact_gathering_is_rejected_before_preview(self):
+        path = self.root / "implicit-facts.yaml"
+        path.write_text(
+            "- hosts: all\n  tasks:\n    - name: New directory\n"
+            "      ansible.builtin.file:\n"
+            "        path: /tmp/preview-only\n        state: directory\n"
+        )
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Implicit fact gathering"):
+                main([str(path), "--check"])
+            run.assert_not_called()
+
     def safe_directory_plan(self):
         path = self.root / "safe.yaml"
         path.write_text(
-            f"- hosts: all\n  tasks:\n    - name: Create a new test directory\n      ansible.builtin.file:\n        path: {self.target}\n        state: directory\n"
+            f"- hosts: all\n  gather_facts: false\n  tasks:\n    - name: Create a new test directory\n      ansible.builtin.file:\n        path: {self.target}\n        state: directory\n"
         )
         expected, _, _ = audit(path, {"all"}, set())
         ref = next(iter(expected))
@@ -402,12 +423,12 @@ class PreviewTests(unittest.TestCase):
     def test_preference_drift_after_preview_blocks_apply(self):
         path = self.root / "preference.yaml"
         path.write_text(
-            "- hosts: all\n  tasks:\n    - name: Set preference\n"
+            "- hosts: all\n  gather_facts: false\n  tasks:\n    - name: Set preference\n"
             "      community.general.osx_defaults:\n"
             "        domain: test.domain\n        key: SafeFlag\n"
             "        type: bool\n        value: true\n"
         )
-        ref = str(path) + ":3"
+        ref = str(path) + ":4"
         plan = {
             "stats": {"127.0.0.1": {"failures": 0, "unreachable": 0, "ignored": 0, "rescued": 0}},
             "plays": [{"tasks": [{"task": {"path": ref}, "hosts": {"127.0.0.1": {"action": "community.general.osx_defaults", "changed": True}}}]}],

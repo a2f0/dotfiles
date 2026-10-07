@@ -1,10 +1,16 @@
 ---
 - name: Configure Ubuntu 24.04 / Linux Mint 22 Linux
   hosts: all
+  gather_facts: false
   vars:
     dotfiles_dir: ~/dotfiles
     ansible_python_interpreter: /usr/bin/python3
   pre_tasks:
+    - name: Gather host facts without local executable facts
+      ansible.builtin.setup:
+        fact_path: /dev/null
+      tags:
+        - always
     - name: Ensure this playbook only runs on Ubuntu 24.04 or Linux Mint 22
       ansible.builtin.fail:
         msg: "This playbook is intended for Ubuntu 24.04 or Linux Mint 22 systems only"
