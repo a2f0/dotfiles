@@ -2,6 +2,10 @@
 
 This file provides guidance to AI coding agents when working with code in this repository.
 
+Claude Code loads it directly when the repository has no `CLAUDE.md`; its
+`instructionFiles` setting defaults to `claude-md-or-agents-md`. Do not add a
+`CLAUDE.md`.
+
 ## Repository Overview
 
 This is a dotfiles repository that manages system configuration and package installation across multiple operating systems (primarily macOS and Arch Linux) using Ansible playbooks. The repository contains configuration files for various development tools and system utilities, along with automation scripts for provisioning environments.
@@ -127,9 +131,10 @@ The repository uses pre-commit hooks for quality assurance:
 ## Conventions
 
 - Work on a feature branch named `<type>/<topic>`. Commits and PR titles use
-  Conventional Commits with a subject of at most 50 characters.
-- Commits are signed. Do not add `Co-authored-by` trailers or attribution
-  footers, and do not force-push.
+  Conventional Commits with an imperative subject of at most 50 characters.
+  Wrap commit bodies at 72 characters.
+- Commits are signed; never skip signing with `--no-gpg-sign`. Do not add
+  `Co-authored-by` trailers or attribution footers, and do not force-push.
 
 ## Shipping
 
@@ -140,11 +145,17 @@ check policy is in `agent-tool.json`; packages are not versioned.
 The `Github Actions` workflow runs on every push. Its `code-quality` job checks
 the agent skills, runs pre-commit, and applies the macOS playbook; its
 `ansible-ubuntu` job applies the Ubuntu playbook. Both must pass. Branch
-protection on `main` also requires resolved review conversations. When handling
-review feedback, reply in its original review thread through
-`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies`
-and resolve only fully addressed findings. Merging deploys nothing; run
-`./runAnsible.sh` on a machine to apply changes.
+protection on `main` also requires resolved review conversations. If a run is
+cancelled, rerun it with `gh run rerun <run-id>` rather than pushing an empty
+commit. Merging deploys nothing; run `./runAnsible.sh` on a machine to apply
+changes.
+
+Gemini Code Assist (configured in `.gemini/config.yaml`) is a GitHub App that
+reviews pull requests automatically when enabled; do not request it with
+`gh pr edit --add-reviewer`. When handling review feedback, reply in its
+original review thread, not the PR conversation, through
+`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies`,
+name the commit that addresses it, and resolve only fully addressed findings.
 
 After upgrading `@a2f0/agent-tool`, run `bun run agents:sync` and commit the
 skills with `.agent-tool-skills.json`. Do not edit the managed skills in
