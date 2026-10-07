@@ -133,6 +133,38 @@ class PreviewTests(unittest.TestCase):
         with self.assertRaisesRegex(UnsafePreview, "Conflicting planned file states"):
             inspect_preview(plan, expected, {})
 
+    def test_planned_symlink_cannot_redirect_descendant_task(self):
+        source_dir = self.root / "existing-directory"
+        source_dir.mkdir()
+        alias = self.root / "alias"
+        child = alias / "new-directory"
+        child_ref = str(self.root / "playbook.yaml") + ":6"
+        link_result = {
+            "action": "ansible.builtin.file", "changed": True, "src": str(source_dir),
+            "diff": {"before": {"path": str(alias), "state": "absent"},
+                     "after": {"path": str(alias), "state": "link"}},
+        }
+        child_result = {
+            "action": "ansible.builtin.file", "changed": True,
+            "diff": {"before": {"path": str(child), "state": "absent"},
+                     "after": {"path": str(child), "state": "directory"}},
+        }
+        cases = [
+            (self.ref, link_result, self.task),
+            (child_ref, child_result, {"ansible.builtin.file": {"state": "directory"}}),
+        ]
+        for ordered in (cases, list(reversed(cases))):
+            plan = {
+                "stats": {"127.0.0.1": {"failures": 0, "unreachable": 0, "ignored": 0, "rescued": 0}},
+                "plays": [{"tasks": [
+                    {"task": {"path": ref}, "hosts": {"127.0.0.1": result}}
+                    for ref, result, _ in ordered
+                ]}],
+            }
+            expected = {ref: ("ansible.builtin.file", task) for ref, _, task in cases}
+            with self.assertRaisesRegex(UnsafePreview, "Planned symlink"):
+                inspect_preview(plan, expected, {})
+
     def test_alias_parents_cannot_plan_different_links_to_one_destination(self):
         directory = self.root / "actual"
         directory.mkdir()
@@ -476,6 +508,20 @@ class PreviewTests(unittest.TestCase):
         )
         with patch("scripts.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Unaudited Jinja blocks"):
+                main([str(path), "--check"])
+            run.assert_not_called()
+
+    def test_preference_binary_override_cannot_run_during_preview(self):
+        path = self.root / "custom-defaults.yaml"
+        path.write_text(
+            "- hosts: all\n  gather_facts: false\n  tasks:\n"
+            "    - name: Change preference\n      community.general.osx_defaults:\n"
+            "        domain: test.domain\n        key: SafeFlag\n"
+            "        type: bool\n        value: true\n"
+            "        path: /tmp/unaudited-defaults\n"
+        )
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "in-place boolean"):
                 main([str(path), "--check"])
             run.assert_not_called()
 

@@ -239,6 +239,7 @@ def audit(playbook, include, exclude, variables=None):
                     raise UnsafePreview("Conditional preference changes cannot be previewed safely")
                 if (
                     not isinstance(value, dict)
+                    or set(value) - {"domain", "key", "type", "value", "state"}
                     or value.get("state", "present") != "present"
                     or value.get("type") != "bool"
                     or not isinstance(value.get("domain"), str)
@@ -501,6 +502,12 @@ def inspect_preview(plan, expected, handlers):
                     os.path.realpath(os.path.dirname(normalized)),
                     os.path.basename(normalized),
                 )
+                if any(
+                    (earlier[0] == "link" and destination.startswith(path + os.sep))
+                    or (state == "link" and path.startswith(destination + os.sep))
+                    for path, earlier in planned.items()
+                ):
+                    raise UnsafePreview("Planned symlink cannot be a task ancestor")
                 if destination in planned and planned[destination] != proposed:
                     raise UnsafePreview("Conflicting planned file states would replace a path")
                 planned[destination] = proposed
