@@ -5,11 +5,11 @@
     "": {
       "name": "dotfiles",
       "devDependencies": {
-        "@a2f0/agent-tool": "0.1.6",
+        "@a2f0/agent-tool": "0.1.7",
       },
     },
   },
   "packages": {
-    "@a2f0/agent-tool": ["@a2f0/agent-tool@0.1.6", "", { "bin": { "agent-tool": "src/index.ts" } }, "sha512-06pcJlFV1ob3hZDjqemujv9HEmiwQykoDQZQha24hKNNXF2JtkOwMVFdJh3ZiYwUx+MO7OgMqCpUwYATcgX8Tg=="],
+    "@a2f0/agent-tool": ["@a2f0/agent-tool@0.1.7", "", { "bin": { "agent-tool": "src/index.ts" } }, "sha512-3r//uck7XGzFD7gxkV1vmvUBFhYi9HaMCwkhkhgOmsU96leOHNQXH9a8j4zJ5yDaANUSgHAg7SMpkajMqTM/Ag=="],
   }
 }

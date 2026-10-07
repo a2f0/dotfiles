@@ -66,3 +66,18 @@ Run provisioners on the running instance
 Destroy the VM
 
     vagrant destroy
+
+## Terraform GitHub provider
+
+Terraform uses `integrations/github` at version 6.13.0.
+After decrypting the backend and variables and configuring AWS credentials,
+initialize from the `terraform` directory with `./init.sh`. For existing state
+that still references `hashicorp/github`, migrate the provider address once:
+
+    terraform state replace-provider registry.terraform.io/hashicorp/github registry.terraform.io/integrations/github
+
+This changes the provider address in state without recreating resources.
+Run `terraform plan -var-file=main.tfvars -out=upgrade.tfplan` and inspect the
+plan before applying it with `terraform apply upgrade.tfplan`. Do not apply a
+plan with deletions or replacements. Saved `*.tfplan` files are ignored by Git because they can contain secrets.
+Delete saved plans after applying them.
