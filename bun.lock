@@ -1,0 +1,15 @@
+{
+  "lockfileVersion": 2,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "dotfiles",
+      "devDependencies": {
+        "@a2f0/agent-tool": "0.1.6",
+      },
+    },
+  },
+  "packages": {
+    "@a2f0/agent-tool": ["@a2f0/agent-tool@0.1.6", "", { "bin": { "agent-tool": "src/index.ts" } }, "sha512-06pcJlFV1ob3hZDjqemujv9HEmiwQykoDQZQha24hKNNXF2JtkOwMVFdJh3ZiYwUx+MO7OgMqCpUwYATcgX8Tg=="],
+  }
+}

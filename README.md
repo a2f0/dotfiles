@@ -14,6 +14,13 @@ Install pre-commit
     pre-commit install
     pre-commit run --all-files
 
+Install the agent tooling and check the shared agent skills (requires Bun)
+
+    bun install
+    bun run agents:check
+
+Agents ship changes with the `ship-pr` skill; see `AGENTS.md`.
+
 ## MacOS
 
 Configure via Ansible
