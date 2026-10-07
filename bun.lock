@@ -6,6 +6,7 @@
       "name": "dotfiles",
       "devDependencies": {
         "@a2f0/agent-tool": "0.1.9",
+        "jsonc-parser": "3.3.1",
         "markdownlint-cli2": "0.23.3",
       },
     },

@@ -152,6 +152,46 @@ class PreviewTests(unittest.TestCase):
                 main([str(path), "--check"])
             run.assert_not_called()
 
+    def test_playbook_import_is_rejected_before_check_mode(self):
+        path = self.root / "import.yaml"
+        path.write_text("- import_playbook: unreviewed.yaml\n")
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Unaudited playbook"):
+                main([str(path), "--check"])
+            run.assert_not_called()
+
+    def test_task_args_cannot_bypass_module_audit(self):
+        path = self.root / "args.yaml"
+        path.write_text(
+            "- hosts: all\n  tasks:\n    - name: Hidden file arguments\n"
+            "      ansible.builtin.file:\n        path: /tmp/target\n"
+            "        state: link\n      args:\n        force: true\n"
+        )
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Unknown task controls"):
+                main([str(path), "--check"])
+            run.assert_not_called()
+
+    def test_string_tags_select_the_complete_tag(self):
+        path = self.root / "tags.yaml"
+        path.write_text(
+            "- hosts: all\n  tags: system\n  tasks:\n"
+            "    - name: New directory\n      ansible.builtin.file:\n"
+            "        path: /tmp/preview-only\n        state: directory\n"
+            "      tags: files\n"
+        )
+        expected, _, _ = audit(path, {"files"}, set())
+        self.assertEqual(len(expected), 1)
+
+    def test_free_form_git_arguments_fail_closed(self):
+        path = self.root / "git.yaml"
+        path.write_text(
+            "- hosts: all\n  tasks:\n    - name: Clone\n"
+            "      ansible.builtin.git: repo=https://example.invalid dest=/tmp/repo\n"
+        )
+        with self.assertRaisesRegex(UnsafePreview, "Git check mode"):
+            audit(path, {"all"}, set())
+
     def test_extra_vars_cannot_disable_check_mode(self):
         with patch("scripts.ansible_safe_run.subprocess.run") as run:
             with self.assertRaises(UnsafePreview):

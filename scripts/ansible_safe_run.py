@@ -9,7 +9,10 @@ import shlex
 import subprocess
 import sys
 
-import yaml
+try:
+    import yaml
+except ImportError as error:
+    raise SystemExit("PyYAML is required; install requirements.txt in the active Python environment") from error
 
 
 class UnsafePreview(ValueError):
@@ -20,7 +23,6 @@ READ_ONLY = {"ansible.builtin.stat", "ansible.builtin.find", "ansible.builtin.fa
 RESTARTS = {"/usr/bin/killall Finder", "/usr/bin/killall SystemUIServer"}
 TASK_KEYS = {
     "name",
-    "args",
     "register",
     "when",
     "loop",
@@ -31,6 +33,28 @@ TASK_KEYS = {
     "failed_when",
     "check_mode",
 }
+PLAY_KEYS = {
+    "name",
+    "hosts",
+    "connection",
+    "become",
+    "vars",
+    "gather_facts",
+    "tags",
+    "check_mode",
+    "pre_tasks",
+    "tasks",
+    "post_tasks",
+    "handlers",
+}
+
+
+def normalized_tags(tags):
+    if isinstance(tags, str):
+        return {tags}
+    if isinstance(tags, list) and all(isinstance(tag, str) for tag in tags):
+        return set(tags)
+    raise UnsafePreview("Tags must be a string or list of strings")
 
 
 def selected(tags, include, exclude):
@@ -63,7 +87,7 @@ def audit(playbook, include, exclude):
                 )
             action = actions[0]
             value = task[action]
-            tags = set(inherited) | set(task.get("tags", []))
+            tags = set(inherited) | normalized_tags(task.get("tags", []))
             if action == "ansible.builtin.import_tasks":
                 if not isinstance(value, str) or "{{" in value:
                     raise UnsafePreview("Dynamic imports cannot establish completeness")
@@ -87,13 +111,18 @@ def audit(playbook, include, exclude):
                 ):
                     raise UnsafePreview("File tasks cannot hide changes or failures")
             elif action == "ansible.builtin.git":
-                if value.get("force") is not False or value.get("update") is not False:
+                if (
+                    not isinstance(value, dict)
+                    or value.get("force") is not False
+                    or value.get("update") is not False
+                ):
                     raise UnsafePreview(
                         "Git check mode must not force or fetch updates"
                     )
             elif action == "community.general.osx_defaults":
                 if (
-                    value.get("state", "present") != "present"
+                    not isinstance(value, dict)
+                    or value.get("state", "present") != "present"
                     or value.get("type") != "bool"
                 ):
                     raise UnsafePreview(
@@ -127,17 +156,15 @@ def audit(playbook, include, exclude):
     playbook = playbook.resolve()
     data, nodes = load(playbook)
     for play, play_node in zip(data, nodes.value, strict=True):
-        if any(
-            key in play
-            for key in (
-                "roles",
-                "vars_files",
-                "module_defaults",
-                "environment",
-                "strategy",
-            )
-        ):
+        if not isinstance(play, dict) or set(play) - PLAY_KEYS:
             raise UnsafePreview("Unaudited playbook execution controls")
+        if play.get("connection", "local") != "local" or play.get("become", False) is not False:
+            raise UnsafePreview("Playbooks must use local execution without privilege escalation")
+        if not isinstance(play.get("vars", {}), dict) or set(play.get("vars", {})) - {
+            "dotfiles_dir",
+            "ansible_python_interpreter",
+        }:
+            raise UnsafePreview("Unaudited playbook variables")
         if play.get("check_mode", True) is not True:
             raise UnsafePreview("Playbook check_mode override")
         node_map = {key.value: value for key, value in play_node.value}
@@ -147,7 +174,7 @@ def audit(playbook, include, exclude):
                     playbook,
                     play[section],
                     node_map[section],
-                    play.get("tags", []),
+                    normalized_tags(play.get("tags", [])),
                     section == "handlers",
                 )
     if not expected:
@@ -361,6 +388,7 @@ def main(argv=None):
         args.skip_tags,
     ]
     command.extend(["-e", json.dumps(variables)])
+    # Keep the audited module and collection graph independent of user config.
     environment = dict(
         os.environ,
         ANSIBLE_CONFIG=str(Path("ansible/ansible.cfg").resolve()),

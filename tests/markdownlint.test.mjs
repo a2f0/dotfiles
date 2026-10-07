@@ -101,7 +101,7 @@ test("malformed TOML remains a fatal configuration error", (t) => {
   assert.match(result.output, /Unable to parse|invalid|Invalid|Error/i);
 });
 
-test("CLI parses many flat TOML keys through the patched parser", (t) => {
+test("CLI parses many flat TOML keys through the secured parser override", (t) => {
   const keys = Array.from({ length: 32768 }, (_, index) => `key_${index} = 1`).join("\n");
   const directory = fixture(t, `${keys}\n[tool.markdownlint-cli2.config]\ndefault = false\nMD018 = true\n`);
   const result = lint(directory);

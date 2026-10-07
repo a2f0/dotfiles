@@ -2,7 +2,9 @@
 
 Dotfiles and Ansible tasks for package installation / system configuration.
 
-Arch Linux system is provisionable via `vagrant up`.
+The legacy `Vagrantfile` provisions Arch Linux with package and keyring changes
+that have no complete non-destructive preview. It is not part of the dependency
+upgrade path described below.
 
 ## Developing
 
@@ -49,6 +51,11 @@ preserved; reconcile conflicting destinations manually before running it.
 macOS restart handlers have an equivalent read-only preview with
 `killall -s Finder` / `killall -s SystemUIServer`; macOS `killall(1)` documents
 that `-s` sends no signals. The subsequent apply retains the normal handlers.
+The wrapper uses the active Python environment, including PyYAML from
+`requirements.txt`, and accepts `--check`, `--diff`, `--tags`, `--skip-tags`,
+and `-e`/`--extra-vars`. It fixes the repository Ansible configuration and
+collection path so the audited tasks cannot change through a user-level
+Ansible configuration or collection shadowing.
 
 For isolated functional tests, set an absolute `dotfiles_home` and the Python
 interpreter used by the controller:
@@ -65,34 +72,22 @@ Run specific tags in the playbook
 
     ./runAnsible.sh --tags 'files'
 
+## Ubuntu and Linux Mint
+
+The clone task cannot be proved safe when the source checkout is absent, so the
+guard stops before applying. Start from an existing checkout and identify it
+explicitly, as CI does:
+
+    ./runAnsible.sh -e "dotfiles_dir=$(pwd) clone_dotfiles=false ansible_python_interpreter=$(command -v python3)"
+
 ## Arch Linux
 
 The guard currently blocks Arch provisioning: pacman, reflector, reboot, and
 VM cleanup effects lack a complete non-destructive preview. Do not use a direct
 playbook run or Vagrant provisioning as an upgrade-safety bypass. Arch tasks
-and package lists remain available for separately reviewed provisioning.
-
-### Vagrant
-
-Start a Virtualbox VM
-
-    vagrant plugin update
-    vagrant box update
-    vagrant up
-    # login
-    vagrant ssh
-
-Start rsyncing Vagrant files
-
-    vagrant rsync-auto
-
-Run provisioners on the running instance
-
-    vagrant provision
-
-Destroy the VM
-
-    vagrant destroy
+and package lists remain available, but the existing `Vagrantfile` also runs
+destructive keyring and cache operations directly. Review those effects and
+establish a complete preview before any future provisioning work.
 
 ## Terraform GitHub provider
 

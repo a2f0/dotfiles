@@ -71,7 +71,7 @@ bun run test:markdownlint
 Arch provisioning is currently blocked by the preview guard because package,
 reflector, reboot, and VM cleanup effects lack a complete safe preview. Do not
 invoke playbooks or Vagrant directly to bypass it during dependency upgrades.
-See README for the separately reviewed provisioning workflow.
+See README for the current provisioning limits.
 
 #### Vagrant Development Environment
 
