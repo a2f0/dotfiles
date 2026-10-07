@@ -379,6 +379,28 @@ class PreviewTests(unittest.TestCase):
         self.assertFalse(selected({"files"}, {"all"}, {"all"}))
         self.assertFalse(selected({"never"}, {"tagged"}, set()))
 
+    def test_repeated_tag_flags_are_combined_for_audit_and_ansible(self):
+        path, preview = self.safe_directory_plan()
+        with patch(
+            "scripts.ansible_safe_run.subprocess.run",
+            return_value=subprocess.CompletedProcess([], 0, preview, ""),
+        ) as run:
+            self.assertEqual(main([
+                str(path), "--check", "--tags", "all", "--tags", "untagged",
+                "--skip-tags", "files", "--skip-tags", "defaults",
+            ]), 0)
+        command = run.call_args.args[0]
+        self.assertEqual(command[command.index("--tags") + 1], "all,untagged")
+        self.assertEqual(command[command.index("--skip-tags") + 1], "files,defaults")
+        path.write_text(path.read_text() + "      tags: files\n")
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "No selected tasks"):
+                main([
+                    str(path), "--check", "--tags", "all",
+                    "--skip-tags", "files", "--skip-tags", "defaults",
+                ])
+            run.assert_not_called()
+
     def test_wrapper_ignores_inherited_python_import_path(self):
         marker = self.root / "injected"
         (self.root / "sitecustomize.py").write_text(

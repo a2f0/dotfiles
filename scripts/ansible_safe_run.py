@@ -129,6 +129,15 @@ def selected(tags, include, exclude):
     )
 
 
+def tag_flags(groups, default):
+    if not groups:
+        return set(default), ",".join(default)
+    values = [part.strip() for group in groups for part in group.split(",")]
+    if any(not value for value in values):
+        raise UnsafePreview("Tag options cannot contain empty names")
+    return set(values), ",".join(values)
+
+
 def audit(playbook, include, exclude, variables=None):
     """Audit even unselected tasks before invoking check mode; imports are static."""
     variables = variables or {}
@@ -599,10 +608,12 @@ def main(argv=None):
     parser.add_argument("playbook", type=Path)
     parser.add_argument("--check", action="store_true")
     parser.add_argument("--diff", action="store_true")
-    parser.add_argument("--tags", default="all")
-    parser.add_argument("--skip-tags", default="")
+    parser.add_argument("--tags", action="append", default=[])
+    parser.add_argument("--skip-tags", action="append", default=[])
     parser.add_argument("-e", "--extra-vars", action="append", default=[])
     args = parser.parse_args(argv)
+    include, tags_argument = tag_flags(args.tags, ["all"])
+    exclude, skip_argument = tag_flags(args.skip_tags, [])
     variables = {}
     for value in args.extra_vars:
         if value.startswith("{"):
@@ -651,7 +662,7 @@ def main(argv=None):
             if plugin.exists() or plugin.is_symlink():
                 raise UnsafePreview("Playbook-local plugins and collections are not audited")
     expected, handlers, files = audit(
-        args.playbook, set(args.tags.split(",")), set(args.skip_tags.split(",")), variables
+        args.playbook, include, exclude, variables
     )
     executable, packages, runtime_files, plugin_paths = trusted_runtime()
     files.update(runtime_files)
@@ -669,9 +680,9 @@ def main(argv=None):
         "-l",
         "127.0.0.1",
         "--tags",
-        args.tags,
+        tags_argument,
         "--skip-tags",
-        args.skip_tags,
+        skip_argument,
     ]
     command.extend(["-e", json.dumps(variables)])
     # Keep the audited module and collection graph independent of user config.
