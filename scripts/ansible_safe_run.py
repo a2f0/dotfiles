@@ -634,6 +634,7 @@ def main(argv=None):
             ANSIBLE_HOME=isolated_ansible_home,
             ANSIBLE_COLLECTIONS_PATH=str(packages),
             ANSIBLE_COLLECTIONS_SCAN_SYS_PATH="False",
+            ANSIBLE_VARS_ENABLED="",
             ANSIBLE_STDOUT_CALLBACK="ansible.posix.json",
             ANSIBLE_NOCOLOR="1",
             **{name: str(path) for name, path in plugin_paths.items()},

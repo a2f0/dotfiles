@@ -58,7 +58,9 @@ and `-e`/`--extra-vars`. It fixes the repository Ansible configuration and
 collection path to that Python's installed packages, removes inherited Ansible
 and Python plugin overrides, and rechecks selected macOS preferences before
 applying. A user-level configuration or collection cannot shadow the audited
-tasks. The supported playbooks gather system facts with local executable facts
+tasks. Implicit `group_vars` and `host_vars` loading is disabled, so adjacent
+variable files cannot add templates to the preview. The supported playbooks
+gather system facts with local executable facts
 disabled, so an `/etc/ansible/facts.d` script cannot run during the preview.
 
 For isolated functional tests, set an absolute `dotfiles_home` and the Python

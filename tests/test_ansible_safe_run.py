@@ -517,8 +517,28 @@ class PreviewTests(unittest.TestCase):
         self.assertEqual(environment["ANSIBLE_LIBRARY"], str(installed / "ansible/modules"))
         self.assertEqual(environment["ANSIBLE_FILTER_PLUGINS"], str(installed / "ansible/plugins/filter"))
         self.assertIn("dotfiles-ansible-home-", environment["ANSIBLE_HOME"])
+        self.assertEqual(environment["ANSIBLE_VARS_ENABLED"], "")
         self.assertNotIn("PYTHONPATH", environment)
         self.assertEqual(environment["ANSIBLE_COLLECTIONS_SCAN_SYS_PATH"], "False")
+
+    def test_adjacent_group_vars_cannot_run_a_template_during_preview(self):
+        playbook = self.root / "playbook.yaml"
+        playbook.write_text(
+            "- hosts: all\n  gather_facts: false\n  tasks:\n"
+            "    - name: Gather safe facts\n      ansible.builtin.setup:\n"
+            "        fact_path: /dev/null\n"
+            "    - name: Inspect home directory\n      ansible.builtin.file:\n"
+            "        path: \"{{ dotfiles_home | default(ansible_facts['user_dir']) }}\"\n"
+            "        state: directory\n"
+        )
+        marker = self.root / "injected"
+        group_vars = self.root / "group_vars"
+        group_vars.mkdir()
+        (group_vars / "all.yaml").write_text(
+            f'dotfiles_home: "{{{{ lookup(\'pipe\', \'/usr/bin/touch {marker}\') }}}}"\n'
+        )
+        self.assertEqual(main([str(playbook), "--check"]), 0)
+        self.assertFalse(marker.exists())
 
     def test_preference_drift_after_preview_blocks_apply(self):
         path = self.root / "preference.yaml"
