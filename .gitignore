@@ -30,6 +30,7 @@ syslog-ng.conf-private
 **/.terraform/*
 *.tfstate
 *.tfstate.*
+*.tfplan
 crash.log
 *.tfvars
 override.tf
