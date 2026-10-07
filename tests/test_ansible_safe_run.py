@@ -1,5 +1,6 @@
 import json
 import os
+import sysconfig
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
@@ -118,6 +119,44 @@ class PreviewTests(unittest.TestCase):
         }
         with self.assertRaisesRegex(UnsafePreview, "Conflicting planned file states"):
             inspect_preview(plan, expected, {})
+
+    def test_planned_parent_snapshots_intermediate_symlink_ancestors(self):
+        first = self.root / "first"
+        second = self.root / "second"
+        first.mkdir()
+        second.mkdir()
+        alias = self.root / "alias"
+        alias.symlink_to(first)
+        directory = alias / "new-parent"
+        target = directory / "link"
+        link_ref = str(self.root / "playbook.yaml") + ":6"
+        directory_result = {
+            "action": "ansible.builtin.file", "changed": True,
+            "diff": {"before": {"path": str(directory), "state": "absent"},
+                     "after": {"path": str(directory), "state": "directory"}},
+        }
+        link_result = {
+            "action": "ansible.builtin.file", "changed": True, "src": str(self.source),
+            "diff": {"before": {"path": str(target), "state": "absent"},
+                     "after": {"path": str(target), "state": "link"}},
+        }
+        plan = {
+            "stats": {"127.0.0.1": {"failures": 0, "unreachable": 0, "ignored": 0, "rescued": 0}},
+            "plays": [{"tasks": [
+                {"task": {"path": self.ref}, "hosts": {"127.0.0.1": directory_result}},
+                {"task": {"path": link_ref}, "hosts": {"127.0.0.1": link_result}},
+            ]}],
+        }
+        expected = {
+            self.ref: ("ansible.builtin.file", {"ansible.builtin.file": {"state": "directory"}}),
+            link_ref: ("ansible.builtin.file", self.task),
+        }
+        snapshots, _ = inspect_preview(plan, expected, {})
+        self.assertEqual(snapshots[str(directory)], ("absent",))
+        self.assertEqual(snapshots[str(target)], ("absent",))
+        alias.unlink()
+        alias.symlink_to(second)
+        self.assertNotEqual(fingerprint(alias), snapshots[str(alias)])
 
     def test_incomplete_diff_is_rejected(self):
         del self.result["diff"]["before"]
@@ -267,6 +306,15 @@ class PreviewTests(unittest.TestCase):
         with patch("scripts.ansible_safe_run.subprocess.run") as run:
             with self.assertRaises(UnsafePreview):
                 main(["ansible/playbook-macos.yaml", "--check", "-e", "[true]"])
+            run.assert_not_called()
+
+    def test_foreign_target_python_cannot_run_during_preview(self):
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "active Python environment"):
+                main([
+                    "ansible/playbook-macos.yaml", "--check", "-e",
+                    "ansible_python_interpreter=/tmp/foreign-python",
+                ])
             run.assert_not_called()
 
     def test_free_form_git_arguments_fail_closed(self):
@@ -459,13 +507,16 @@ class PreviewTests(unittest.TestCase):
 
     def test_inherited_ansible_and_python_plugins_are_removed(self):
         path, preview = self.safe_directory_plan()
-        with patch.dict(os.environ, {"ANSIBLE_LIBRARY": "/tmp/foreign", "PYTHONPATH": "/tmp/foreign"}), patch(
+        with patch.dict(os.environ, {"ANSIBLE_LIBRARY": "/tmp/foreign", "ANSIBLE_FILTER_PLUGINS": "/tmp/foreign", "PYTHONPATH": "/tmp/foreign"}), patch(
             "scripts.ansible_safe_run.subprocess.run",
             return_value=subprocess.CompletedProcess([], 0, preview, ""),
         ) as run:
             self.assertEqual(main([str(path), "--check"]), 0)
         environment = run.call_args.kwargs["env"]
-        self.assertNotIn("ANSIBLE_LIBRARY", environment)
+        installed = Path(sysconfig.get_path("purelib")).resolve()
+        self.assertEqual(environment["ANSIBLE_LIBRARY"], str(installed / "ansible/modules"))
+        self.assertEqual(environment["ANSIBLE_FILTER_PLUGINS"], str(installed / "ansible/plugins/filter"))
+        self.assertIn("dotfiles-ansible-home-", environment["ANSIBLE_HOME"])
         self.assertNotIn("PYTHONPATH", environment)
         self.assertEqual(environment["ANSIBLE_COLLECTIONS_SCAN_SYS_PATH"], "False")
 

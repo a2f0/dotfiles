@@ -10,6 +10,7 @@ import shlex
 import subprocess
 import sys
 import sysconfig
+import tempfile
 
 try:
     import yaml
@@ -70,6 +71,25 @@ STABLE_CONDITIONS = {
 RESTART_FAILURES = {
     "/usr/bin/killall Finder": ("kill_finder", "kill_finder.rc > 1"),
     "/usr/bin/killall SystemUIServer": ("kill_systemuiserver", "kill_systemuiserver.rc > 1"),
+}
+PLUGIN_DIRECTORIES = {
+    "ANSIBLE_ACTION_PLUGINS": "action",
+    "ANSIBLE_BECOME_PLUGINS": "become",
+    "ANSIBLE_CACHE_PLUGINS": "cache",
+    "ANSIBLE_CALLBACK_PLUGINS": "callback",
+    "ANSIBLE_CLICONF_PLUGINS": "cliconf",
+    "ANSIBLE_CONNECTION_PLUGINS": "connection",
+    "ANSIBLE_DOC_FRAGMENT_PLUGINS": "doc_fragments",
+    "ANSIBLE_FILTER_PLUGINS": "filter",
+    "ANSIBLE_HTTPAPI_PLUGINS": "httpapi",
+    "ANSIBLE_INVENTORY_PLUGINS": "inventory",
+    "ANSIBLE_LOOKUP_PLUGINS": "lookup",
+    "ANSIBLE_NETCONF_PLUGINS": "netconf",
+    "ANSIBLE_SHELL_PLUGINS": "shell",
+    "ANSIBLE_STRATEGY_PLUGINS": "strategy",
+    "ANSIBLE_TERMINAL_PLUGINS": "terminal",
+    "ANSIBLE_TEST_PLUGINS": "test",
+    "ANSIBLE_VARS_PLUGINS": "vars",
 }
 
 
@@ -333,7 +353,14 @@ def trusted_runtime():
         for path in implementations
     ):
         raise UnsafePreview("Required Ansible implementation is outside the installed environment")
-    return executable, packages, {config, inventory, *implementations}
+    plugin_paths = {
+        name: packages / "ansible/plugins" / directory
+        for name, directory in PLUGIN_DIRECTORIES.items()
+    }
+    plugin_paths["ANSIBLE_LIBRARY"] = packages / "ansible/modules"
+    if not all(path.is_dir() and path.resolve().is_relative_to(packages) for path in plugin_paths.values()):
+        raise UnsafePreview("Ansible plugin paths are outside the installed environment")
+    return executable, packages, {config, inventory, *implementations}, plugin_paths
 
 
 def preference_snapshot(expected):
@@ -455,6 +482,8 @@ def inspect_preview(plan, expected, handlers):
                     raise UnsafePreview("Conflicting planned file states would replace a path")
                 planned[destination] = proposed
                 current = fingerprint(path)
+                for ancestor in Path(path).parents:
+                    snapshots.setdefault(str(ancestor), fingerprint(ancestor))
                 if state == "link":
                     if "src" in before or "src" in after:
                         raise UnsafePreview(
@@ -568,10 +597,16 @@ def main(argv=None):
     for key in ("dotfiles_dir", "dotfiles_home", "ansible_python_interpreter"):
         if key in variables and not Path(variables[key]).is_absolute():
             raise UnsafePreview(f"{key} must be an absolute path")
+    if (
+        "ansible_python_interpreter" in variables
+        and Path(variables["ansible_python_interpreter"]).resolve()
+        != Path(sys.executable).resolve()
+    ):
+        raise UnsafePreview("Ansible target Python must be the active Python environment")
     expected, handlers, files = audit(
         args.playbook, set(args.tags.split(",")), set(args.skip_tags.split(",")), variables
     )
-    executable, packages, runtime_files = trusted_runtime()
+    executable, packages, runtime_files, plugin_paths = trusted_runtime()
     files.update(runtime_files)
     files.add(Path(__file__).resolve())
     config = {str(path): fingerprint(path) for path in files}
@@ -591,50 +626,53 @@ def main(argv=None):
     ]
     command.extend(["-e", json.dumps(variables)])
     # Keep the audited module and collection graph independent of user config.
-    environment = dict(
-        ((key, value) for key, value in os.environ.items()
-         if not key.startswith(("ANSIBLE_", "PYTHON"))),
-        ANSIBLE_CONFIG=str(Path("ansible/ansible.cfg").resolve()),
-        ANSIBLE_COLLECTIONS_PATH=str(packages),
-        ANSIBLE_COLLECTIONS_SCAN_SYS_PATH="False",
-        ANSIBLE_STDOUT_CALLBACK="ansible.posix.json",
-        ANSIBLE_NOCOLOR="1",
-    )
-    preferences = preference_snapshot(expected)
-    preview = subprocess.run(
-        command + ["--check", "--diff"], env=environment, capture_output=True, text=True
-    )
-    if preview.stderr:
-        print(preview.stderr, file=sys.stderr, end="")
-    if preview.returncode:
-        raise UnsafePreview("Ansible preview failed; apply was not started")
-    plan = json.loads(preview.stdout)
-    snapshots, restarts = inspect_preview(plan, expected, handlers)
-    if preference_snapshot(expected) != preferences:
-        raise UnsafePreview("macOS preference state changed during preview")
-    preview_restarts(restarts)
-    if args.diff:
-        describe_changes(plan, expected, handlers)
-    print(
-        f"Safe preview: {len(expected)} selected tasks; no deletions, overwrites, or missing effects"
-    )
-    if args.check:
-        return 0
-    for path, previous in {**config, **snapshots}.items():
-        if fingerprint(path) != previous:
-            raise UnsafePreview(
-                "Configuration or target state changed after the preview"
-            )
-    if preference_snapshot(expected) != preferences:
-        raise UnsafePreview("macOS preference state changed after preview")
-    print(
-        "Applying the same playbook, inventory, variables, and selected tasks",
-        flush=True,
-    )
-    environment["ANSIBLE_STDOUT_CALLBACK"] = "default"
-    return subprocess.run(
-        command + (["--diff"] if args.diff else []), env=environment
-    ).returncode
+    with tempfile.TemporaryDirectory(prefix="dotfiles-ansible-home-") as isolated_ansible_home:
+        environment = dict(
+            ((key, value) for key, value in os.environ.items()
+             if not key.startswith(("ANSIBLE_", "PYTHON"))),
+            ANSIBLE_CONFIG=str(Path("ansible/ansible.cfg").resolve()),
+            ANSIBLE_HOME=isolated_ansible_home,
+            ANSIBLE_COLLECTIONS_PATH=str(packages),
+            ANSIBLE_COLLECTIONS_SCAN_SYS_PATH="False",
+            ANSIBLE_STDOUT_CALLBACK="ansible.posix.json",
+            ANSIBLE_NOCOLOR="1",
+            **{name: str(path) for name, path in plugin_paths.items()},
+        )
+        preferences = preference_snapshot(expected)
+        preview = subprocess.run(
+            command + ["--check", "--diff"], env=environment, capture_output=True, text=True
+        )
+        if preview.stderr:
+            print(preview.stderr, file=sys.stderr, end="")
+        if preview.returncode:
+            raise UnsafePreview("Ansible preview failed; apply was not started")
+        plan = json.loads(preview.stdout)
+        snapshots, restarts = inspect_preview(plan, expected, handlers)
+        if preference_snapshot(expected) != preferences:
+            raise UnsafePreview("macOS preference state changed during preview")
+        preview_restarts(restarts)
+        if args.diff:
+            describe_changes(plan, expected, handlers)
+        print(
+            f"Safe preview: {len(expected)} selected tasks; no deletions, overwrites, or missing effects"
+        )
+        if args.check:
+            return 0
+        for path, previous in {**config, **snapshots}.items():
+            if fingerprint(path) != previous:
+                raise UnsafePreview(
+                    "Configuration or target state changed after the preview"
+                )
+        if preference_snapshot(expected) != preferences:
+            raise UnsafePreview("macOS preference state changed after preview")
+        print(
+            "Applying the same playbook, inventory, variables, and selected tasks",
+            flush=True,
+        )
+        environment["ANSIBLE_STDOUT_CALLBACK"] = "default"
+        return subprocess.run(
+            command + (["--diff"] if args.diff else []), env=environment
+        ).returncode
 
 
 if __name__ == "__main__":
