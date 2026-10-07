@@ -8,9 +8,11 @@ from unittest.mock import patch
 from scripts.ansible_safe_run import (
     UnsafePreview,
     audit,
+    fingerprint,
     inspect_preview,
     main,
     preview_restarts,
+    selected,
 )
 
 
@@ -182,6 +184,37 @@ class PreviewTests(unittest.TestCase):
         )
         expected, _, _ = audit(path, {"files"}, set())
         self.assertEqual(len(expected), 1)
+
+    def test_special_tags_and_skip_tags_match_ansible_selection(self):
+        self.assertTrue(selected({"always"}, {"files"}, set()))
+        self.assertFalse(selected({"always"}, {"files"}, {"always"}))
+        self.assertFalse(selected({"never"}, {"all"}, set()))
+        self.assertTrue(selected({"never"}, {"never"}, set()))
+        self.assertTrue(selected({"files"}, {"files"}, set()))
+        self.assertFalse(selected({"files"}, {"files"}, {"files"}))
+
+    def test_directory_contents_do_not_change_its_entry_identity(self):
+        before = fingerprint(self.root)
+        (self.root / "unrelated-entry").write_text("updated elsewhere")
+        self.assertEqual(fingerprint(self.root), before)
+
+    def test_task_privilege_escalation_is_rejected_before_preview(self):
+        path = self.root / "become.yaml"
+        path.write_text(
+            "- hosts: all\n  tasks:\n    - name: Privileged file\n"
+            "      ansible.builtin.file:\n        path: /tmp/target\n"
+            "        state: directory\n      become: true\n"
+        )
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Unknown task controls"):
+                main([str(path), "--check"])
+            run.assert_not_called()
+
+    def test_malformed_extra_vars_cannot_reach_preview(self):
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaises(UnsafePreview):
+                main(["ansible/playbook-macos.yaml", "--check", "-e", "[true]"])
+            run.assert_not_called()
 
     def test_free_form_git_arguments_fail_closed(self):
         path = self.root / "git.yaml"

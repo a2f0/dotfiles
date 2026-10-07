@@ -92,6 +92,7 @@ test("the parser security override remains confined to its reviewed CLI owner", 
   const owners = Object.entries(lock.packages).filter(([, entry]) => entry[2]?.dependencies?.["smol-toml"]);
   assert.deepEqual(owners.map(([name]) => name), ["markdownlint-cli2"]);
   assert.equal(owners[0][1][0], "markdownlint-cli2@0.23.3");
+  assert.equal(lock.packages["smol-toml"][0], "smol-toml@1.9.0");
 });
 
 test("malformed TOML remains a fatal configuration error", (t) => {

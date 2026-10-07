@@ -28,7 +28,6 @@ TASK_KEYS = {
     "loop",
     "notify",
     "tags",
-    "become",
     "changed_when",
     "failed_when",
     "check_mode",
@@ -190,6 +189,9 @@ def fingerprint(path):
     if not path.exists():
         return ("absent",)
     stat = path.stat()
+    if path.is_dir():
+        # Directory contents may change without changing the destination entry.
+        return ("directory", stat.st_dev, stat.st_ino, stat.st_mode, stat.st_uid, stat.st_gid)
     digest = hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
     return (stat.st_mode, stat.st_uid, stat.st_gid, stat.st_mtime_ns, digest)
 
@@ -340,7 +342,10 @@ def main(argv=None):
     variables = {}
     for value in args.extra_vars:
         if value.startswith("{"):
-            variables.update(json.loads(value))
+            parsed = json.loads(value)
+            if not isinstance(parsed, dict):
+                raise UnsafePreview("JSON extra variables must be an object")
+            variables.update(parsed)
         else:
             for pair in shlex.split(value):
                 key, separator, item = pair.partition("=")
@@ -373,8 +378,8 @@ def main(argv=None):
     files.add(Path("ansible/ansible.cfg").resolve())
     files.add(Path(__file__).resolve())
     config = {str(path): fingerprint(path) for path in files}
-    if "dotfiles_dir" in variables:
-        config[variables["dotfiles_dir"]] = fingerprint(variables["dotfiles_dir"])
+    source_dir = Path(variables.get("dotfiles_dir", Path.cwd())).resolve()
+    config[str(source_dir)] = fingerprint(source_dir)
     command = [
         "ansible-playbook",
         "-i",
@@ -430,6 +435,6 @@ def main(argv=None):
 if __name__ == "__main__":
     try:
         sys.exit(main())
-    except (UnsafePreview, json.JSONDecodeError, KeyError, TypeError, OSError) as error:
+    except (UnsafePreview, json.JSONDecodeError, yaml.YAMLError, KeyError, TypeError, OSError) as error:
         print(f"Apply blocked: {error}", file=sys.stderr)
         sys.exit(1)

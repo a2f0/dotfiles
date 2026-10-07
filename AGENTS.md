@@ -75,22 +75,9 @@ See README for the current provisioning limits.
 
 #### Vagrant Development Environment
 
-```bash
-# Start and provision VM
-vagrant plugin update
-vagrant box update
-vagrant up
-vagrant ssh
-
-# Auto-sync files during development
-vagrant rsync-auto
-
-# Re-run provisioners on running instance
-vagrant provision
-
-# Clean up
-vagrant destroy
-```
+The current `Vagrantfile` has unpreviewed keyring, cache, package, and VM
+effects. Its provisioning commands are held during dependency upgrades; see
+README for the current limits.
 
 ## Architecture
 
