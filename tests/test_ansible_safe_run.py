@@ -1,4 +1,6 @@
 import json
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
 import subprocess
 import tempfile
@@ -159,6 +161,23 @@ class PreviewTests(unittest.TestCase):
         path.write_text("- import_playbook: unreviewed.yaml\n")
         with patch("scripts.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Unaudited playbook"):
+                main([str(path), "--check"])
+            run.assert_not_called()
+
+    def test_conditional_task_import_is_rejected_before_check_mode(self):
+        path = self.root / "conditional-import.yaml"
+        child = self.root / "child.yaml"
+        child.write_text(
+            "- name: New directory\n  ansible.builtin.file:\n"
+            "    path: /tmp/preview-only\n    state: directory\n"
+        )
+        path.write_text(
+            "- hosts: all\n  tasks:\n    - name: Import conditionally\n"
+            "      ansible.builtin.import_tasks: child.yaml\n"
+            "      when: approved_for_apply\n"
+        )
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Conditional task imports"):
                 main([str(path), "--check"])
             run.assert_not_called()
 
@@ -340,6 +359,19 @@ class PreviewTests(unittest.TestCase):
             check, apply = [call.args[0] for call in run.call_args_list]
             self.assertEqual(check[:-2], apply)
             self.assertEqual(check[-2:], ["--check", "--diff"])
+
+    def test_diff_shows_target_without_exposing_ansible_values(self):
+        path, preview = self.safe_directory_plan()
+        plan = json.loads(preview)
+        plan["plays"][0]["tasks"][0]["hosts"]["127.0.0.1"]["diff"]["secret"] = "private-value"
+        output = StringIO()
+        with patch(
+            "scripts.ansible_safe_run.subprocess.run",
+            return_value=subprocess.CompletedProcess([], 0, json.dumps(plan), ""),
+        ), redirect_stdout(output):
+            self.assertEqual(main([str(path), "--check", "--diff"]), 0)
+        self.assertIn(f"Would create directory: {self.target}", output.getvalue())
+        self.assertNotIn("private-value", output.getvalue())
 
     def test_config_drift_after_preview_blocks_apply(self):
         path, preview = self.safe_directory_plan()

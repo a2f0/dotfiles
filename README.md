@@ -15,13 +15,13 @@ Use the pinned Python on PATH, or activate a virtual environment created by it.
     python3 -m venv .venv
     . .venv/bin/activate
     pip install -r requirements.txt
+    bun install
     pre-commit install
     pre-commit run --all-files
     python3 -m unittest discover -s tests
 
-Install the agent tooling and check the shared agent skills (requires Bun)
+Check the shared agent skills (requires Bun)
 
-    bun install
     bun run agents:check
     bun run test:markdownlint
 
@@ -44,6 +44,7 @@ Configure via Ansible (dry run)
 
 `runAnsible.sh` audits the selected playbook and its static imports before
 running `--check --diff`. It requires complete localhost and loop results,
+prints the proposed targets without file contents or preference values,
 rejects deletions, file overwrites, changed symlink targets, missing sources,
 and unsupported effects, and checks that configuration and file state still
 match before applying the same arguments. Existing configuration files are

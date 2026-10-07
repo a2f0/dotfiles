@@ -107,6 +107,8 @@ def audit(playbook, include, exclude, variables=None):
             value = task[action]
             tags = set(inherited) | normalized_tags(task.get("tags", []))
             if action == "ansible.builtin.import_tasks":
+                if "when" in task:
+                    raise UnsafePreview("Conditional task imports cannot be previewed safely")
                 if not isinstance(value, str) or "{{" in value:
                     raise UnsafePreview("Dynamic imports cannot establish completeness")
                 child = (path.parent / value).resolve()
@@ -377,6 +379,26 @@ def preview_restarts(names):
         print(f"Read-only restart preview: {name} (no signals sent)")
 
 
+def describe_changes(plan, expected, handlers):
+    """Show reviewed targets without exposing Ansible diff values or file contents."""
+    for play in plan["plays"]:
+        for entry in play.get("tasks", []):
+            filename, _, line = entry["task"]["path"].rpartition(":")
+            ref = f"{Path(filename).resolve()}:{line}"
+            record = expected.get(ref) or handlers.get(ref)
+            if record is None:
+                continue
+            action, task = record
+            result = entry["hosts"]["127.0.0.1"]
+            for item in result.get("results", [result]):
+                if item.get("skipped") or not item.get("changed"):
+                    continue
+                if action == "ansible.builtin.file":
+                    print(f"Would create {task[action]['state']}: {item['diff']['after']['path']}")
+                elif action == "community.general.osx_defaults":
+                    print(f"Would update preference: {task[action]['domain']}/{task[action]['key']}")
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("playbook", type=Path)
@@ -455,10 +477,11 @@ def main(argv=None):
         print(preview.stderr, file=sys.stderr, end="")
     if preview.returncode:
         raise UnsafePreview("Ansible preview failed; apply was not started")
-    snapshots, restarts = inspect_preview(
-        json.loads(preview.stdout), expected, handlers
-    )
+    plan = json.loads(preview.stdout)
+    snapshots, restarts = inspect_preview(plan, expected, handlers)
     preview_restarts(restarts)
+    if args.diff:
+        describe_changes(plan, expected, handlers)
     print(
         f"Safe preview: {len(expected)} selected tasks; no deletions, overwrites, or missing effects"
     )
