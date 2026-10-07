@@ -2,6 +2,9 @@
 
 This file provides guidance to AI coding agents when working with code in this repository.
 
+Claude Code loads it directly when the repository has no `CLAUDE.md`, so do not
+add a `CLAUDE.md`.
+
 ## Repository Overview
 
 This is a dotfiles repository that manages system configuration and package installation across multiple operating systems (primarily macOS and Arch Linux) using Ansible playbooks. The repository contains configuration files for various development tools and system utilities, along with automation scripts for provisioning environments.
