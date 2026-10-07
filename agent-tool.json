@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "subject": {
+    "maxLength": 50
+  },
+  "merge": {
+    "requiredChecks": [
+      {"name": "code-quality", "workflow": "Github Actions"},
+      {"name": "ansible-ubuntu", "workflow": "Github Actions"}
+    ]
+  },
+  "versions": {
+    "packages": []
+  },
+  "pr": {
+    "rejectClaudeBranding": true
+  }
+}

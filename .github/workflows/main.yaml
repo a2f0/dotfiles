@@ -9,6 +9,14 @@ jobs:
     continue-on-error: false
     steps:
     - uses: actions/checkout@v7
+    - name: Set up Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: 1.4.2
+    - name: Check agent skills
+      run: |
+        bun install --frozen-lockfile
+        bun run agents:check
     - name: Set up Python
       uses: actions/setup-python@v7
       with:

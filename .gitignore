@@ -49,3 +49,6 @@ terraform.rc
 
 # build artifacts
 a.out
+
+# Bun
+node_modules/
