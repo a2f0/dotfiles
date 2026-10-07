@@ -5,7 +5,7 @@
     "": {
       "name": "dotfiles",
       "devDependencies": {
-        "@a2f0/agent-tool": "0.1.9",
+        "@a2f0/agent-tool": "0.1.10",
         "jsonc-parser": "3.3.1",
         "markdownlint-cli2": "0.23.3",
       },
@@ -20,7 +20,7 @@
     },
   },
   "packages": {
-    "@a2f0/agent-tool": ["@a2f0/agent-tool@0.1.9", "", { "bin": { "agent-tool": "src/index.ts" } }, "sha512-Q8tsiXywPdXeH5I9d5XqslrFm4YQT352Xx0vOrmnFPoHfBUlqInVUSNibzARB4Nzodvysl5yccsRHCGF51SrhQ=="],
+    "@a2f0/agent-tool": ["@a2f0/agent-tool@0.1.10", "", { "bin": { "agent-tool": "src/index.ts" } }, "sha512-kuAMx7swbLNU86c6fbSUgs88rXDLOvbtVlABEqaJVrsWdNetsg1KEkURZZlyVZq7Jjl//Koij/WoRiQ2RAmZ7Q=="],
 
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 
