@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import sysconfig
 from contextlib import redirect_stdout
 from io import StringIO
@@ -371,6 +372,28 @@ class PreviewTests(unittest.TestCase):
         self.assertTrue(selected({"never"}, {"never"}, set()))
         self.assertTrue(selected({"files"}, {"files"}, set()))
         self.assertFalse(selected({"files"}, {"files"}, {"files"}))
+        self.assertTrue(selected(set(), {"untagged"}, set()))
+        self.assertFalse(selected(set(), {"all"}, {"untagged"}))
+        self.assertFalse(selected({"files"}, {"all"}, {"tagged"}))
+        self.assertTrue(selected({"always"}, {"all"}, {"all"}))
+        self.assertFalse(selected({"files"}, {"all"}, {"all"}))
+        self.assertFalse(selected({"never"}, {"tagged"}, set()))
+
+    def test_wrapper_ignores_inherited_python_import_path(self):
+        marker = self.root / "injected"
+        (self.root / "sitecustomize.py").write_text(
+            "import os\nfrom pathlib import Path\n"
+            "Path(os.environ['INJECTION_MARKER']).write_text('injected')\n"
+        )
+        result = subprocess.run(
+            ["/bin/sh", "runAnsible.sh", "--help"],
+            cwd=Path(__file__).resolve().parents[1],
+            env={**os.environ, "PYTHONPATH": str(self.root), "INJECTION_MARKER": str(marker)},
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertFalse(marker.exists())
 
     def test_directory_contents_do_not_change_its_entry_identity(self):
         before = fingerprint(self.root)
@@ -647,6 +670,9 @@ class PreviewTests(unittest.TestCase):
         self.assertNotIn("PYTHONPATH", environment)
         self.assertEqual(environment["ANSIBLE_COLLECTIONS_SCAN_SYS_PATH"], "False")
         self.assertEqual(environment["PATH"], "/usr/bin:/bin:/usr/sbin:/sbin")
+        self.assertEqual(environment["PYTHONNOUSERSITE"], "1")
+        self.assertEqual(environment["PYTHONSAFEPATH"], "1")
+        self.assertEqual(run.call_args.args[0][:3], [sys.executable, "-I", str(Path(sysconfig.get_path("scripts")).resolve() / "ansible-playbook")])
 
     def test_adjacent_group_vars_cannot_run_a_template_during_preview(self):
         playbook = self.root / "playbook.yaml"

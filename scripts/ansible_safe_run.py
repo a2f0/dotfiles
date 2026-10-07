@@ -113,13 +113,19 @@ def normalized_tags(tags):
 
 
 def selected(tags, include, exclude):
-    tags = set(tags)
-    return not tags.intersection(exclude) and (
+    tags = set(tags) or {"untagged"}
+    included = (
         "always" in tags
         or ("never" not in tags and "all" in include)
         or bool(tags.intersection(include))
-        or ("tagged" in include and bool(tags))
-        or ("untagged" in include and not tags)
+        or ("tagged" in include and tags != {"untagged"} and "never" not in tags)
+    )
+    if not included:
+        return False
+    if "all" in exclude:
+        return "always" in tags and "always" not in exclude
+    return not tags.intersection(exclude) and not (
+        "tagged" in exclude and tags != {"untagged"}
     )
 
 
@@ -654,6 +660,8 @@ def main(argv=None):
     source_dir = Path(variables.get("dotfiles_dir", Path.cwd())).resolve()
     config[str(source_dir)] = fingerprint(source_dir)
     command = [
+        sys.executable,
+        "-I",
         str(executable),
         "-i",
         "ansible/inventory.yaml",
@@ -678,6 +686,8 @@ def main(argv=None):
             ANSIBLE_VARS_ENABLED="",
             ANSIBLE_STDOUT_CALLBACK="ansible.posix.json",
             ANSIBLE_NOCOLOR="1",
+            PYTHONNOUSERSITE="1",
+            PYTHONSAFEPATH="1",
             PATH=TRUSTED_PATH,
             **{name: str(path) for name, path in plugin_paths.items()},
         )

@@ -47,4 +47,4 @@ detect_playbook() {
 
 playbook="$(detect_playbook)"
 
-exec python3 scripts/ansible_safe_run.py "$playbook" "$@"
+exec python3 -I scripts/ansible_safe_run.py "$playbook" "$@"
