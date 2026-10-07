@@ -138,6 +138,14 @@ def tag_flags(groups, default):
     return set(values), ",".join(values)
 
 
+def ensure_no_local_plugins(roots):
+    for root in roots:
+        for name in LOCAL_PLUGIN_DIRECTORIES:
+            plugin = root / name
+            if plugin.exists() or plugin.is_symlink():
+                raise UnsafePreview("Playbook-local plugins and collections are not audited")
+
+
 def audit(playbook, include, exclude, variables=None):
     """Audit even unselected tasks before invoking check mode; imports are static."""
     variables = variables or {}
@@ -656,11 +664,8 @@ def main(argv=None):
         )
     ):
         raise UnsafePreview("Ansible target Python must be the active Python environment")
-    for root in {args.playbook.resolve().parent, Path("ansible/inventory.yaml").resolve().parent, Path.cwd()}:
-        for name in LOCAL_PLUGIN_DIRECTORIES:
-            plugin = root / name
-            if plugin.exists() or plugin.is_symlink():
-                raise UnsafePreview("Playbook-local plugins and collections are not audited")
+    plugin_roots = {args.playbook.resolve().parent, Path("ansible/inventory.yaml").resolve().parent, Path.cwd()}
+    ensure_no_local_plugins(plugin_roots)
     expected, handlers, files = audit(
         args.playbook, include, exclude, variables
     )
@@ -729,6 +734,7 @@ def main(argv=None):
                 )
         if preference_snapshot(expected) != preferences:
             raise UnsafePreview("macOS preference state changed after preview")
+        ensure_no_local_plugins(plugin_roots)
         print(
             "Applying the same playbook, inventory, variables, and selected tasks",
             flush=True,

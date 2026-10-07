@@ -740,6 +740,19 @@ class PreviewTests(unittest.TestCase):
                 main([str(playbook), "--check"])
             run.assert_not_called()
 
+    def test_plugin_created_during_preview_blocks_apply(self):
+        path, preview = self.safe_directory_plan()
+        plugin = self.root / "collections"
+
+        def create_plugin(*args, **kwargs):
+            plugin.mkdir()
+            return subprocess.CompletedProcess([], 0, preview, "")
+
+        with patch("scripts.ansible_safe_run.subprocess.run", side_effect=create_plugin) as run:
+            with self.assertRaisesRegex(UnsafePreview, "Playbook-local plugins"):
+                main([str(path)])
+            self.assertEqual(run.call_count, 1)
+
     def test_preference_drift_after_preview_blocks_apply(self):
         path = self.root / "preference.yaml"
         path.write_text(
