@@ -142,9 +142,9 @@ the agent skills, runs pre-commit, and applies the macOS playbook; its
 `ansible-ubuntu` job applies the Ubuntu playbook. Both must pass. Branch
 protection on `main` also requires resolved review conversations. When handling
 review feedback, reply in its original review thread through
-`POST /repos/{owner}/{repo}/pulls/comments/{comment_id}/replies` and resolve
-only fully addressed findings. Merging deploys nothing; run `./runAnsible.sh`
-on a machine to apply changes.
+`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies`
+and resolve only fully addressed findings. Merging deploys nothing; run
+`./runAnsible.sh` on a machine to apply changes.
 
 After upgrading `@a2f0/agent-tool`, run `bun run agents:sync` and commit the
 skills with `.agent-tool-skills.json`. Do not edit the managed skills in
