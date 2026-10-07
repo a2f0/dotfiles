@@ -91,6 +91,14 @@ PLUGIN_DIRECTORIES = {
     "ANSIBLE_TEST_PLUGINS": "test",
     "ANSIBLE_VARS_PLUGINS": "vars",
 }
+LOCAL_PLUGIN_DIRECTORIES = {
+    "action_plugins", "become_plugins", "cache_plugins", "callback_plugins",
+    "cliconf_plugins", "collections", "connection_plugins", "doc_fragments",
+    "filter_plugins", "httpapi_plugins", "inventory_plugins", "library",
+    "lookup_plugins", "module_utils", "netconf_plugins", "roles",
+    "shell_plugins", "strategy_plugins", "terminal_plugins", "test_plugins",
+    "vars_plugins",
+}
 
 
 def normalized_tags(tags):
@@ -185,7 +193,10 @@ def audit(playbook, include, exclude, variables=None):
                 tasks(child, child_data, child_node, tags, handler)
                 continue
             if action == "ansible.builtin.setup":
-                if value != {"fact_path": "/dev/null"} or "when" in task:
+                if value != {
+                    "fact_path": "/dev/null",
+                    "gather_subset": ["!facter", "!ohai"],
+                } or "when" in task:
                     raise UnsafePreview("Fact gathering must disable executable local facts")
             elif action in READ_ONLY:
                 pass
@@ -199,6 +210,8 @@ def audit(playbook, include, exclude, variables=None):
                     raise UnsafePreview(
                         "Only directory and symlink file tasks are audited"
                     )
+                if value.get("recurse", False) is not False:
+                    raise UnsafePreview("Recursive file changes cannot be previewed completely")
                 if (
                     task.get("changed_when") is not None
                     or task.get("failed_when") is not None
@@ -517,6 +530,8 @@ def inspect_preview(plan, expected, handlers):
                     )
                 if previous == "link" and current[0] != "link":
                     raise UnsafePreview("A symlink changed type after the preview")
+                if previous == "directory" and current[0] != "directory":
+                    raise UnsafePreview("A directory changed type after the preview")
                 snapshots[path] = current
     if not set(expected).issubset(observed):
         raise UnsafePreview("Selected tasks were omitted from the preview")
@@ -603,6 +618,11 @@ def main(argv=None):
         != Path(sys.executable).resolve()
     ):
         raise UnsafePreview("Ansible target Python must be the active Python environment")
+    for root in {args.playbook.resolve().parent, Path("ansible/inventory.yaml").resolve().parent, Path.cwd()}:
+        for name in LOCAL_PLUGIN_DIRECTORIES:
+            plugin = root / name
+            if plugin.exists() or plugin.is_symlink():
+                raise UnsafePreview("Playbook-local plugins and collections are not audited")
     expected, handlers, files = audit(
         args.playbook, set(args.tags.split(",")), set(args.skip_tags.split(",")), variables
     )

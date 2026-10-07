@@ -82,6 +82,19 @@ class PreviewTests(unittest.TestCase):
             self.inspect()
         self.assertEqual(self.target.readlink(), self.source)
 
+    def test_previewed_directory_cannot_become_a_symlink(self):
+        self.target.symlink_to(self.root)
+        result = {
+            "action": "ansible.builtin.file",
+            "changed": False,
+            "diff": {
+                "before": {"path": str(self.target), "state": "directory"},
+                "after": {"path": str(self.target), "state": "directory"},
+            },
+        }
+        with self.assertRaisesRegex(UnsafePreview, "directory changed type"):
+            self.inspect(result, task={"ansible.builtin.file": {"state": "directory"}})
+
     def test_symlink_retargeted_during_preview_is_rejected(self):
         other = self.root / "other-source"
         other.write_text("unexpected target")
@@ -263,6 +276,20 @@ class PreviewTests(unittest.TestCase):
         )
         with patch("scripts.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Unknown task controls"):
+                main([str(path), "--check"])
+            run.assert_not_called()
+
+    def test_recursive_file_task_is_rejected_before_preview(self):
+        path = self.root / "recursive.yaml"
+        path.write_text(
+            "- hosts: all\n  gather_facts: false\n  tasks:\n"
+            "    - name: Recurse into existing directory\n"
+            "      ansible.builtin.file:\n"
+            f"        path: {self.root}\n"
+            "        state: directory\n        recurse: true\n"
+        )
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Recursive file changes"):
                 main([str(path), "--check"])
             run.assert_not_called()
 
@@ -527,6 +554,7 @@ class PreviewTests(unittest.TestCase):
             "- hosts: all\n  gather_facts: false\n  tasks:\n"
             "    - name: Gather safe facts\n      ansible.builtin.setup:\n"
             "        fact_path: /dev/null\n"
+            "        gather_subset: ['!facter', '!ohai']\n"
             "    - name: Inspect home directory\n      ansible.builtin.file:\n"
             "        path: \"{{ dotfiles_home | default(ansible_facts['user_dir']) }}\"\n"
             "        state: directory\n"
@@ -537,8 +565,32 @@ class PreviewTests(unittest.TestCase):
         (group_vars / "all.yaml").write_text(
             f'dotfiles_home: "{{{{ lookup(\'pipe\', \'/usr/bin/touch {marker}\') }}}}"\n'
         )
-        self.assertEqual(main([str(playbook), "--check"]), 0)
+        bin_dir = self.root / "bin"
+        bin_dir.mkdir()
+        collectors = [self.root / "facter-ran", self.root / "ohai-ran"]
+        for name, effect in zip(("facter", "ohai"), collectors, strict=True):
+            executable = bin_dir / name
+            executable.write_text(f"#!/bin/sh\n/usr/bin/touch {effect}\n")
+            executable.chmod(0o755)
+        with patch.dict(os.environ, {"PATH": f"{bin_dir}:{os.environ['PATH']}"}):
+            self.assertEqual(main([str(playbook), "--check"]), 0)
         self.assertFalse(marker.exists())
+        self.assertTrue(all(not effect.exists() for effect in collectors))
+
+    def test_playbook_local_plugin_is_rejected_before_preview(self):
+        playbook = self.root / "playbook.yaml"
+        playbook.write_text(
+            "- hosts: all\n  gather_facts: false\n  tasks:\n"
+            "    - name: Inspect safe path\n      ansible.builtin.file:\n"
+            f"        path: {self.target}\n        state: directory\n"
+        )
+        plugins = self.root / "filter_plugins"
+        plugins.mkdir()
+        (plugins / "unsafe.py").write_text("raise RuntimeError('plugin ran')\n")
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Playbook-local plugins"):
+                main([str(playbook), "--check"])
+            run.assert_not_called()
 
     def test_preference_drift_after_preview_blocks_apply(self):
         path = self.root / "preference.yaml"
