@@ -2,8 +2,9 @@
 
 This file provides guidance to AI coding agents when working with code in this repository.
 
-Claude Code loads it directly when the repository has no `CLAUDE.md`, so do not
-add a `CLAUDE.md`.
+Claude Code loads it directly when the repository has no `CLAUDE.md`; its
+`instructionFiles` setting defaults to `claude-md-or-agents-md`. Do not add a
+`CLAUDE.md`.
 
 ## Repository Overview
 
