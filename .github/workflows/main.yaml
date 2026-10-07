@@ -9,6 +9,11 @@ jobs:
     continue-on-error: false
     steps:
     - uses: actions/checkout@v7
+    - name: Set up Node
+      uses: actions/setup-node@v7
+      with:
+        node-version-file: '.nvmrc'
+        package-manager-cache: false
     - name: Set up Bun
       uses: oven-sh/setup-bun@v2
       with:
@@ -20,7 +25,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v7
       with:
-        python-version: '3.14'
+        python-version-file: '.python-version'
         architecture: 'x64'
     - name: install shellcheck and luacheck
       run: |
@@ -31,12 +36,16 @@ jobs:
     - name: Run pre-commit
       run: |
         pre-commit install
-        pre-commit autoupdate
         pre-commit run --all-files
       env:
           SKIP: no-commit-to-branch
+    - name: Test Ansible preview guards
+      run: |
+        python3 -m unittest discover -s tests
+        bun run test:markdownlint
     - name: Run ansible MacOS
-      run: ./runAnsible.sh
+      run: |
+        ./runAnsible.sh -e "dotfiles_home=${RUNNER_TEMP}/dotfiles-home ansible_python_interpreter=$(command -v python3)"
 
   ansible-ubuntu:
     runs-on: ubuntu-24.04
@@ -46,9 +55,10 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v7
       with:
-        python-version: '3.14'
+        python-version-file: '.python-version'
         architecture: 'x64'
     - name: install and configure python dependencies
       run: pip install -r ./requirements.txt
     - name: Run ansible Ubuntu 24.04
-      run: ./runAnsible.sh -e "dotfiles_dir=${GITHUB_WORKSPACE} clone_dotfiles=false"
+      run: |
+        ./runAnsible.sh -e "dotfiles_dir=${GITHUB_WORKSPACE} dotfiles_home=${RUNNER_TEMP}/dotfiles-home clone_dotfiles=false ansible_python_interpreter=$(command -v python3)"

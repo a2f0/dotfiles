@@ -15,13 +15,14 @@ This is a dotfiles repository that manages system configuration and package inst
 ### Setup and Installation
 
 ```bash
-# Install Python dependencies and set up pre-commit hooks
-pyenv install $(cat .python-version)
-pyenv local $(cat .python-version)
+# Install the pinned tools, Python dependencies, and pre-commit hooks
+mise install
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 pre-commit install
 
-# Install agent tooling (requires Bun)
+# Install agent tooling and the local markdownlint hook (requires Bun)
 bun install
 
 # Install system dependencies for linting
@@ -44,6 +45,10 @@ pre-commit run check-yaml
 
 # Check that the shared agent skills are current
 bun run agents:check
+
+# Verify the Ansible preview safety gate
+python3 -m unittest discover -s tests
+bun run test:markdownlint
 ```
 
 ### System Provisioning
@@ -52,24 +57,21 @@ bun run agents:check
 
 ```bash
 # Configure macOS system via Ansible
-ansible-playbook -i ansible/inventory.yaml ansible/playbook-macos.yaml -l 127.0.0.1
+./runAnsible.sh
 
 # Dry run to see what would change
-ansible-playbook -i ansible/inventory.yaml ansible/playbook-macos.yaml --check -l 127.0.0.1
+./runAnsible.sh --check
 
 # Run only specific tasks (e.g., file symlinks)
-ansible-playbook -i ansible/inventory.yaml ansible/playbook-macos.yaml -l 127.0.0.1 --tags 'files'
+./runAnsible.sh --tags 'files'
 ```
 
 #### Arch Linux
 
-```bash
-# Configure Arch Linux system via Ansible
-ansible-playbook -i ansible/inventory.yaml ansible/playbook-arch-linux.yaml -l 127.0.0.1
-
-# Run only specific tasks
-ansible-playbook -i ansible/inventory.yaml ansible/playbook-arch-linux.yaml -l 127.0.0.1 --tags 'files'
-```
+Arch provisioning is currently blocked by the preview guard because package,
+reflector, reboot, and VM cleanup effects lack a complete safe preview. Do not
+invoke playbooks or Vagrant directly to bypass it during dependency upgrades.
+See README for the separately reviewed provisioning workflow.
 
 #### Vagrant Development Environment
 
@@ -143,8 +145,13 @@ with an agent other than the one that wrote the change. Title and required
 check policy is in `agent-tool.json`; packages are not versioned.
 
 The `Github Actions` workflow runs on every push. Its `code-quality` job checks
-the agent skills, runs pre-commit, and applies the macOS playbook; its
-`ansible-ubuntu` job applies the Ubuntu playbook. Both must pass. Branch
+the agent skills, runs pre-commit and guard regressions, and applies the macOS
+playbook; its `ansible-ubuntu` job applies the Ubuntu playbook. Both first audit
+the tasks and require a complete safe `--check --diff` preview against the same
+runner, inventory, variables, interpreter, and selected tasks. CI isolates file
+destinations with `dotfiles_home` under `RUNNER_TEMP`; macOS preferences and
+restart handlers retain their functional validation. Never replace these applies
+with check-only tests. Both must pass. Branch
 protection on `main` also requires resolved review conversations. If a run is
 cancelled, rerun it with `gh run rerun <run-id>` rather than pushing an empty
 commit. Merging deploys nothing; run `./runAnsible.sh` on a machine to apply
@@ -160,3 +167,10 @@ name the commit that addresses it, and resolve only fully addressed findings.
 After upgrading `@a2f0/agent-tool`, run `bun run agents:sync` and commit the
 skills with `.agent-tool-skills.json`. Do not edit the managed skills in
 `.agents/skills` or `.claude/skills`.
+
+Use the managed `update-dependencies` skill for dependency upgrades. Keep all
+runtime pins synchronized and check controller and target Python against the
+Ansible support matrix. Always dry-run before infrastructure mutation, including
+CI triggered by a push, and skip compatibility groups with destructive,
+unsupported, or incomplete previews. Do not change Terraform state or run Arch
+cleanup/reboots to validate an upgrade. See README for the preview limits.

@@ -6,9 +6,19 @@
   "scripts": {
     "agent-tool": "agent-tool",
     "agents:check": "agent-tool skills check",
-    "agents:sync": "agent-tool skills install --apply"
+    "agents:sync": "agent-tool skills install --apply",
+    "test:markdownlint": "node --test tests/markdownlint.test.mjs"
   },
   "devDependencies": {
-    "@a2f0/agent-tool": "0.1.7"
+    "@a2f0/agent-tool": "0.1.9",
+    "markdownlint-cli2": "0.23.3"
+  },
+  "overrides": {
+    "markdownlint-cli2@0.23.3": {
+      "smol-toml": "1.9.0"
+    }
+  },
+  "patchedDependencies": {
+    "markdownlint@0.41.1": "patches/markdownlint@0.41.1.patch"
   }
 }
