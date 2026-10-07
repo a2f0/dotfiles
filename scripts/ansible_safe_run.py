@@ -58,6 +58,19 @@ STABLE_EXPRESSIONS = {
     "item.dest",
 }
 CLONE_CONDITION = "clone_dotfiles | default(true) | bool"
+STABLE_CONDITIONS = {
+    CLONE_CONDITION,
+    "ansible_facts['os_family'] != 'Darwin'",
+    "not ( (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_version'] is version('24.04', '==')) or (ansible_facts['distribution'] == 'Linux Mint' and ansible_facts['distribution_major_version'] is version('22', '==')) )",
+    "dotfiles_dir_stat.stat.exists",
+    "not dotfiles_dir_stat.stat.isdir",
+    "dotfiles_dir_stat.stat.isdir",
+    "(not dotfiles_dir_stat.stat.exists) or (dotfiles_dir_entries.matched | int == 0)",
+}
+RESTART_FAILURES = {
+    "/usr/bin/killall Finder": ("kill_finder", "kill_finder.rc > 1"),
+    "/usr/bin/killall SystemUIServer": ("kill_systemuiserver", "kill_systemuiserver.rc > 1"),
+}
 
 
 def normalized_tags(tags):
@@ -95,6 +108,8 @@ def audit(playbook, include, exclude, variables=None):
                 raise UnsafePreview("Unknown task controls or check_mode override")
             if "ansible_check_mode" in str(task):
                 raise UnsafePreview("Check-mode-dependent tasks cannot match the apply")
+            if "{%" in str(task) or "{#" in str(task):
+                raise UnsafePreview("Unaudited Jinja blocks cannot run during a preview")
             for expression in re.findall(r"\{\{(.*?)\}\}", str(task), flags=re.DOTALL):
                 if expression.strip() not in STABLE_EXPRESSIONS:
                     raise UnsafePreview("Task template can change between preview and apply")
@@ -106,6 +121,39 @@ def audit(playbook, include, exclude, variables=None):
                 raise UnsafePreview("Loop items must be literal")
             action = actions[0]
             value = task[action]
+            restart_failure = (
+                RESTART_FAILURES.get(value, (None, None))
+                if isinstance(value, str)
+                else (None, None)
+            )
+            if "when" in task:
+                conditions = task["when"] if isinstance(task["when"], list) else [task["when"]]
+                if not conditions or any(
+                    not isinstance(condition, str)
+                    or " ".join(condition.split()) not in STABLE_CONDITIONS
+                    for condition in conditions
+                ):
+                    raise UnsafePreview("Unaudited task condition could run during preview")
+            if "failed_when" in task and (
+                action != "ansible.builtin.command"
+                or task.get("register") != restart_failure[0]
+                or task["failed_when"] != restart_failure[1]
+            ):
+                raise UnsafePreview("Unaudited failure condition could run during preview")
+            if "changed_when" in task and (
+                action != "ansible.builtin.command" or task["changed_when"] is not False
+            ):
+                raise UnsafePreview("Unaudited change condition could run during preview")
+            if "notify" in task and (
+                action != "community.general.osx_defaults"
+                or not isinstance(task["notify"], list)
+                or any(
+                    not isinstance(name, str)
+                    or name not in {"Restart Finder", "Restart SystemUIServer"}
+                    for name in task["notify"]
+                )
+            ):
+                raise UnsafePreview("Unaudited handler notification")
             tags = set(inherited) | normalized_tags(task.get("tags", []))
             if action == "ansible.builtin.import_tasks":
                 if "when" in task:
@@ -320,7 +368,7 @@ def inspect_preview(plan, expected, handlers):
         stats.get(key) != 0 for key in ("failures", "unreachable", "ignored", "rescued")
     ):
         raise UnsafePreview("Preview contains failed, unreachable, or hidden results")
-    observed, snapshots, restarts, directories = set(), {}, set(), set()
+    observed, snapshots, restarts, directories, planned = set(), {}, set(), set(), {}
     for play in plan["plays"]:
         for entry in play.get("tasks", []):
             filename, separator, line = entry["task"]["path"].rpartition(":")
@@ -383,7 +431,7 @@ def inspect_preview(plan, expected, handlers):
                 diff = item.get("diff", {})
                 before, after = diff.get("before", {}), diff.get("after", {})
                 path = after.get("path")
-                if not path or before.get("path") != path:
+                if not isinstance(path, str) or not path or before.get("path") != path:
                     raise UnsafePreview(
                         "File preview has no complete before/after path"
                     )
@@ -396,6 +444,16 @@ def inspect_preview(plan, expected, handlers):
                     raise UnsafePreview(
                         "Preview would replace or remove an existing path"
                     )
+                target = (
+                    normalized_link_target(path, item["src"])
+                    if state == "link" and isinstance(item.get("src"), str)
+                    else None
+                )
+                proposed = (state, target)
+                destination = os.path.normpath(path)
+                if destination in planned and planned[destination] != proposed:
+                    raise UnsafePreview("Conflicting planned file states would replace a path")
+                planned[destination] = proposed
                 current = fingerprint(path)
                 if state == "link":
                     if "src" in before or "src" in after:

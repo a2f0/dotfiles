@@ -95,6 +95,30 @@ class PreviewTests(unittest.TestCase):
         with self.assertRaisesRegex(UnsafePreview, "replace or remove"):
             self.inspect()
 
+    def test_conflicting_planned_states_cannot_replace_a_created_directory(self):
+        link_ref = str(self.root / "playbook.yaml") + ":6"
+        directory = {
+            "action": "ansible.builtin.file",
+            "changed": True,
+            "diff": {
+                "before": {"path": str(self.target), "state": "absent"},
+                "after": {"path": str(self.target), "state": "directory"},
+            },
+        }
+        plan = {
+            "stats": {"127.0.0.1": {"failures": 0, "unreachable": 0, "ignored": 0, "rescued": 0}},
+            "plays": [{"tasks": [
+                {"task": {"path": self.ref}, "hosts": {"127.0.0.1": directory}},
+                {"task": {"path": link_ref}, "hosts": {"127.0.0.1": self.result}},
+            ]}],
+        }
+        expected = {
+            self.ref: ("ansible.builtin.file", {"ansible.builtin.file": {"state": "directory"}}),
+            link_ref: ("ansible.builtin.file", self.task),
+        }
+        with self.assertRaisesRegex(UnsafePreview, "Conflicting planned file states"):
+            inspect_preview(plan, expected, {})
+
     def test_incomplete_diff_is_rejected(self):
         del self.result["diff"]["before"]
         with self.assertRaisesRegex(UnsafePreview, "before/after path"):
@@ -187,7 +211,7 @@ class PreviewTests(unittest.TestCase):
             "      when: approved_for_apply\n"
         )
         with patch("scripts.ansible_safe_run.subprocess.run") as run:
-            with self.assertRaisesRegex(UnsafePreview, "Conditional task imports"):
+            with self.assertRaisesRegex(UnsafePreview, "condition"):
                 main([str(path), "--check"])
             run.assert_not_called()
 
@@ -295,7 +319,7 @@ class PreviewTests(unittest.TestCase):
             "        state: link\n      when: parent_state.stat.exists\n"
         )
         with patch("scripts.ansible_safe_run.subprocess.run") as run:
-            with self.assertRaisesRegex(UnsafePreview, "Conditional file changes"):
+            with self.assertRaisesRegex(UnsafePreview, "condition"):
                 main([str(path), "--check"])
             run.assert_not_called()
 
@@ -312,6 +336,31 @@ class PreviewTests(unittest.TestCase):
         )
         with patch("scripts.ansible_safe_run.subprocess.run") as run:
             with self.assertRaises(UnsafePreview):
+                main([str(path), "--check"])
+            run.assert_not_called()
+
+    def test_bare_condition_lookup_cannot_run_during_preview(self):
+        path = self.root / "lookup.yaml"
+        path.write_text(
+            "- hosts: all\n  gather_facts: false\n  tasks:\n"
+            "    - name: Read state\n      ansible.builtin.stat:\n"
+            "        path: /tmp/preview-only\n"
+            "      when: lookup('pipe', 'touch /tmp/should-not-run')\n"
+        )
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Unaudited task condition"):
+                main([str(path), "--check"])
+            run.assert_not_called()
+
+    def test_jinja_block_cannot_run_during_preview(self):
+        path = self.root / "block.yaml"
+        path.write_text(
+            "- hosts: all\n  gather_facts: false\n  tasks:\n"
+            "    - name: \"{% set x = lookup('pipe', 'touch /tmp/should-not-run') %} Hidden\"\n"
+            "      ansible.builtin.stat:\n        path: /tmp/preview-only\n"
+        )
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Unaudited Jinja blocks"):
                 main([str(path), "--check"])
             run.assert_not_called()
 
