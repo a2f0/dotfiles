@@ -676,6 +676,23 @@ class PreviewTests(unittest.TestCase):
                 main([str(path)])
             self.assertEqual(run.call_count, 1)
 
+    def test_playbook_symlink_retarget_after_preview_blocks_apply(self):
+        path, preview = self.safe_directory_plan()
+        alias = self.root / "selected.yaml"
+        other = self.root / "other.yaml"
+        other.write_text(path.read_text())
+        alias.symlink_to(path)
+
+        def retarget(*args, **kwargs):
+            alias.unlink()
+            alias.symlink_to(other)
+            return subprocess.CompletedProcess([], 0, preview, "")
+
+        with patch("scripts.ansible_safe_run.subprocess.run", side_effect=retarget) as run:
+            with self.assertRaisesRegex(UnsafePreview, "Configuration or target state changed"):
+                main([str(alias)])
+            self.assertEqual(run.call_count, 1)
+
     def test_inherited_ansible_and_python_plugins_are_removed(self):
         path, preview = self.safe_directory_plan()
         with patch.dict(os.environ, {"ANSIBLE_LIBRARY": "/tmp/foreign", "ANSIBLE_FILTER_PLUGINS": "/tmp/foreign", "PYTHONPATH": "/tmp/foreign", "PATH": f"{self.root}/shadow:/usr/bin"}), patch(

@@ -212,7 +212,9 @@ def audit(playbook, include, exclude, variables=None):
                     raise UnsafePreview("Conditional task imports cannot be previewed safely")
                 if not isinstance(value, str) or "{{" in value:
                     raise UnsafePreview("Dynamic imports cannot establish completeness")
-                child = (path.parent / value).resolve()
+                logical_child = (path.parent / value).absolute()
+                files.add(logical_child)
+                child = logical_child.resolve()
                 child_data, child_node = load(child)
                 tasks(child, child_data, child_node, tags, handler)
                 continue
@@ -310,6 +312,7 @@ def audit(playbook, include, exclude, variables=None):
         text = path.read_text()
         return yaml.safe_load(text), yaml.compose(text)
 
+    files.add(playbook.absolute())
     playbook = playbook.resolve()
     data, nodes = load(playbook)
     for play, play_node in zip(data, nodes.value, strict=True):
@@ -377,6 +380,12 @@ def fingerprint(path):
     return (stat.st_mode, stat.st_uid, stat.st_gid, stat.st_mtime_ns, digest)
 
 
+def bound_fingerprint(path):
+    """Bind the path Ansible opens and the resolved file inspected by the audit."""
+    path = Path(path)
+    return (str(path.resolve()), fingerprint(path))
+
+
 def normalized_link_target(path, target):
     return os.path.normpath(os.path.join(os.path.dirname(path), target))
 
@@ -413,7 +422,11 @@ def trusted_runtime():
     plugin_paths["ANSIBLE_LIBRARY"] = packages / "ansible/modules"
     if not all(path.is_dir() and path.resolve().is_relative_to(packages) for path in plugin_paths.values()):
         raise UnsafePreview("Ansible plugin paths are outside the installed environment")
-    return executable, packages, {config, inventory, *implementations}, plugin_paths
+    logical_config = Path("ansible/ansible.cfg").absolute()
+    logical_inventory = Path("ansible/inventory.yaml").absolute()
+    return executable, packages, {
+        config, inventory, logical_config, logical_inventory, *implementations
+    }, plugin_paths
 
 
 def preference_snapshot(expected):
@@ -682,9 +695,9 @@ def main(argv=None):
     executable, packages, runtime_files, plugin_paths = trusted_runtime()
     files.update(runtime_files)
     files.add(Path(__file__).resolve())
-    config = {str(path): fingerprint(path) for path in files}
-    source_dir = Path(variables.get("dotfiles_dir", Path.cwd())).resolve()
-    config[str(source_dir)] = fingerprint(source_dir)
+    config = {str(path): bound_fingerprint(path) for path in files}
+    source_dir = Path(variables.get("dotfiles_dir", Path.cwd())).absolute()
+    config[str(source_dir)] = bound_fingerprint(source_dir)
     command = [
         sys.executable,
         "-I",
@@ -737,7 +750,12 @@ def main(argv=None):
         )
         if args.check:
             return 0
-        for path, previous in {**config, **snapshots}.items():
+        for path, previous in config.items():
+            if bound_fingerprint(path) != previous:
+                raise UnsafePreview(
+                    "Configuration or target state changed after the preview"
+                )
+        for path, previous in snapshots.items():
             if fingerprint(path) != previous:
                 raise UnsafePreview(
                     "Configuration or target state changed after the preview"
