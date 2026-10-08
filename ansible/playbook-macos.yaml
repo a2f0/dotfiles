@@ -3,10 +3,17 @@
   hosts: 127.0.0.1
   connection: local
   become: false
+  gather_facts: false
   vars:
     dotfiles_dir: "{{ playbook_dir | dirname }}"
     ansible_python_interpreter: /usr/bin/python3
   pre_tasks:
+    - name: Gather host facts without local executable facts
+      ansible.builtin.setup:
+        fact_path: /dev/null
+        gather_subset: ['!facter', '!ohai']
+      tags:
+        - always
     - name: Ensure this playbook only runs on macOS
       ansible.builtin.fail:
         msg: "This playbook is intended for macOS systems only"
