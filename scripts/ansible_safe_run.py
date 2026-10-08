@@ -149,7 +149,7 @@ def ensure_no_local_plugins(roots):
 def audit(playbook, include, exclude, variables=None):
     """Audit even unselected tasks before invoking check mode; imports are static."""
     variables = variables or {}
-    expected, handlers, files = {}, {}, set()
+    expected, handlers, files, planned_preferences = {}, {}, set(), {}
 
     def tasks(path, data, nodes, inherited=(), handler=False):
         for task, node in zip(data, nodes.value, strict=True):
@@ -291,6 +291,16 @@ def audit(playbook, include, exclude, variables=None):
             if handler:
                 handlers[ref] = record
             elif selected(tags, include, exclude):
+                if action == "community.general.osx_defaults":
+                    preference = (value["domain"], value["key"])
+                    if (
+                        preference in planned_preferences
+                        and planned_preferences[preference] != value["value"]
+                    ):
+                        raise UnsafePreview(
+                            "Conflicting planned macOS preference values"
+                        )
+                    planned_preferences[preference] = value["value"]
                 expected[ref] = record
 
     def load(path):

@@ -780,6 +780,24 @@ class PreviewTests(unittest.TestCase):
         self.assertEqual(run.call_count, 4)
         self.assertEqual(run.call_args.args[0], ["/usr/bin/defaults", "read", "test.domain", "SafeFlag"])
 
+    def test_conflicting_preference_writes_block_before_preview(self):
+        path = self.root / "conflicting-preferences.yaml"
+        path.write_text(
+            "- hosts: all\n  gather_facts: false\n  tasks:\n"
+            "    - name: Enable preference\n"
+            "      community.general.osx_defaults:\n"
+            "        domain: test.domain\n        key: SafeFlag\n"
+            "        type: bool\n        value: true\n"
+            "    - name: Disable preference\n"
+            "      community.general.osx_defaults:\n"
+            "        domain: test.domain\n        key: SafeFlag\n"
+            "        type: bool\n        value: false\n"
+        )
+        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Conflicting planned macOS preference"):
+                main([str(path)])
+            run.assert_not_called()
+
     def test_restart_preview_sends_no_signal(self):
         with patch("scripts.ansible_safe_run.sys.platform", "darwin"), patch(
             "scripts.ansible_safe_run.subprocess.run",
