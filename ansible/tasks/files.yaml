@@ -1,56 +1,57 @@
 ---
 - name: Make sure directories exist
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/{{ item }}"
     state: directory
     owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
   loop:
-    - '~/install/bin'
-    - '~/.bundle'
-    - '~/.codex'
-    - '~/.config'
-    - '~/.imapfilter'
-    - '~/.config/nvim'
-    - '~/.config/weechat'
+    - 'install/bin'
+    - '.bundle'
+    - '.codex'
+    - '.config'
+    - '.imapfilter'
+    - '.config/nvim'
+    - '.config/weechat'
 
 - name: Create symlinks
   ansible.builtin.file:
     src: "{{ dotfiles_dir }}/files/{{ item.src }}"
-    dest: "{{ item.dest }}"
+    dest: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/{{ item.dest }}"
     state: link
-    force: true
+    force: false
+    follow: false
   loop:
-    - { src: 'shellcheck/aliases', dest: '~/.aliases' }
-    - { src: 'ansible.cfg', dest: '~/.ansible.cfg' }
-    - { src: 'aspell.en.pws', dest: '~/.aspell.en.pws' }
-    - { src: 'bash_profile', dest: '~/.bash_profile' }
-    - { src: 'bashrc', dest: '~/.bashrc' }
-    - { src: 'bundler', dest: '~/.bundle/config' }
-    - { src: 'efnet.ircrc', dest: '~/.efnet.ircrc' }
-    - { src: 'freenode.ircrc', dest: '~/.freenode.ircrc' }
-    - { src: 'functions', dest: '~/.functions' }
-    - { src: 'shellcheck/functions', dest: '~/.functions-posix' }
-    - { src: 'functions-zsh', dest: '~/.functions-zsh' }
-    - { src: 'gemrc', dest: '~/.gemrc' }
-    - { src: 'gitconfig', dest: '~/.gitconfig' }
-    - { src: 'global.ircrc', dest: '~/.global.ircrc' }
-    - { src: 'imapfilter.config.lua', dest: '~/.imapfilter/config.lua' }
-    - { src: 'inputrc', dest: '~/.inputrc' }
-    - { src: 'mailcap', dest: '~/.mailcap' }
-    - { src: 'muttrc', dest: '~/.muttrc' }
-    - { src: 'muttrc-imap', dest: '~/.muttrc-imap' }
-    - { src: 'offlineimaprc.ini', dest: '~/.offlineimaprc' }
-    - { src: 'offlineimap.py', dest: '~/.offlineimap.py' }
-    - { src: 'pinerc', dest: '~/.pinerc' }
-    - { src: 'profile', dest: '~/.profile' }
-    - { src: 'screenrc', dest: '~/.screenrc' }
-    - { src: 'vimrc', dest: '~/.vimrc' }
-    - { src: 'zprofile', dest: '~/.zprofile' }
-    - { src: 'zshenv', dest: '~/.zshenv' }
-    - { src: 'zshrc', dest: '~/.zshrc' }
-    - { src: 'nvim.init.lua', dest: '~/.config/nvim/init.lua' }
-    - { src: 'starship.toml', dest: '~/.config/starship.toml' }
-    - { src: 'tmux.conf', dest: '~/.tmux.conf' }
-    - { src: 'weechat/weechat.conf', dest: '~/.config/weechat/weechat.conf' }
-    - { src: 'weechat/irc.conf', dest: '~/.config/weechat/irc.conf' }
+    - { src: 'shellcheck/aliases', dest: '.aliases' }
+    - { src: 'ansible.cfg', dest: '.ansible.cfg' }
+    - { src: 'aspell.en.pws', dest: '.aspell.en.pws' }
+    - { src: 'bash_profile', dest: '.bash_profile' }
+    - { src: 'bashrc', dest: '.bashrc' }
+    - { src: 'bundler', dest: '.bundle/config' }
+    - { src: 'efnet.ircrc', dest: '.efnet.ircrc' }
+    - { src: 'freenode.ircrc', dest: '.freenode.ircrc' }
+    - { src: 'functions', dest: '.functions' }
+    - { src: 'shellcheck/functions', dest: '.functions-posix' }
+    - { src: 'functions-zsh', dest: '.functions-zsh' }
+    - { src: 'gemrc', dest: '.gemrc' }
+    - { src: 'gitconfig', dest: '.gitconfig' }
+    - { src: 'global.ircrc', dest: '.global.ircrc' }
+    - { src: 'imapfilter.config.lua', dest: '.imapfilter/config.lua' }
+    - { src: 'inputrc', dest: '.inputrc' }
+    - { src: 'mailcap', dest: '.mailcap' }
+    - { src: 'muttrc', dest: '.muttrc' }
+    - { src: 'muttrc-imap', dest: '.muttrc-imap' }
+    - { src: 'offlineimaprc.ini', dest: '.offlineimaprc' }
+    - { src: 'offlineimap.py', dest: '.offlineimap.py' }
+    - { src: 'pinerc', dest: '.pinerc' }
+    - { src: 'profile', dest: '.profile' }
+    - { src: 'screenrc', dest: '.screenrc' }
+    - { src: 'vimrc', dest: '.vimrc' }
+    - { src: 'zprofile', dest: '.zprofile' }
+    - { src: 'zshenv', dest: '.zshenv' }
+    - { src: 'zshrc', dest: '.zshrc' }
+    - { src: 'nvim.init.lua', dest: '.config/nvim/init.lua' }
+    - { src: 'starship.toml', dest: '.config/starship.toml' }
+    - { src: 'tmux.conf', dest: '.tmux.conf' }
+    - { src: 'weechat/weechat.conf', dest: '.config/weechat/weechat.conf' }
+    - { src: 'weechat/irc.conf', dest: '.config/weechat/irc.conf' }

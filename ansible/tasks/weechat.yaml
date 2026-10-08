@@ -1,7 +1,7 @@
 ---
 - name: Make sure ~/.config/weechat exists
   ansible.builtin.file:
-    path: ~/.config/weechat
+    path: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.config/weechat"
     state: directory
     owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"

@@ -1,14 +1,14 @@
 ---
 - name: Make sure ~/.mcabber exists
   ansible.builtin.file:
-    path: ~/.mcabber
+    path: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.mcabber"
     state: directory
     owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
 
 - name: Make sure ~/.mcabber/otr exists
   ansible.builtin.file:
-    path: ~/.mcabber/otr
+    path: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.mcabber/otr"
     state: directory
     owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"

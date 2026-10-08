@@ -29,6 +29,7 @@
     repo: 'https://github.com/a2f0/dotfiles.git'
     dest: "{{ dotfiles_dir | default('~/dotfiles') }}"
     force: false
+    update: false
     version: main
   when:
     - clone_dotfiles | default(true) | bool

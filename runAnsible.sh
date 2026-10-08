@@ -2,11 +2,8 @@
 
 set -eu
 
-INVENTORY="ansible/inventory.yaml"
-LIMIT_HOST="127.0.0.1"
-
 detect_playbook() {
-  os_name="$(uname -s)"
+  os_name="$(/usr/bin/uname -s)"
 
   case "$os_name" in
     Darwin)
@@ -50,4 +47,4 @@ detect_playbook() {
 
 playbook="$(detect_playbook)"
 
-exec ansible-playbook -i "$INVENTORY" "$playbook" -l "$LIMIT_HOST" "$@"
+exec python3 -I scripts/ansible_safe_run.py "$playbook" "$@"
