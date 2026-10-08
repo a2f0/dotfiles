@@ -12,7 +12,9 @@ from unittest.mock import patch
 
 from scripts.ansible_safe_run import (
     UnsafePreview,
+    active_python_interpreter,
     audit,
+    bound_fingerprint,
     fingerprint,
     inspect_preview,
     main,
@@ -692,6 +694,28 @@ class PreviewTests(unittest.TestCase):
             with self.assertRaisesRegex(UnsafePreview, "Configuration or target state changed"):
                 main([str(alias)])
             self.assertEqual(run.call_count, 1)
+
+    def test_installed_python_alias_is_accepted_but_sibling_alias_is_not(self):
+        active_prefix = self.root / "active-python"
+        aliases = active_prefix / "bin"
+        aliases.mkdir(parents=True)
+        interpreter = aliases / "python3"
+        interpreter.symlink_to(Path(sys.executable))
+        self.assertTrue(
+            active_python_interpreter(interpreter, sys.executable, active_prefix)
+        )
+        self.assertFalse(
+            active_python_interpreter(
+                interpreter, sys.executable, self.root / "other-python"
+            )
+        )
+        before = bound_fingerprint(interpreter)
+        interpreter.unlink()
+        interpreter.symlink_to(self.source)
+        self.assertNotEqual(
+            before,
+            bound_fingerprint(interpreter),
+        )
 
     def test_inherited_ansible_and_python_plugins_are_removed(self):
         path, preview = self.safe_directory_plan()

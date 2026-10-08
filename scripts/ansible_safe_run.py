@@ -386,6 +386,17 @@ def bound_fingerprint(path):
     return (str(path.resolve()), fingerprint(path))
 
 
+def active_python_interpreter(path, executable=None, prefix=None):
+    """Accept aliases only from the controller's own Python installation."""
+    candidate = Path(path).absolute()
+    executable = Path(executable or sys.executable).absolute()
+    prefix = Path(prefix or sys.prefix).absolute()
+    return (
+        candidate.resolve() == executable.resolve()
+        and candidate.parent in {executable.parent, prefix / "bin"}
+    )
+
+
 def normalized_link_target(path, target):
     return os.path.normpath(os.path.join(os.path.dirname(path), target))
 
@@ -679,12 +690,7 @@ def main(argv=None):
             raise UnsafePreview(f"{key} must be an absolute path")
     if (
         "ansible_python_interpreter" in variables
-        and (
-            Path(variables["ansible_python_interpreter"]).parent
-            != Path(sys.executable).parent
-            or Path(variables["ansible_python_interpreter"]).resolve()
-            != Path(sys.executable).resolve()
-        )
+        and not active_python_interpreter(variables["ansible_python_interpreter"])
     ):
         raise UnsafePreview("Ansible target Python must be the active Python environment")
     plugin_roots = {args.playbook.resolve().parent, Path("ansible/inventory.yaml").resolve().parent, Path.cwd()}
@@ -698,6 +704,9 @@ def main(argv=None):
     config = {str(path): bound_fingerprint(path) for path in files}
     source_dir = Path(variables.get("dotfiles_dir", Path.cwd())).absolute()
     config[str(source_dir)] = bound_fingerprint(source_dir)
+    if "ansible_python_interpreter" in variables:
+        interpreter = Path(variables["ansible_python_interpreter"]).absolute()
+        config[str(interpreter)] = bound_fingerprint(interpreter)
     command = [
         sys.executable,
         "-I",
