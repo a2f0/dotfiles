@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 import sysconfig
@@ -386,14 +387,13 @@ def bound_fingerprint(path):
     return (str(path.resolve()), fingerprint(path))
 
 
-def active_python_interpreter(path, executable=None, prefix=None):
-    """Accept aliases only from the controller's own Python installation."""
+def active_python_interpreter(path, executable=None, invoked=None):
+    """Accept exactly the active executable or the launcher used by this wrapper."""
     candidate = Path(path).absolute()
     executable = Path(executable or sys.executable).absolute()
-    prefix = Path(prefix or sys.prefix).absolute()
-    return (
-        candidate.resolve() == executable.resolve()
-        and candidate.parent in {executable.parent, prefix / "bin"}
+    invoked = invoked or shutil.which("python3")
+    return candidate == executable or (
+        invoked is not None and candidate == Path(invoked).absolute()
     )
 
 

@@ -695,18 +695,17 @@ class PreviewTests(unittest.TestCase):
                 main([str(alias)])
             self.assertEqual(run.call_count, 1)
 
-    def test_installed_python_alias_is_accepted_but_sibling_alias_is_not(self):
-        active_prefix = self.root / "active-python"
-        aliases = active_prefix / "bin"
+    def test_active_python_launcher_is_accepted_but_sibling_alias_is_not(self):
+        aliases = self.root / "active-python" / "bin"
         aliases.mkdir(parents=True)
         interpreter = aliases / "python3"
         interpreter.symlink_to(Path(sys.executable))
         self.assertTrue(
-            active_python_interpreter(interpreter, sys.executable, active_prefix)
+            active_python_interpreter(interpreter, sys.executable, interpreter)
         )
         self.assertFalse(
             active_python_interpreter(
-                interpreter, sys.executable, self.root / "other-python"
+                interpreter, sys.executable, self.root / "other-python" / "bin" / "python3"
             )
         )
         before = bound_fingerprint(interpreter)
