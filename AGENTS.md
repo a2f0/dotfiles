@@ -80,13 +80,13 @@ normally.
 Arch provisioning is currently blocked by the preview guard because package,
 reflector, reboot, and VM cleanup effects lack a complete safe preview. Do not
 invoke playbooks or Vagrant directly to bypass it during dependency upgrades.
-See README for the current provisioning limits.
+See [provisioning](docs/provisioning.md) for the current limits.
 
 #### Vagrant Development Environment
 
 The current `Vagrantfile` has unpreviewed keyring, cache, package, and VM
 effects. Its provisioning commands are held during dependency upgrades; see
-README for the current limits.
+[provisioning](docs/provisioning.md) for the current limits.
 
 ## Architecture
 
@@ -169,4 +169,14 @@ runtime pins synchronized and check controller and target Python against the
 Ansible support matrix. Always dry-run before infrastructure mutation, including
 CI triggered by a push, and skip compatibility groups with destructive,
 unsupported, or incomplete previews. Do not change Terraform state or run Arch
-cleanup/reboots to validate an upgrade. See README for the preview limits.
+cleanup/reboots to validate an upgrade. Read
+[dependency upgrades](docs/dependency-upgrades.md) for procedures and active
+constraints, and [provisioning](docs/provisioning.md) for preview limits.
+
+Keep the root README focused on purpose, setup, and essential safe usage. Put
+reusable upgrade procedures and active constraints, override rationale, and removal
+conditions in `docs/dependency-upgrades.md`, linking to focused operational docs
+where needed. Record each upgrade's version inventory, audit/test/preview results,
+and skipped groups in its PR, not README or an accumulating documentation journal.
+Keep historical findings attributed to their PR; recheck them before claiming
+current status. Update or remove maintenance guidance as constraints change.
