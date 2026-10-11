@@ -36,7 +36,7 @@ sudo luarocks install luacheck
 
 ```bash
 # Run all pre-commit hooks on all files
-pre-commit run --all-files
+bun run agent:run --label pre-commit -- pre-commit run --all-files
 
 # Run specific pre-commit hook
 pre-commit run shellcheck
@@ -47,9 +47,18 @@ pre-commit run check-yaml
 bun run agents:check
 
 # Verify the Ansible preview safety gate
-python3 -m unittest discover -s tests
-bun run test:markdownlint
+bun run agent:run --label preview-tests -- python3 -m unittest discover -s tests
+bun run agent:run --label markdownlint-tests -- bun run test:markdownlint
 ```
+
+Use `bun run agent:run --label <name> -- <command> [args...]` for noisy finite
+commands. It preserves the command's exit status and full private logs while
+returning a compact receipt and a bounded failure excerpt. Inspect required
+warnings, timings, and artifacts before accepting a check; use
+`bun run agent-tool logs <log-path>` or a targeted search for more evidence.
+Keep review verdicts and structured decision output visible. Do not wrap
+interactive tools or persistent servers. Existing hooks and CI checks still run
+normally.
 
 ### System Provisioning
 
