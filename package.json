@@ -5,12 +5,13 @@
   "packageManager": "bun@1.4.2",
   "scripts": {
     "agent-tool": "agent-tool",
+    "agent:run": "agent-tool run",
     "agents:check": "agent-tool skills check",
     "agents:sync": "agent-tool skills install --apply",
     "test:markdownlint": "node --test tests/markdownlint.test.mjs"
   },
   "devDependencies": {
-    "@a2f0/agent-tool": "0.1.10",
+    "@a2f0/agent-tool": "0.1.11",
     "jsonc-parser": "3.3.1",
     "markdownlint-cli2": "0.23.3"
   },
