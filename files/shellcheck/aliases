@@ -19,7 +19,6 @@ alias remain="git switch main && git pull"
 if [ "$(uname -n)" = x1 ]; then
     alias clipboard="xclip -out | xclip -selection clipboard"
     alias currentbranch="git branch --show-current | tr -d '\n' | xclip -selection clipboard"
-    alias gemini-confirm='echo "@gemini-code-assist can you confirm this is fixed in $(git log -n 1 --format=%h)?" | xclip -selection clipboard'
     alias lock="xlock -mode laser"
     alias windows="xwininfo -root -children"
 fi
@@ -27,7 +26,6 @@ fi
 if [ "$(uname)" = Darwin ]; then
     alias currentbranch="git branch --show-current | tee /dev/tty | tr -d '\n' | pbcopy"
     alias derived="rm -rf ~/Library/Developer/Xcode/DerivedData"
-    alias gemini-confirm='echo "@gemini-code-assist can you confirm this is fixed in $(git log -n 1 --format=%h)?" | pbcopy'
     alias lock='open -a /System/Library/Frameworks/ScreenSaver.framework/Versions/A/Resources/ScreenSaverEngine.app'
     alias lsusb="system_profiler SPUSBDataType"
     alias md5sum="md5"

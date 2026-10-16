@@ -153,10 +153,8 @@ cancelled, rerun it with `gh run rerun <run-id>` rather than pushing an empty
 commit. Merging deploys nothing; run `./runAnsible.sh` on a machine to apply
 changes.
 
-Gemini Code Assist (configured in `.gemini/config.yaml`) is a GitHub App that
-reviews pull requests automatically when enabled; do not request it with
-`gh pr edit --add-reviewer`. When handling review feedback, reply in its
-original review thread, not the PR conversation, through
+When handling review feedback, reply in its original review thread, not the
+PR conversation, through
 `POST /repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies`,
 name the commit that addresses it, and resolve only fully addressed findings.
 
