@@ -17,31 +17,32 @@ controller and target Python versions against the selected Ansible release's
 support matrix and read its upstream porting guide before changing the group.
 
 Skip infrastructure groups without a complete real-environment preview.
-Encrypted Terraform credentials/state and unavailable Arch hosts are validation
-limits, not evidence of a safe upgrade. Do not change Terraform state or run Arch
-cleanup/reboots to validate an upgrade. The [provisioning guide](provisioning.md)
-describes the Ansible guard, CI applies, and blocked Arch/Vagrant effects.
+Missing Terraform credentials or variables and unavailable Arch hosts are
+validation limits, not evidence of a safe upgrade. Do not change Terraform state
+or run Arch cleanup/reboots to validate an upgrade. The
+[provisioning guide](provisioning.md) describes the Ansible guard, CI applies,
+blocked Arch/Vagrant effects, and the Terraform state backend.
 
 ## Terraform
 
-Inspect initialization and planning effects before execution. After decrypting
-the backend and variables and configuring AWS credentials, initialize from the
-`terraform` directory with `./init.sh`, using the intended real backend and
-variables. Hold the group if initialization needs a backend or state migration;
-[legacy provider state](provisioning.md#legacy-terraform-state) requires separate
-authorization.
+Inspect initialization and planning effects before execution. With `.secrets`
+linked, `main.tfvars` decrypted, and the GitHub token set as described in
+[provisioning](provisioning.md#terraform), initialize from the `terraform`
+directory with `./init.sh` against the real R2 backend. Hold the group if
+initialization needs a backend or state migration.
 
-Create and inspect a saved plan from that same directory:
+Create and inspect a saved plan from that same directory. `run.sh` supplies the
+state credentials to each Terraform command:
 
-    terraform plan -var-file=main.tfvars -out=upgrade.tfplan
-    terraform show -json upgrade.tfplan > upgrade.tfplan.json
+    ./run.sh plan -input=false -var-file=main.tfvars -out=upgrade.tfplan
+    ./run.sh show -json upgrade.tfplan > upgrade.tfplan.json
     bun run --cwd .. agent-tool dependencies check-terraform-plan terraform/upgrade.tfplan.json
 
 Inspect resource identities, drift, warnings, and effects outside resource actions
 as well as the helper's result. Do not apply a plan with deletions or replacements,
 or one whose safety cannot be established. Before an authorized apply, verify
 that the validated configuration, toolchain, environment, and state still match
-that preview, then consume the saved plan with `terraform apply upgrade.tfplan`.
+that preview, then consume the saved plan with `./run.sh apply upgrade.tfplan`.
 Do not use `apply.sh` during dependency upgrades because it generates a fresh,
 uninspected plan. Saved binary and JSON plans are ignored by Git because they can
 contain secrets; keep them private and delete them after use.
