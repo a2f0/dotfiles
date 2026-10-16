@@ -11,6 +11,7 @@
     - '.codex'
     - '.config'
     - '.imapfilter'
+    - '.config/ghostty'
     - '.config/nvim'
     - '.config/weechat'
 
@@ -50,6 +51,7 @@
     - { src: 'zprofile', dest: '.zprofile' }
     - { src: 'zshenv', dest: '.zshenv' }
     - { src: 'zshrc', dest: '.zshrc' }
+    - { src: 'com.mitchellh.ghostty.config', dest: '.config/ghostty/config' }
     - { src: 'nvim.init.lua', dest: '.config/nvim/init.lua' }
     - { src: 'starship.toml', dest: '.config/starship.toml' }
     - { src: 'tmux.conf', dest: '.tmux.conf' }
