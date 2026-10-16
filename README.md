@@ -75,3 +75,7 @@ Vagrant commands. See [provisioning limits](docs/provisioning.md#arch-linux-and-
 
 See [dependency upgrades](docs/dependency-upgrades.md) for upgrade procedures,
 active compatibility constraints, security exceptions, and Terraform previews.
+
+Terraform state is in Cloudflare R2. The `terraform/` scripts read its key from
+the gitignored `.secrets` link to matrix-secrets; see
+[Terraform](docs/provisioning.md#terraform).

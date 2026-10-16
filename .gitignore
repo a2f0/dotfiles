@@ -26,6 +26,9 @@ ssh_config
 syslog-ng.conf-private
 .DS_Store
 
+# matrix-secrets link; no trailing slash, so the pattern matches the symlink
+.secrets
+
 # terraform
 **/.terraform/*
 *.tfstate
@@ -40,6 +43,7 @@ override.tf.json
 .terraformrc
 terraform.rc
 /terraform/main.tfvars
+# plaintext left over from the removed encrypted backend file
 /terraform/terraform.backend
 
 # ansible

@@ -48,17 +48,41 @@ and package lists remain available, but the existing `Vagrantfile` also runs
 destructive keyring and cache operations directly. Review those effects and
 establish a complete preview before any future provisioning work.
 
-## Legacy Terraform state
+## Terraform
 
-The provider source is declared in [`terraform/main.tf`](../terraform/main.tf).
-Existing state may still reference `hashicorp/github` instead of
-`integrations/github`. That requires a separately authorized, one-time provider
-address migration before using the normal Terraform workflow:
+[`terraform/`](../terraform) manages this repository's `SLACK_WEBHOOK_URL`
+GitHub Actions secret. Its state is the object `terraform.tfstate` in the
+Cloudflare R2 bucket `dotfiles-terraform-state`, read through the S3 backend
+with lockfile locking, so Terraform 1.10 or later is required. The backend
+settings are committed in [`terraform/main.tf`](../terraform/main.tf); the
+bucket and its token were created by hand and are not managed here. No AWS
+account is involved.
 
-    terraform state replace-provider registry.terraform.io/hashicorp/github registry.terraform.io/integrations/github
+`.secrets` is a gitignored link to this project's folder in `matrix-secrets`,
+which the matrix workspace manages and backs up
+([a2f0/matrix `docs/secrets.md`](https://github.com/a2f0/matrix/blob/main/docs/secrets.md)).
+Link it from the repository root and confirm Git ignores it:
 
-Run this only from the `terraform` directory with the intended real backend
-initialized. It changes the provider address in state without recreating
-resources. Do not mutate state to validate a dependency upgrade; if this migration
-is needed, hold that upgrade group. See [Terraform upgrades](dependency-upgrades.md#terraform)
-for initialization, saved plans, and apply restrictions.
+    ln -s ../matrix-secrets/dotfiles .secrets   # ../../../ from a matrix checkout
+    git check-ignore .secrets
+
+`terraform/run.sh` runs a Terraform command from the `terraform` directory. It
+loads `.secrets/prod/shared.env` when present and then `.secrets/prod/app.env`,
+which wins, and stops before running Terraform when `app.env`,
+`TF_STATE_ACCESS_KEY_ID`, or `TF_STATE_SECRET_ACCESS_KEY` is missing. That pair
+is the R2 S3 key of a token limited to the state bucket. Only Terraform receives
+it, as `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, after `AWS_PROFILE` and
+`AWS_SESSION_TOKEN` are unset, so an ambient AWS profile or session cannot
+redirect the backend. `init.sh` and `apply.sh` run through it. `init.sh` passes
+`-reconfigure`, so a working directory initialized for the former S3 bucket
+switches to R2 without offering to migrate state.
+
+The GitHub provider takes its token from `TF_VAR_github_access_token`, or
+Terraform prompts for it. `main.tfvars`, decrypted from `main.tfvars.gpg`,
+supplies the owner, repository, and webhook URL. From the `terraform` directory:
+
+    ./init.sh
+    ./run.sh plan -var-file=main.tfvars
+
+See [Terraform upgrades](dependency-upgrades.md#terraform) for saved plans and
+apply restrictions.

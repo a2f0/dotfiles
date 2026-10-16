@@ -98,6 +98,10 @@ effects. Its provisioning commands are held during dependency upgrades; see
   - **`tasks/`** - Ansible task files organized by operating system and functionality
 - **`files/`** - Contains all dotfiles and configuration files that get symlinked to home directory
 - **`Vagrantfile`** - VM configuration for testing Arch Linux setup
+- **`terraform/`** - Manages this repository's `SLACK_WEBHOOK_URL` Actions
+  secret. State is in the Cloudflare R2 bucket `dotfiles-terraform-state`;
+  `run.sh` reads its key from the gitignored `.secrets` link to matrix-secrets,
+  so no AWS credentials are needed. See [Terraform](docs/provisioning.md#terraform).
 
 ### Configuration Management
 
