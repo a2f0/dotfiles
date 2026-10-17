@@ -26,15 +26,16 @@ blocked Arch/Vagrant effects, and the Terraform state backend.
 ## Terraform
 
 Inspect initialization and planning effects before execution. With `.secrets`
-linked, `main.tfvars` decrypted, and the GitHub token set as described in
+linked and the GitHub token set as described in
 [provisioning](provisioning.md#terraform), initialize from the `terraform`
 directory with `./init.sh` against the real R2 backend. Hold the group if
 initialization needs a backend or state migration.
 
 Create and inspect a saved plan from that same directory. `run.sh` supplies the
-state credentials to each Terraform command:
+state credentials to each Terraform command and `.secrets/prod/main.tfvars` to
+`plan` and `apply`:
 
-    ./run.sh plan -input=false -var-file=main.tfvars -out=upgrade.tfplan
+    ./run.sh plan -input=false -out=upgrade.tfplan
     ./run.sh show -json upgrade.tfplan > upgrade.tfplan.json
     bun run --cwd .. agent-tool dependencies check-terraform-plan terraform/upgrade.tfplan.json
 
@@ -42,10 +43,11 @@ Inspect resource identities, drift, warnings, and effects outside resource actio
 as well as the helper's result. Do not apply a plan with deletions or replacements,
 or one whose safety cannot be established. Before an authorized apply, verify
 that the validated configuration, toolchain, environment, and state still match
-that preview, then consume the saved plan with `./run.sh apply upgrade.tfplan`.
-Do not use `apply.sh` during dependency upgrades because it generates a fresh,
-uninspected plan. Saved binary and JSON plans are ignored by Git because they can
-contain secrets; keep them private and delete them after use.
+that preview, then consume the saved plan with `./run.sh apply upgrade.tfplan`;
+Terraform refuses it if `main.tfvars` no longer matches the plan. Do not use
+`apply.sh` during dependency upgrades because it generates a fresh, uninspected
+plan. Saved binary and JSON plans are ignored by Git because they can contain
+secrets; keep them private and delete them after use.
 
 ## Markdownlint security override
 

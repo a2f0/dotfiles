@@ -26,6 +26,11 @@ APP_ENV = (
     "TF_STATE_SECRET_ACCESS_KEY=app-secret\n"
 )
 
+TFVARS = 'github_owner = "owner"\n'
+
+# Subcommands that evaluate input variables, and so receive main.tfvars.
+VARIABLE_COMMANDS = ("plan", "apply", "destroy", "refresh", "import", "console")
+
 
 class TerraformRunTests(unittest.TestCase):
     def setUp(self):
@@ -50,11 +55,17 @@ class TerraformRunTests(unittest.TestCase):
             "TERRAFORM_LOG": str(self.log),
         }
 
-    def write_secrets(self, app=APP_ENV, shared=None):
+    def write_secrets(self, app=APP_ENV, shared=None, tfvars=TFVARS):
         if app is not None:
             (self.tier / "app.env").write_text(app)
         if shared is not None:
             (self.tier / "shared.env").write_text(shared)
+        if tfvars is not None:
+            (self.tier / "main.tfvars").write_text(tfvars)
+
+    @property
+    def var_file_arg(self):
+        return f"-var-file={self.tier / 'main.tfvars'}"
 
     def run_script(self, script, *args, **env):
         return subprocess.run(
@@ -72,27 +83,74 @@ class TerraformRunTests(unittest.TestCase):
 
     def test_run_forwards_arguments_from_the_terraform_directory(self):
         self.write_secrets()
-        result = self.run_script("run.sh", "plan", "-var-file=main.tfvars")
+        result = self.run_script("run.sh", "plan", "-input=false", "-var=a=b")
         self.assertEqual(result.returncode, 0, result.stderr)
         call = self.terraform_call()
         self.assertEqual(call["cwd"], str(self.terraform))
-        self.assertEqual(call["args"], "plan -var-file=main.tfvars")
+        self.assertEqual(
+            call["args"], f"plan {self.var_file_arg} -input=false -var=a=b"
+        )
+
+    def test_variable_commands_receive_the_tier_variable_file(self):
+        self.write_secrets()
+        for command in VARIABLE_COMMANDS:
+            with self.subTest(command=command):
+                result = self.run_script("run.sh", command, "-input=false")
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(
+                    self.terraform_call()["args"],
+                    f"{command} {self.var_file_arg} -input=false",
+                )
+
+    def test_saved_plan_apply_receives_the_variable_file(self):
+        self.write_secrets()
+        result = self.run_script("run.sh", "apply", "upgrade.tfplan")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(
+            self.terraform_call()["args"],
+            f"apply {self.var_file_arg} upgrade.tfplan",
+        )
+
+    def test_other_commands_run_without_the_variable_file(self):
+        self.write_secrets(tfvars=None)
+        for args in (
+            ("show", "-json", "upgrade.tfplan"),
+            ("state", "list"),
+            ("output",),
+            ("-version",),
+            (),
+        ):
+            with self.subTest(args=args):
+                result = self.run_script("run.sh", *args)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(self.terraform_call()["args"], " ".join(args))
 
     def test_init_reconfigures_without_input(self):
-        self.write_secrets()
+        self.write_secrets(tfvars=None)
         result = self.run_script("init.sh")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(
             self.terraform_call()["args"], "init -input=false -reconfigure"
         )
 
-    def test_apply_uses_the_variable_file(self):
+    def test_apply_uses_the_tier_variable_file(self):
         self.write_secrets()
         result = self.run_script("apply.sh")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(
-            self.terraform_call()["args"], "apply -var-file=main.tfvars"
+            self.terraform_call()["args"], f"apply {self.var_file_arg}"
         )
+
+    def test_missing_variable_file_stops_before_terraform(self):
+        self.write_secrets(tfvars=None)
+        for script, args in (("run.sh", ("plan",)), ("apply.sh", ())):
+            with self.subTest(script=script):
+                result = self.run_script(script, *args)
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(
+                    f"{self.tier / 'main.tfvars'} is missing", result.stderr
+                )
+                self.assertFalse(self.log.exists())
 
     def test_state_key_replaces_ambient_aws_credentials(self):
         self.write_secrets()

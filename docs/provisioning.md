@@ -77,12 +77,16 @@ redirect the backend. `init.sh` and `apply.sh` run through it. `init.sh` passes
 `-reconfigure`, so a working directory initialized for the former S3 bucket
 switches to R2 without offering to migrate state.
 
-The GitHub provider takes its token from `TF_VAR_github_access_token`, or
-Terraform prompts for it. `main.tfvars`, decrypted from `main.tfvars.gpg`,
-supplies the owner, repository, and webhook URL. From the `terraform` directory:
+`.secrets/prod/main.tfvars` supplies the owner, repository, and webhook URL.
+`run.sh` passes it as the first `-var-file` to `plan`, `apply`, `destroy`,
+`refresh`, `import`, and `console`, so a later `-var` or `-var-file` wins, and
+stops before running Terraform when it is missing. Other subcommands, such as
+`init`, `show`, and `state`, run without it. It holds no token: the GitHub
+provider takes its token from `TF_VAR_github_access_token`, for example
+`gh auth token`, or Terraform prompts for it. From the `terraform` directory:
 
     ./init.sh
-    ./run.sh plan -var-file=main.tfvars
+    TF_VAR_github_access_token="$(gh auth token)" ./run.sh plan
 
 See [Terraform upgrades](dependency-upgrades.md#terraform) for saved plans and
 apply restrictions.

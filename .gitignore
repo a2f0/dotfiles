@@ -7,9 +7,6 @@
 /hosts
 /id_rsa
 /iptables.rules
-/keyrings/live/pubring.gpg~
-/keyrings/live/pubring.kbx~
-/keyrings/live/secring.gpg
 /mcabberrc
 /my.cnf
 /offlineimaprc
@@ -42,8 +39,8 @@ override.tf.json
 *_override.tf.json
 .terraformrc
 terraform.rc
-/terraform/main.tfvars
-# plaintext left over from the removed encrypted backend file
+# Plaintext left over from removed Blackbox files: *.tfvars above covers
+# terraform/main.tfvars, and this entry the encrypted backend file's.
 /terraform/terraform.backend
 
 # ansible
