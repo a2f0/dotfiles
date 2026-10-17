@@ -5,7 +5,7 @@
     "": {
       "name": "dotfiles",
       "devDependencies": {
-        "@a2f0/agent-tool": "0.1.14",
+        "@a2f0/agent-tool": "0.1.15",
         "jsonc-parser": "3.3.1",
         "markdownlint-cli2": "0.23.3",
       },
@@ -20,7 +20,7 @@
     },
   },
   "packages": {
-    "@a2f0/agent-tool": ["@a2f0/agent-tool@0.1.14", "", { "dependencies": { "@resvg/resvg-wasm": "2.6.2" }, "bin": { "agent-tool": "src/index.ts" } }, "sha512-CLUvDoUC7lxnHU8n78Xw9guVrOB0lBtEv3hA9uS2BL4/6IPhHzL1HEgCi/O4rBXhoQaHyJKHObeA9JSOv2IpGg=="],
+    "@a2f0/agent-tool": ["@a2f0/agent-tool@0.1.15", "", { "dependencies": { "@resvg/resvg-wasm": "2.6.2" }, "bin": { "agent-tool": "src/index.ts" } }, "sha512-7i7usmCNd/d1QCTb6jEbWYzcuBcDTUSTUWJCTi0sNyUDodro2Gc6HBWvhg7Q8sWJ4IGtAjOIsQoS26Rm04phmw=="],
 
     "@nodelib/fs.scandir": ["@nodelib/fs.scandir@2.1.5", "", { "dependencies": { "@nodelib/fs.stat": "2.0.5", "run-parallel": "^1.1.9" } }, "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="],
 
