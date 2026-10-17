@@ -2,7 +2,7 @@
   "name": "dotfiles",
   "private": true,
   "license": "UNLICENSED",
-  "packageManager": "bun@1.4.2",
+  "packageManager": "bun@1.4.3",
   "scripts": {
     "agent-tool": "agent-tool",
     "agent:run": "agent-tool run",
@@ -11,13 +11,13 @@
     "test:markdownlint": "node --test tests/markdownlint.test.mjs"
   },
   "devDependencies": {
-    "@a2f0/agent-tool": "0.1.11",
+    "@a2f0/agent-tool": "0.1.14",
     "jsonc-parser": "3.3.1",
     "markdownlint-cli2": "0.23.3"
   },
   "overrides": {
     "markdownlint-cli2@0.23.3": {
-      "smol-toml": "1.9.0"
+      "smol-toml": "1.9.1"
     }
   },
   "patchedDependencies": {

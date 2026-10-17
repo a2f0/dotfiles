@@ -16,6 +16,12 @@ manifests and locks. Keep duplicated runtime pins synchronized. Check the
 controller and target Python versions against the selected Ansible release's
 support matrix and read its upstream porting guide before changing the group.
 
+Keep Python on 3.14 while Ansible uses core 2.21: its
+[support matrix](https://docs.ansible.com/projects/ansible-core/devel/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix)
+supports controller Python 3.12–3.14 and target Python 3.9–3.14. Python 3.15
+requires a stable compatible Ansible/core release, followed by the complete
+guarded previews and controller/target checks below.
+
 Skip infrastructure groups without a complete real-environment preview.
 Missing Terraform credentials or variables and unavailable Arch hosts are
 validation limits, not evidence of a safe upgrade. Do not change Terraform state
@@ -51,7 +57,7 @@ secrets; keep them private and delete them after use.
 
 ## Markdownlint security override
 
-[`package.json`](../package.json) scopes the `smol-toml` 1.9.0 override to
+[`package.json`](../package.json) scopes the `smol-toml` 1.9.1 override to
 markdownlint-cli2 0.23.3, which pins 1.8.0. It addresses
 [GHSA-r4xh-jqrq-34v2](https://github.com/squirrelchat/smol-toml/security/advisories/GHSA-r4xh-jqrq-34v2).
 The local markdownlint CLI is this repository's only consumer. It uses the named
