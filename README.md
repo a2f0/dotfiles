@@ -38,7 +38,8 @@ harness for finite commands, not interactive tools or persistent servers.
 The markdownlint pre-commit hook uses the Bun-locked local CLI with the same
 Markdown file scope and `.markdownlint.yaml` rules. Install Bun dependencies
 before running hooks; use the Node version pinned in `.nvmrc` / `.mise.toml`.
-CI selects that exact Node version before running the hook.
+CI installs Bun and Node from `.mise.toml` before running the hook.
+Python and Ansible retain their existing setup and guarded provisioning checks.
 
 ## macOS
 

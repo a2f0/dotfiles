@@ -9,15 +9,11 @@ jobs:
     continue-on-error: false
     steps:
     - uses: actions/checkout@v7
-    - name: Set up Node
-      uses: actions/setup-node@v7
+    - name: Set up Bun and Node with mise
+      uses: jdx/mise-action@9b200bcecbfd6303e69a4a261b2e09e3757440a7 # v5.2.0
       with:
-        node-version-file: '.nvmrc'
-        package-manager-cache: false
-    - name: Set up Bun
-      uses: oven-sh/setup-bun@v2
-      with:
-        bun-version: 1.4.3
+        version: 2026.10.13
+        install_args: bun node
     - name: Check agent skills
       run: |
         bun install --frozen-lockfile
