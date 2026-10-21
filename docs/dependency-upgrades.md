@@ -60,7 +60,7 @@ secrets; keep them private and delete them after use.
 The local markdownlint-cli2 0.24.0 naturally resolves `smol-toml` 1.9.1,
 which addresses
 [GHSA-r4xh-jqrq-34v2](https://github.com/squirrelchat/smol-toml/security/advisories/GHSA-r4xh-jqrq-34v2).
-No parser override is needed. Its configuration merge copies properties with
+No parser override is needed. The CLI's configuration merge copies properties with
 object spread, which accepts the parser's null-prototype results.
 
 Markdownlint's rule normalization still checks `instanceof Object`, so the
@@ -74,6 +74,12 @@ Retain the patch until markdownlint supports these objects. Verify removal with
 pointers, nested and disabled rules, ignores, invalid input, many flat keys, and
 existing YAML rules; the lock-graph regression checks the reviewed CLI version
 and natural parser ownership.
+
+Bun uses [lockfile format 3 for nested or version-scoped overrides](https://bun.sh/docs/pm/overrides#limitations).
+Removing the last such override can return the generated lockfile to format 2,
+even with the same pinned Bun 1.4.3. Do not edit the format or integrity fields
+manually. Regenerate with the pinned executable and verify that a subsequent
+`bun install --frozen-lockfile` succeeds without changing the lockfile hash.
 
 ## Unresolved advisory constraints
 

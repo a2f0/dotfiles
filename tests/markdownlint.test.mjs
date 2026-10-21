@@ -92,6 +92,10 @@ test("the secured parser resolves naturally under its reviewed CLI owner", () =>
   const owners = Object.entries(lock.packages).filter(([, entry]) => entry[2]?.dependencies?.["smol-toml"]);
   assert.deepEqual(owners.map(([name]) => name), ["markdownlint-cli2"]);
   assert.equal(owners[0][1][0], "markdownlint-cli2@0.24.0");
+  assert.equal(owners[0][1][2].dependencies["smol-toml"], "1.9.1");
+  const manifest = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+  assert.equal(manifest.overrides, undefined);
+  assert.equal(lock.overrides, undefined);
   assert.equal(lock.packages["smol-toml"][0], "smol-toml@1.9.1");
 });
 
