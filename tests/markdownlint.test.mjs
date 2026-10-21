@@ -85,13 +85,17 @@ severity = "warning"
   assert.equal(toml.output, ordinary.output);
 });
 
-test("the parser security override remains confined to its reviewed CLI owner", () => {
+test("the secured parser resolves naturally under its reviewed CLI owner", () => {
   const errors = [];
   const lock = parseJsonc(readFileSync(new URL("../bun.lock", import.meta.url), "utf8"), errors, { allowTrailingComma: true });
   assert.equal(errors.length, 0);
   const owners = Object.entries(lock.packages).filter(([, entry]) => entry[2]?.dependencies?.["smol-toml"]);
   assert.deepEqual(owners.map(([name]) => name), ["markdownlint-cli2"]);
-  assert.equal(owners[0][1][0], "markdownlint-cli2@0.23.3");
+  assert.equal(owners[0][1][0], "markdownlint-cli2@0.24.0");
+  assert.equal(owners[0][1][2].dependencies["smol-toml"], "1.9.1");
+  const manifest = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+  assert.equal(manifest.overrides, undefined);
+  assert.equal(lock.overrides, undefined);
   assert.equal(lock.packages["smol-toml"][0], "smol-toml@1.9.1");
 });
 
@@ -102,7 +106,7 @@ test("malformed TOML remains a fatal configuration error", (t) => {
   assert.match(result.output, /Unable to parse|invalid|Invalid|Error/i);
 });
 
-test("CLI parses many flat TOML keys through the secured parser override", (t) => {
+test("CLI parses many flat TOML keys through the secured parser", (t) => {
   const keys = Array.from({ length: 32768 }, (_, index) => `key_${index} = 1`).join("\n");
   const directory = fixture(t, `${keys}\n[tool.markdownlint-cli2.config]\ndefault = false\nMD018 = true\n`);
   const result = lint(directory);

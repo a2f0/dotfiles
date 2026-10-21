@@ -55,26 +55,31 @@ Terraform refuses it if `main.tfvars` no longer matches the plan. Do not use
 plan. Saved binary and JSON plans are ignored by Git because they can contain
 secrets; keep them private and delete them after use.
 
-## Markdownlint security override
+## Markdownlint parser compatibility
 
-[`package.json`](../package.json) scopes the `smol-toml` 1.9.1 override to
-markdownlint-cli2 0.23.3, which pins 1.8.0. It addresses
+The local markdownlint-cli2 0.24.0 naturally resolves `smol-toml` 1.9.1,
+which addresses
 [GHSA-r4xh-jqrq-34v2](https://github.com/squirrelchat/smol-toml/security/advisories/GHSA-r4xh-jqrq-34v2).
-The local markdownlint CLI is this repository's only consumer. It uses the named
-`parse` export, and its configuration merge copies properties with object spread,
-which accepts the parser's null-prototype results.
+No parser override is needed. The CLI's configuration merge copies properties with
+object spread, which accepts the parser's null-prototype results.
 
-Markdownlint's rule normalization also checks `instanceof Object`, so the
-[version-bound markdownlint patch](../patches/markdownlint@0.41.1.patch) accepts
+Markdownlint's rule normalization still checks `instanceof Object`, so the
+[version-bound markdownlint patch](../patches/markdownlint@0.42.0.patch) accepts
 null-prototype objects without changing previously accepted values. Without the
 patch, nested TOML rule options silently lose their settings.
 
-Retain the override and patch until the CLI naturally resolves a fixed parser
-and markdownlint supports its objects. Verify removal with `bun run test:markdownlint`
-and a fresh audit. The [integration tests](../tests/markdownlint.test.mjs) cover
-actual CLI TOML config pointers, nested and disabled rules, ignores, invalid input,
-many flat keys, and existing YAML rules; the lock-graph regression also checks
-the reviewed CLI version and parser ownership.
+Retain the patch until markdownlint supports these objects. Verify removal with
+`bun run test:markdownlint` and a fresh audit. The
+[integration tests](../tests/markdownlint.test.mjs) cover actual CLI TOML config
+pointers, nested and disabled rules, ignores, invalid input, many flat keys, and
+existing YAML rules; the lock-graph regression checks the reviewed CLI version
+and natural parser ownership.
+
+Bun uses [lockfile format 3 for nested or version-scoped overrides](https://bun.sh/docs/pm/overrides#limitations).
+Removing the last such override can return the generated lockfile to format 2,
+even with the same pinned Bun 1.4.3. Do not edit the format or integrity fields
+manually. Regenerate with the pinned executable and verify that a subsequent
+`bun install --frozen-lockfile` succeeds without changing the lockfile hash.
 
 ## Unresolved advisory constraints
 
