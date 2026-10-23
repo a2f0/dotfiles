@@ -122,5 +122,5 @@ playbooks. `bun run lint:branch-name <name>` checks an explicit branch;
 feature branches use `<type>/<topic>`, with no length cap. Keep provisioning
 behind the repository's audited preview and apply entrypoint.
 CI uses the same validation plan and additionally owns platform setup and audited
-preview/apply checks. Only CI skips the no-commit-to-branch pre-commit check so it
-can validate main; local checks continue to require a feature branch.
+preview/apply checks. Repository guidance requires feature branches for changes;
+the validation plan itself also runs on main in CI.

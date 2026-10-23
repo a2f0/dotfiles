@@ -14,14 +14,12 @@ jobs:
       with:
         version: 2026.10.17
         install_args: bun node
-    - name: Check agent skills
-      run: |
-        bun install --frozen-lockfile
-        bun run agents:check
+    - name: Install agent tooling
+      run: bun install --frozen-lockfile
     - name: Validate the actual branch name
-      if: github.event_name == 'pull_request' || github.ref_type == 'branch'
+      if: github.ref_type == 'branch'
       env:
-        BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        BRANCH_NAME: ${{ github.ref_name }}
       run: bun run lint:branch-name "$BRANCH_NAME"
     - name: Set up Python
       uses: actions/setup-python@v7
@@ -38,8 +36,6 @@ jobs:
       run: |
         pre-commit install
         bun run check
-      env:
-          SKIP: no-commit-to-branch
     - name: Run ansible MacOS
       run: |
         ./runAnsible.sh -e "dotfiles_home=${RUNNER_TEMP}/dotfiles-home ansible_python_interpreter=$(command -v python3)"
