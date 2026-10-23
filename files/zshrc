@@ -119,5 +119,3 @@ path_prepend "$HOME/.antigravity/antigravity/bin"
 path_append "$HOME/.maestro/bin"
 path_prepend "$HOME/.opencode/bin"
 path_prepend "$HOME/.bun/bin"
-
-tl() { . ~/github/tearleads/scripts/session.sh ~/github/tearleads; } && tl
