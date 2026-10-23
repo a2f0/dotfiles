@@ -17,8 +17,8 @@ environment dependencies, hook installation, and repository structure. In agent
 shells, put the pinned tools from `~/.local/share/mise/installs` and the configured
 `.venv/bin` first on PATH; do not run `mise trust`.
 
-Run `pre-commit run --all-files`, `python3 -m unittest discover -s tests`,
-`bun run test:markdownlint`, and `bun run agents:check`. Install dependencies and
+Run `bun run check` for pre-commit, Python tests, Markdown tests, and managed
+skills. CI additionally validates branch names and platform playbooks. Install dependencies and
 pre-commit hooks before committing. Capture noisy finite commands with the pinned
 `bun run agent:run --label <check> -- <command>` harness, inspect required warnings,
 timings, and artifacts, and keep review verdicts and decision output visible.

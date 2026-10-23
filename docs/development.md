@@ -110,10 +110,8 @@ agent-tool pin; provisioning algorithms and validation remain repository-owned.
 
 ## Shared validation
 
-After documented dependency setup, `bun run check` records the complete local
-validation sequence with the pinned agent-tool. CI preserves its platform
-integration checks and validates the actual PR or destination branch through
-`bun run lint:branch-name <name>`. Feature branches use `<type>/<topic>`;
-there is no added branch-length cap. Repository-owned provisioning gates remain
-unchanged. The managed `ship-pr` and `reset` skills use shared branch, PR, and
-confirmed-merge cleanup commands.
+After dependency setup, `bun run check` records the local pre-commit, Python,
+Markdown, and managed-skill checks. CI also exercises the documented platform
+playbooks. `bun run lint:branch-name <name>` checks an explicit branch;
+feature branches use `<type>/<topic>`, with no length cap. Keep provisioning
+behind the repository's audited preview and apply entrypoint.
