@@ -6,7 +6,7 @@ its preview guard runs before Ansible applies changes.
 
 ## Ansible preview guard
 
-`runAnsible.sh` audits the selected playbook and its static imports before
+`runAnsible.sh` invokes `scripts/deploy/ansible_safe_run.py` to audit the selected playbook and its static imports before
 running `--check --diff`. It requires complete localhost and loop results,
 prints the proposed targets without file contents or preference values,
 rejects deletions, file overwrites, changed symlink targets, missing sources,

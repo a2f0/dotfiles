@@ -8,10 +8,12 @@
     "agent:run": "agent-tool run",
     "agents:check": "agent-tool skills check",
     "agents:sync": "agent-tool skills install --apply",
-    "test:markdownlint": "node --test tests/markdownlint.test.mjs"
+    "test:markdownlint": "node --test tests/markdownlint.test.mjs",
+    "lint:branch-name": "agent-tool branch check",
+    "check": "agent-tool run-group scripts/testing/verify.json"
   },
   "devDependencies": {
-    "@a2f0/agent-tool": "0.1.17",
+    "@a2f0/agent-tool": "0.1.19",
     "jsonc-parser": "3.3.1",
     "markdownlint-cli2": "0.24.0"
   },

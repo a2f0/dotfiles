@@ -14,10 +14,13 @@ jobs:
       with:
         version: 2026.10.17
         install_args: bun node
-    - name: Check agent skills
-      run: |
-        bun install --frozen-lockfile
-        bun run agents:check
+    - name: Install agent tooling
+      run: bun install --frozen-lockfile
+    - name: Validate the actual branch name
+      if: github.ref_type == 'branch'
+      env:
+        BRANCH_NAME: ${{ github.ref_name }}
+      run: bun run lint:branch-name "$BRANCH_NAME"
     - name: Set up Python
       uses: actions/setup-python@v7
       with:
@@ -29,16 +32,10 @@ jobs:
         brew install luacheck
     - name: install and configure python dependencies
       run: pip install -r ./requirements.txt
-    - name: Run pre-commit
+    - name: Run shared validation
       run: |
         pre-commit install
-        pre-commit run --all-files
-      env:
-          SKIP: no-commit-to-branch
-    - name: Test Ansible preview guards
-      run: |
-        python3 -m unittest discover -s tests
-        bun run test:markdownlint
+        bun run check
     - name: Run ansible MacOS
       run: |
         ./runAnsible.sh -e "dotfiles_home=${RUNNER_TEMP}/dotfiles-home ansible_python_interpreter=$(command -v python3)"

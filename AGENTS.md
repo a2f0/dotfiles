@@ -10,126 +10,24 @@ Claude Code loads it directly when the repository has no `CLAUDE.md`; its
 
 This is a dotfiles repository that manages system configuration and package installation across multiple operating systems (primarily macOS and Arch Linux) using Ansible playbooks. The repository contains configuration files for various development tools and system utilities, along with automation scripts for provisioning environments.
 
-## Development Commands
+## Setup and validation
 
-### Setup and Installation
+Follow [development](docs/development.md) for pinned tool setup, Python virtual
+environment dependencies, hook installation, and repository structure. In agent
+shells, put the pinned tools from `~/.local/share/mise/installs` and the configured
+`.venv/bin` first on PATH; do not run `mise trust`.
 
-```bash
-# Install the pinned tools, Python dependencies, and pre-commit hooks
-mise install
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-pre-commit install
+Run `bun run check` for pre-commit, Python tests, Markdown tests, and managed
+skills. CI additionally validates branch names and platform playbooks. Install dependencies and
+pre-commit hooks before committing. Capture noisy finite commands with the pinned
+`bun run agent:run --label <check> -- <command>` harness, inspect required warnings,
+timings, and artifacts, and keep review verdicts and decision output visible.
+The [development guide](docs/development.md#validation) has invocation examples.
 
-# Install agent tooling and the local markdownlint hook (requires Bun)
-bun install
-
-# Install system dependencies for linting
-brew install shellcheck luacheck  # macOS
-# Linux: install via luarocks since luacheck isn't in apt repositories
-sudo apt-get install shellcheck lua5.3 lua5.3-dev luarocks
-sudo luarocks install luacheck
-```
-
-### Linting and Quality Checks
-
-```bash
-# Run all pre-commit hooks on all files
-bun run agent:run --label pre-commit -- pre-commit run --all-files
-
-# Run specific pre-commit hook
-pre-commit run shellcheck
-pre-commit run luacheck
-pre-commit run check-yaml
-
-# Check that the shared agent skills are current
-bun run agents:check
-
-# Verify the Ansible preview safety gate
-bun run agent:run --label preview-tests -- python3 -m unittest discover -s tests
-bun run agent:run --label markdownlint-tests -- bun run test:markdownlint
-```
-
-Use `bun run agent:run --label <name> -- <command> [args...]` for noisy finite
-commands. It preserves the command's exit status and full private logs while
-returning a compact receipt and a bounded failure excerpt. Inspect required
-warnings, timings, and artifacts before accepting a check; use
-`bun run agent-tool logs <log-path>` or a targeted search for more evidence.
-Keep review verdicts and structured decision output visible. Do not wrap
-interactive tools or persistent servers. Existing hooks and CI checks still run
-normally.
-
-### System Provisioning
-
-#### macOS
-
-```bash
-# Configure macOS system via Ansible
-./runAnsible.sh
-
-# Dry run to see what would change
-./runAnsible.sh --check
-
-# Run only specific tasks (e.g., file symlinks)
-./runAnsible.sh --tags 'files'
-```
-
-#### Arch Linux
-
-Arch provisioning is currently blocked by the preview guard because package,
-reflector, reboot, and VM cleanup effects lack a complete safe preview. Do not
-invoke playbooks or Vagrant directly to bypass it during dependency upgrades.
-See [provisioning](docs/provisioning.md) for the current limits.
-
-#### Vagrant Development Environment
-
-The current `Vagrantfile` has unpreviewed keyring, cache, package, and VM
-effects. Its provisioning commands are held during dependency upgrades; see
-[provisioning](docs/provisioning.md) for the current limits.
-
-## Architecture
-
-### Core Structure
-
-- **`ansible/`** - Contains all Ansible playbooks, inventory, and tasks
-  - **`playbook-*.yaml`** - Main Ansible playbooks for different operating systems
-  - **`inventory.yaml`** - Ansible inventory configuration for localhost
-  - **`tasks/`** - Ansible task files organized by operating system and functionality
-- **`files/`** - Contains all dotfiles and configuration files that get symlinked to home directory
-- **`Vagrantfile`** - VM configuration for testing Arch Linux setup
-- **`terraform/`** - Manages this repository's `SLACK_WEBHOOK_URL` Actions
-  secret. State is in the Cloudflare R2 bucket `dotfiles-terraform-state`;
-  `run.sh` reads its key and `main.tfvars` from the gitignored `.secrets` link
-  to matrix-secrets, so no AWS credentials or encrypted files are needed. See
-  [Terraform](docs/provisioning.md#terraform).
-
-### Configuration Management
-
-The system uses Ansible to create symbolic links from `files/` directory to appropriate locations in the user's home directory. Each playbook imports relevant tasks based on the target operating system.
-
-### Key Task Categories
-
-- **ansible/tasks/files.yaml** - Core dotfile symlinking (shell configs, git, vim, etc.)
-- **ansible/tasks/macos/files.yaml** - macOS-specific configurations
-- **ansible/tasks/arch-linux/** - Arch Linux specific tasks including package installation and system configuration
-
-### Shell Scripts and Functions
-
-- **`files/shellcheck/`** - Contains shell scripts that are linted via pre-commit hooks
-- **`files/functions`** and **`files/functions-zsh`** - Shell utility functions
-- Configuration files for various tools: vim, tmux, git, zsh, bash, cursor, etc.
-
-## Pre-commit Configuration
-
-The repository uses pre-commit hooks for quality assurance:
-
-- YAML validation
-- Trailing whitespace removal
-- End-of-file fixing
-- Merge conflict detection
-- Shellcheck linting for shell scripts in `files/shellcheck/`
-- Ansible-lint for Ansible playbooks and tasks in `ansible/`
+Provision only through `runAnsible.sh` and the [provisioning guide](docs/provisioning.md).
+Arch and Vagrant effects lack a complete safe preview and remain blocked; do not
+bypass the guard with direct playbook or Vagrant commands. Preserve host state and
+never provision a real system merely to validate maintenance changes.
 
 ## Conventions
 
@@ -159,8 +57,8 @@ commit. Merging deploys nothing; run `./runAnsible.sh` on a machine to apply
 changes.
 
 When handling review feedback, reply in its original review thread, not the
-PR conversation, through
-`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies`,
+PR conversation, with
+`agent-tool pr threads reply <comment-id> --body-file <reply-file>`,
 name the commit that addresses it, and resolve only fully addressed findings.
 
 After upgrading `@a2f0/agent-tool`, run `bun run agents:sync` and commit the
