@@ -107,3 +107,13 @@ Future maintenance helpers use purpose-based `scripts/` directories. Keep normal
 command entrypoints stable and update tests, CI, documentation, and imports with
 any move. Shared branch, review, PR, and managed-skill mechanics come from the exact
 agent-tool pin; provisioning algorithms and validation remain repository-owned.
+
+## Shared validation
+
+After documented dependency setup, `bun run check` records the complete local
+validation sequence with the pinned agent-tool. CI preserves its platform
+integration checks and validates the actual PR or destination branch through
+`bun run lint:branch-name <name>`. Feature branches use `<type>/<topic>`;
+there is no added branch-length cap. Repository-owned provisioning gates remain
+unchanged. The managed `ship-pr` and `reset` skills use shared branch, PR, and
+confirmed-merge cleanup commands.

@@ -5,8 +5,14 @@
   },
   "merge": {
     "requiredChecks": [
-      {"name": "code-quality", "workflow": "Github Actions"},
-      {"name": "ansible-ubuntu", "workflow": "Github Actions"}
+      {
+        "name": "code-quality",
+        "workflow": "Github Actions"
+      },
+      {
+        "name": "ansible-ubuntu",
+        "workflow": "Github Actions"
+      }
     ]
   },
   "versions": {
@@ -14,5 +20,12 @@
   },
   "pr": {
     "rejectClaudeBranding": true
+  },
+  "branch": {
+    "types": null,
+    "exempt": [
+      "main"
+    ],
+    "maxLength": null
   }
 }

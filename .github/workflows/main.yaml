@@ -18,6 +18,11 @@ jobs:
       run: |
         bun install --frozen-lockfile
         bun run agents:check
+    - name: Validate the actual branch name
+      if: github.event_name == 'pull_request' || github.ref_type == 'branch'
+      env:
+        BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+      run: bun run lint:branch-name "$BRANCH_NAME"
     - name: Set up Python
       uses: actions/setup-python@v7
       with:

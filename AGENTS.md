@@ -57,8 +57,8 @@ commit. Merging deploys nothing; run `./runAnsible.sh` on a machine to apply
 changes.
 
 When handling review feedback, reply in its original review thread, not the
-PR conversation, through
-`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies`,
+PR conversation, with
+`agent-tool pr threads reply <comment-id> --body-file <reply-file>`,
 name the commit that addresses it, and resolve only fully addressed findings.
 
 After upgrading `@a2f0/agent-tool`, run `bun run agents:sync` and commit the

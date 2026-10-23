@@ -1,0 +1,40 @@
+{
+  "label": "verify",
+  "steps": [
+    {
+      "label": "pre-commit",
+      "command": [
+        "pre-commit",
+        "run",
+        "--all-files"
+      ]
+    },
+    {
+      "label": "preview-guard-tests",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests"
+      ]
+    },
+    {
+      "label": "markdown-tests",
+      "command": [
+        "bun",
+        "run",
+        "test:markdownlint"
+      ]
+    },
+    {
+      "label": "skills",
+      "command": [
+        "bun",
+        "run",
+        "agents:check"
+      ]
+    }
+  ]
+}
