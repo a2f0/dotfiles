@@ -10,7 +10,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from scripts.ansible_safe_run import (
+from scripts.deploy.ansible_safe_run import (
     UnsafePreview,
     active_python_interpreter,
     audit,
@@ -300,7 +300,7 @@ class PreviewTests(unittest.TestCase):
         path.write_text(
             "- hosts: all\n  tasks:\n    - name: Dangerous preview\n      ansible.builtin.command: rm -rf /important-data\n      check_mode: false\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaises(UnsafePreview):
                 main([str(path), "--check"])
             run.assert_not_called()
@@ -308,7 +308,7 @@ class PreviewTests(unittest.TestCase):
     def test_playbook_import_is_rejected_before_check_mode(self):
         path = self.root / "import.yaml"
         path.write_text("- import_playbook: unreviewed.yaml\n")
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Unaudited playbook"):
                 main([str(path), "--check"])
             run.assert_not_called()
@@ -325,7 +325,7 @@ class PreviewTests(unittest.TestCase):
             "      ansible.builtin.import_tasks: child.yaml\n"
             "      when: approved_for_apply\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "condition"):
                 main([str(path), "--check"])
             run.assert_not_called()
@@ -337,7 +337,7 @@ class PreviewTests(unittest.TestCase):
             "      ansible.builtin.file:\n        path: /tmp/target\n"
             "        state: link\n      args:\n        force: true\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Unknown task controls"):
                 main([str(path), "--check"])
             run.assert_not_called()
@@ -351,7 +351,7 @@ class PreviewTests(unittest.TestCase):
             f"        path: {self.root}\n"
             "        state: directory\n        recurse: true\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Recursive file changes"):
                 main([str(path), "--check"])
             run.assert_not_called()
@@ -384,7 +384,7 @@ class PreviewTests(unittest.TestCase):
     def test_repeated_tag_flags_are_combined_for_audit_and_ansible(self):
         path, preview = self.safe_directory_plan()
         with patch(
-            "scripts.ansible_safe_run.subprocess.run",
+            "scripts.deploy.ansible_safe_run.subprocess.run",
             return_value=subprocess.CompletedProcess([], 0, preview, ""),
         ) as run:
             self.assertEqual(main([
@@ -395,7 +395,7 @@ class PreviewTests(unittest.TestCase):
         self.assertEqual(command[command.index("--tags") + 1], "all,untagged")
         self.assertEqual(command[command.index("--skip-tags") + 1], "files,defaults")
         path.write_text(path.read_text() + "      tags: files\n")
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "No selected tasks"):
                 main([
                     str(path), "--check", "--tags", "all",
@@ -431,19 +431,19 @@ class PreviewTests(unittest.TestCase):
             "      ansible.builtin.file:\n        path: /tmp/target\n"
             "        state: directory\n      become: true\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Unknown task controls"):
                 main([str(path), "--check"])
             run.assert_not_called()
 
     def test_malformed_extra_vars_cannot_reach_preview(self):
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaises(UnsafePreview):
                 main(["ansible/playbook-macos.yaml", "--check", "-e", "[true]"])
             run.assert_not_called()
 
     def test_foreign_target_python_cannot_run_during_preview(self):
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "active Python environment"):
                 main([
                     "ansible/playbook-macos.yaml", "--check", "-e",
@@ -455,7 +455,7 @@ class PreviewTests(unittest.TestCase):
         interpreter = self.root / "other-venv" / "bin" / "python3"
         interpreter.parent.mkdir(parents=True)
         interpreter.symlink_to(Path(sysconfig.get_path("scripts")) / "python3")
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "active Python environment"):
                 main([
                     "ansible/playbook-macos.yaml", "--check", "-e",
@@ -481,7 +481,7 @@ class PreviewTests(unittest.TestCase):
             "        path: \"{{ '/tmp/safe' if ansible_check_mode else '/tmp/victim' }}\"\n"
             "        state: directory\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Check-mode-dependent"):
                 main([str(path), "--check"])
             run.assert_not_called()
@@ -495,7 +495,7 @@ class PreviewTests(unittest.TestCase):
             "      ansible.builtin.file:\n"
             "        path: /tmp/preview-only\n        state: directory\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "source and interpreter"):
                 main([str(path), "--check"])
             run.assert_not_called()
@@ -512,13 +512,13 @@ class PreviewTests(unittest.TestCase):
             "        path: /tmp/new-parent/link\n        src: /tmp/source\n"
             "        state: link\n      when: parent_state.stat.exists\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "condition"):
                 main([str(path), "--check"])
             run.assert_not_called()
 
     def test_extra_vars_cannot_disable_check_mode(self):
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaises(UnsafePreview):
                 main(["ansible/playbook-macos.yaml", "-e", "ansible_check_mode=false"])
             run.assert_not_called()
@@ -528,7 +528,7 @@ class PreviewTests(unittest.TestCase):
         path.write_text(
             "- hosts: all\n  tasks:\n    - name: Hidden operation\n      ansible.builtin.file:\n        path: /important-data\n        state: directory\n      when: not ansible_check_mode\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaises(UnsafePreview):
                 main([str(path), "--check"])
             run.assert_not_called()
@@ -541,7 +541,7 @@ class PreviewTests(unittest.TestCase):
             "        path: /tmp/preview-only\n"
             "      when: lookup('pipe', 'touch /tmp/should-not-run')\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Unaudited task condition"):
                 main([str(path), "--check"])
             run.assert_not_called()
@@ -553,7 +553,7 @@ class PreviewTests(unittest.TestCase):
             "    - name: \"{% set x = lookup('pipe', 'touch /tmp/should-not-run') %} Hidden\"\n"
             "      ansible.builtin.stat:\n        path: /tmp/preview-only\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Unaudited Jinja blocks"):
                 main([str(path), "--check"])
             run.assert_not_called()
@@ -567,7 +567,7 @@ class PreviewTests(unittest.TestCase):
             "        type: bool\n        value: true\n"
             "        path: /tmp/unaudited-defaults\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "in-place boolean"):
                 main([str(path), "--check"])
             run.assert_not_called()
@@ -580,7 +580,7 @@ class PreviewTests(unittest.TestCase):
             "    - name: Read state\n      ansible.builtin.stat:\n"
             "        path: /tmp/preview-only\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Play names"):
                 main([str(path), "--check"])
             run.assert_not_called()
@@ -588,7 +588,7 @@ class PreviewTests(unittest.TestCase):
     def test_guard_blocks_apply_when_preview_fails(self):
         path, _ = self.safe_directory_plan()
         with patch(
-            "scripts.ansible_safe_run.subprocess.run",
+            "scripts.deploy.ansible_safe_run.subprocess.run",
             return_value=subprocess.CompletedProcess([], 1, "", ""),
         ) as run:
             with self.assertRaises(UnsafePreview):
@@ -604,7 +604,7 @@ class PreviewTests(unittest.TestCase):
             "      ansible.builtin.file:\n"
             "        path: /tmp/preview-only\n        state: directory\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Implicit fact gathering"):
                 main([str(path), "--check"])
             run.assert_not_called()
@@ -642,7 +642,7 @@ class PreviewTests(unittest.TestCase):
     def test_apply_follows_complete_preview_with_identical_selection(self):
         path, preview = self.safe_directory_plan()
         with patch(
-            "scripts.ansible_safe_run.subprocess.run",
+            "scripts.deploy.ansible_safe_run.subprocess.run",
             side_effect=[
                 subprocess.CompletedProcess([], 0, preview, ""),
                 subprocess.CompletedProcess([], 0),
@@ -659,7 +659,7 @@ class PreviewTests(unittest.TestCase):
         plan["plays"][0]["tasks"][0]["hosts"]["127.0.0.1"]["diff"]["secret"] = "private-value"
         output = StringIO()
         with patch(
-            "scripts.ansible_safe_run.subprocess.run",
+            "scripts.deploy.ansible_safe_run.subprocess.run",
             return_value=subprocess.CompletedProcess([], 0, json.dumps(plan), ""),
         ), redirect_stdout(output):
             self.assertEqual(main([str(path), "--check", "--diff"]), 0)
@@ -673,7 +673,7 @@ class PreviewTests(unittest.TestCase):
             path.write_text(path.read_text() + "# Configuration changed\n")
             return subprocess.CompletedProcess([], 0, preview, "")
 
-        with patch("scripts.ansible_safe_run.subprocess.run", side_effect=drift) as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run", side_effect=drift) as run:
             with self.assertRaises(UnsafePreview):
                 main([str(path)])
             self.assertEqual(run.call_count, 1)
@@ -690,7 +690,7 @@ class PreviewTests(unittest.TestCase):
             alias.symlink_to(other)
             return subprocess.CompletedProcess([], 0, preview, "")
 
-        with patch("scripts.ansible_safe_run.subprocess.run", side_effect=retarget) as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run", side_effect=retarget) as run:
             with self.assertRaisesRegex(UnsafePreview, "Configuration or target state changed"):
                 main([str(alias)])
             self.assertEqual(run.call_count, 1)
@@ -719,7 +719,7 @@ class PreviewTests(unittest.TestCase):
     def test_inherited_ansible_and_python_plugins_are_removed(self):
         path, preview = self.safe_directory_plan()
         with patch.dict(os.environ, {"ANSIBLE_LIBRARY": "/tmp/foreign", "ANSIBLE_FILTER_PLUGINS": "/tmp/foreign", "PYTHONPATH": "/tmp/foreign", "PATH": f"{self.root}/shadow:/usr/bin"}), patch(
-            "scripts.ansible_safe_run.subprocess.run",
+            "scripts.deploy.ansible_safe_run.subprocess.run",
             return_value=subprocess.CompletedProcess([], 0, preview, ""),
         ) as run:
             self.assertEqual(main([str(path), "--check"]), 0)
@@ -775,7 +775,7 @@ class PreviewTests(unittest.TestCase):
         plugins = self.root / "filter_plugins"
         plugins.mkdir()
         (plugins / "unsafe.py").write_text("raise RuntimeError('plugin ran')\n")
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Playbook-local plugins"):
                 main([str(playbook), "--check"])
             run.assert_not_called()
@@ -788,7 +788,7 @@ class PreviewTests(unittest.TestCase):
             plugin.mkdir()
             return subprocess.CompletedProcess([], 0, preview, "")
 
-        with patch("scripts.ansible_safe_run.subprocess.run", side_effect=create_plugin) as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run", side_effect=create_plugin) as run:
             with self.assertRaisesRegex(UnsafePreview, "Playbook-local plugins"):
                 main([str(path)])
             self.assertEqual(run.call_count, 1)
@@ -807,7 +807,7 @@ class PreviewTests(unittest.TestCase):
             "plays": [{"tasks": [{"task": {"path": ref}, "hosts": {"127.0.0.1": {"action": "community.general.osx_defaults", "changed": True}}}]}],
         }
         with patch(
-            "scripts.ansible_safe_run.subprocess.run",
+            "scripts.deploy.ansible_safe_run.subprocess.run",
             side_effect=[
                 subprocess.CompletedProcess([], 0, "0", ""),
                 subprocess.CompletedProcess([], 0, json.dumps(plan), ""),
@@ -833,14 +833,14 @@ class PreviewTests(unittest.TestCase):
             "        domain: test.domain\n        key: SafeFlag\n"
             "        type: bool\n        value: false\n"
         )
-        with patch("scripts.ansible_safe_run.subprocess.run") as run:
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Conflicting planned macOS preference"):
                 main([str(path)])
             run.assert_not_called()
 
     def test_restart_preview_sends_no_signal(self):
-        with patch("scripts.ansible_safe_run.sys.platform", "darwin"), patch(
-            "scripts.ansible_safe_run.subprocess.run",
+        with patch("scripts.deploy.ansible_safe_run.sys.platform", "darwin"), patch(
+            "scripts.deploy.ansible_safe_run.subprocess.run",
             return_value=subprocess.CompletedProcess([], 1, "", ""),
         ) as run:
             preview_restarts({"Finder", "SystemUIServer"})

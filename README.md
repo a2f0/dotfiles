@@ -23,17 +23,8 @@ Check the shared agent skills (requires Bun)
 
 Agents ship changes with the `ship-pr` skill; see `AGENTS.md`.
 
-For compact output from noisy validation commands, use the pinned harness:
-
-    bun run agent:run --label pre-commit -- pre-commit run --all-files
-    bun run agent:run --label preview-tests -- python3 -m unittest discover -s tests
-    bun run agent:run --label markdownlint-tests -- bun run test:markdownlint
-
-The harness preserves exit status and full private logs, prints a compact receipt,
-and includes a bounded excerpt on failure. Read a log with
-`bun run agent-tool logs <log-path>` or search it for required warnings, timings,
-and artifacts. Keep review verdicts and other decision output visible; use the
-harness for finite commands, not interactive tools or persistent servers.
+See [development](docs/development.md) for the repository layout, script locations,
+individual validation commands, and compact command logging.
 
 The markdownlint pre-commit hook uses the Bun-locked local CLI with the same
 Markdown file scope and `.markdownlint.yaml` rules. Install Bun dependencies
