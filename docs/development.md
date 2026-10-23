@@ -6,6 +6,12 @@ procedures; [AGENTS.md](../AGENTS.md) owns branch, review, and shipping policy.
 
 ## Setup and installation
 
+The setup below is for an interactive developer shell. Agent shells use the
+already installed pinned tools under `~/.local/share/mise/installs`, plus
+`.venv/bin`, on PATH; they do not run `mise install` or `mise trust` in this
+checkout. Install a missing tool by explicit version outside the checkout
+before continuing.
+
 ```bash
 # Install the pinned tools, Python dependencies, and pre-commit hooks
 mise install
@@ -115,3 +121,5 @@ Markdown, and managed-skill checks. CI also exercises the documented platform
 playbooks. `bun run lint:branch-name <name>` checks an explicit branch;
 feature branches use `<type>/<topic>`, with no length cap. Keep provisioning
 behind the repository's audited preview and apply entrypoint.
+Keep the local validation plan and CI's static/test steps in sync; CI additionally
+owns platform setup and the audited preview/apply checks.
