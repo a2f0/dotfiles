@@ -34,16 +34,12 @@ jobs:
         brew install luacheck
     - name: install and configure python dependencies
       run: pip install -r ./requirements.txt
-    - name: Run pre-commit
+    - name: Run shared validation
       run: |
         pre-commit install
-        pre-commit run --all-files
+        bun run check
       env:
           SKIP: no-commit-to-branch
-    - name: Test Ansible preview guards
-      run: |
-        python3 -m unittest discover -s tests
-        bun run test:markdownlint
     - name: Run ansible MacOS
       run: |
         ./runAnsible.sh -e "dotfiles_home=${RUNNER_TEMP}/dotfiles-home ansible_python_interpreter=$(command -v python3)"
