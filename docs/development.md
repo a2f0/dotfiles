@@ -100,6 +100,13 @@ The repository uses pre-commit hooks for quality assurance:
 - Merge conflict detection
 - Shellcheck linting for shell scripts in `files/shellcheck/`
 - Ansible-lint for Ansible playbooks and tasks in `ansible/`
+- Luacheck for Lua files
+- Markdownlint for Markdown files
+
+The markdownlint hook uses the Bun-locked local `markdownlint-cli2` with the
+`.markdownlint.yaml` rules. Install Bun dependencies before running hooks, and
+use the Node version pinned in `.nvmrc` / `.mise.toml`. CI installs Bun and Node
+from `.mise.toml` before running the hook.
 
 ## Maintenance scripts
 

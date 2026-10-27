@@ -1,6 +1,6 @@
 # Provisioning
 
-Use the commands in the [README](../README.md) for everyday provisioning.
+Use the commands in the [README](../README.md#provisioning) for everyday provisioning.
 Install the pinned tools and Python dependencies first; use `runAnsible.sh` so
 its preview guard runs before Ansible applies changes.
 
