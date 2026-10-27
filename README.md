@@ -1,73 +1,76 @@
-# Overview
+# dotfiles
 
-Dotfiles and Ansible tasks for package installation / system configuration.
+Shell, Git, editor, terminal, tmux, mail, and chat configuration, plus the
+Ansible playbooks that install it. The files live in `files/`; the playbooks in
+`ansible/` symlink them into the home directory on macOS and on Ubuntu 24.04 or
+Linux Mint 22, and set a few macOS preferences. The Arch Linux playbooks, which
+also install packages, are kept but currently blocked. `runAnsible.sh` picks the
+playbook for the current host and applies it only after a guarded dry-run finds
+no destructive or unsupported changes.
 
-## Developing
+## Quick start
 
-Install the tools pinned by `.mise.toml`, then Python dependencies and hooks.
-Use the pinned Python on PATH, or activate a virtual environment created by it.
+Install [mise](https://mise.jdx.dev/), plus `shellcheck` and `luacheck` for the
+pre-commit hooks ([details](docs/development.md#setup-and-installation)).
 
-    mise install
-    python3 -m venv .venv
-    . .venv/bin/activate
-    pip install -r requirements.txt
-    bun install
-    pre-commit install
-    pre-commit run --all-files
-    python3 -m unittest discover -s tests
+```sh
+mise install                     # pinned Bun, Node, Python, Ansible, pre-commit
+python3 -m venv .venv            # with the pinned Python from mise
+. .venv/bin/activate
+pip install -r requirements.txt
+bun install
+pre-commit install
+./runAnsible.sh --check          # macOS: preview changes without applying them
+```
 
-Check the shared agent skills (requires Bun)
+## Provisioning
 
-    bun run agents:check
-    bun run test:markdownlint
+`runAnsible.sh` runs the playbook for the host after an automatic guarded
+dry-run. It rejects destructive or unsupported changes and preserves existing
+configuration files, so reconcile conflicting destinations manually before
+running it. The [provisioning guide](docs/provisioning.md) describes the guard
+and isolated test runs.
 
-Agents ship changes with the `ship-pr` skill; see `AGENTS.md`.
+### macOS
 
-See [development](docs/development.md) for the repository layout, script locations,
-individual validation commands, and compact command logging.
+```sh
+./runAnsible.sh                  # preview, then apply
+./runAnsible.sh --check          # preview only
+./runAnsible.sh --tags 'files'   # run only the tasks with this tag
+```
 
-The markdownlint pre-commit hook uses the Bun-locked local CLI with the same
-Markdown file scope and `.markdownlint.yaml` rules. Install Bun dependencies
-before running hooks; use the Node version pinned in `.nvmrc` / `.mise.toml`.
-CI installs Bun and Node from `.mise.toml` before running the hook.
-Python and Ansible retain their existing setup and guarded provisioning checks.
-
-## macOS
-
-Configure via Ansible, after an automatic guarded dry-run:
-
-    ./runAnsible.sh
-
-Preview changes without applying them:
-
-    ./runAnsible.sh --check
-
-Run specific tags in the playbook:
-
-    ./runAnsible.sh --tags 'files'
-
-The wrapper rejects destructive or unsupported changes and preserves existing
-configuration files. Reconcile conflicting destinations manually before running
-it. See [provisioning](docs/provisioning.md) for guard behavior and isolated tests.
-
-## Ubuntu and Linux Mint
+### Ubuntu and Linux Mint
 
 Start from an existing checkout and identify it explicitly; the guard blocks
-cloning into an absent checkout:
+cloning into an absent checkout. Add `--check` to preview only.
 
-    ./runAnsible.sh -e "dotfiles_dir=$(pwd) clone_dotfiles=false ansible_python_interpreter=$(command -v python3)"
+```sh
+./runAnsible.sh -e "dotfiles_dir=$(pwd) clone_dotfiles=false ansible_python_interpreter=$(command -v python3)"
+```
 
-## Arch Linux
+### Arch Linux
 
 Arch provisioning is blocked because package, reboot, and VM cleanup effects
 lack a complete safe preview. Do not bypass the guard with direct playbook or
 Vagrant commands. See [provisioning limits](docs/provisioning.md#arch-linux-and-vagrant).
 
+## Development
+
+```sh
+bun run check                          # both below, Markdown lint tests, skill check
+pre-commit run --all-files             # hooks over every file
+python3 -m unittest discover -s tests  # preview guard and Terraform wrapper tests
+```
+
+The [development guide](docs/development.md) covers the repository layout,
+script locations, individual checks, and hook details.
+
 ## Maintenance
 
-See [dependency upgrades](docs/dependency-upgrades.md) for upgrade procedures,
+[Dependency upgrades](docs/dependency-upgrades.md) covers upgrade procedures,
 active compatibility constraints, security exceptions, and Terraform previews.
 
-Terraform state is in Cloudflare R2. The `terraform/` scripts read its key and
-the Terraform variables from the gitignored `.secrets` link to matrix-secrets;
-see [Terraform](docs/provisioning.md#terraform).
+`terraform/` manages this repository's `SLACK_WEBHOOK_URL` Actions secret. Its
+state is in Cloudflare R2, and its scripts read the state key and the Terraform
+variables from the gitignored `.secrets` link to matrix-secrets; see
+[Terraform](docs/provisioning.md#terraform).

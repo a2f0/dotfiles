@@ -74,7 +74,8 @@ cleanup/reboots to validate an upgrade. Read
 [dependency upgrades](docs/dependency-upgrades.md) for procedures and active
 constraints, and [provisioning](docs/provisioning.md) for preview limits.
 
-Keep the root README focused on purpose, setup, and essential safe usage. Put
+Keep the root README focused on purpose, setup, and essential safe usage for
+people; instructions for coding agents belong in this file. Put
 reusable upgrade procedures and active constraints, override rationale, and removal
 conditions in `docs/dependency-upgrades.md`, linking to focused operational docs
 where needed. Record each upgrade's version inventory, audit/test/preview results,
