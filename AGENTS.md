@@ -19,15 +19,32 @@ shells, put the pinned tools from `~/.local/share/mise/installs` and the configu
 
 Run `bun run check` for pre-commit, Python tests, Markdown tests, and managed
 skills. CI additionally validates branch names and platform playbooks. Install dependencies and
-pre-commit hooks before committing. Capture noisy finite commands with the pinned
-`bun run agent:run --label <check> -- <command>` harness, inspect required warnings,
-timings, and artifacts, and keep review verdicts and decision output visible.
-The [development guide](docs/development.md#validation) has invocation examples.
+pre-commit hooks before committing.
 
 Provision only through `runAnsible.sh` and the [provisioning guide](docs/provisioning.md).
 Arch and Vagrant effects lack a complete safe preview and remain blocked; do not
 bypass the guard with direct playbook or Vagrant commands. Preserve host state and
 never provision a real system merely to validate maintenance changes.
+
+## Output capture
+
+Run finite, noisy commands, such as installs, builds, tests, linters, and Git
+commands that run hooks, through
+`bun run agent:run --label <name> -- <command> [args...]`. It keeps complete
+output in a private log, preserves the exit status, and prints a compact
+receipt, with a bounded excerpt of the log on failure. Read more with
+`bun run agent:logs <log-path>`, raising `--tail-lines` or `--max-bytes` as
+needed, or with a targeted search of the log. A zero exit does not rule out
+warnings: inspect required warnings, timings, and artifacts before accepting a
+check. Run reviews, version preparation, audits, infrastructure previews, and
+run-group checks directly so their results stay visible, and run interactive
+tools and servers directly too. Never narrow a suite or silence warnings to
+reduce output.
+
+For example, capture the hooks with
+`bun run agent:run --label pre-commit -- pre-commit run --all-files`. `bun run check`
+is a run group, so run it directly. The
+[development guide](docs/development.md#validation) has more invocation examples.
 
 ## Conventions
 
