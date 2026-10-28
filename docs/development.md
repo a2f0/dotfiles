@@ -53,7 +53,7 @@ Use `bun run agent:run --label <name> -- <command> [args...]` for noisy finite
 commands. It preserves the command's exit status and full private logs while
 returning a compact receipt and a bounded failure excerpt. Inspect required
 warnings, timings, and artifacts before accepting a check; use
-`bun run agent-tool logs <log-path>` or a targeted search for more evidence.
+`bun run agent:logs <log-path>` or a targeted search for more evidence.
 Keep review verdicts and structured decision output visible. Do not wrap
 interactive tools or persistent servers. Existing hooks and CI checks still run
 normally.
