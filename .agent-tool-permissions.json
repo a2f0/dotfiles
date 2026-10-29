@@ -31,6 +31,7 @@
       "Bash(bun run agent-tool skills check *)",
       "Bash(bun run agent-tool hooks check *)",
       "Bash(bun run agent-tool images list *)",
+      "Bash(bun run agent-tool graph check *)",
       "Bash(bun run agent-tool permissions show *)",
       "Bash(bun run agent-tool permissions check *)",
       "Bash(bun run agent-tool bun install *)",
@@ -87,6 +88,7 @@
       "Bash(node_modules/.bin/agent-tool skills check *)",
       "Bash(node_modules/.bin/agent-tool hooks check *)",
       "Bash(node_modules/.bin/agent-tool images list *)",
+      "Bash(node_modules/.bin/agent-tool graph check *)",
       "Bash(node_modules/.bin/agent-tool permissions show *)",
       "Bash(node_modules/.bin/agent-tool permissions check *)",
       "Bash(node_modules/.bin/agent-tool bun install *)",
@@ -143,6 +145,7 @@
       "Bash(agent-tool skills check *)",
       "Bash(agent-tool hooks check *)",
       "Bash(agent-tool images list *)",
+      "Bash(agent-tool graph check *)",
       "Bash(agent-tool permissions show *)",
       "Bash(agent-tool permissions check *)",
       "Bash(agent-tool bun install *)",
@@ -175,6 +178,6 @@
   },
   "codex": {
     "file": ".codex/rules/agent-tool.rules",
-    "sha256": "5d62faa2a16543cddccdca5d65dd6a1032a9799114f19e9920fc621fe3cb1a38"
+    "sha256": "a830306efa2bae1d524bcfe00b9c48668080d8c10179d79293fca1822a36dc52"
   }
 }
