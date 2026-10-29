@@ -20,8 +20,10 @@ The wrapper uses the active Python environment, including PyYAML from
 `requirements.txt`, and accepts `--check`, `--diff`, `--tags`, `--skip-tags`,
 and `-e`/`--extra-vars`. It fixes the repository Ansible configuration and
 collection path to that Python's installed packages, removes inherited Ansible
-and Python plugin overrides, and rechecks selected macOS preferences before
-applying. A user-level configuration or collection cannot shadow the audited
+and Python plugin overrides, and rechecks selected macOS preferences and
+Linux Mint dconf keys with `dconf read` before applying. Only integer dconf
+keys conditioned on the Linux Mint fact are audited; the CI Ubuntu job proves
+their conditional skip, not the write. A user-level configuration or collection cannot shadow the audited
 tasks. Implicit `group_vars` and `host_vars` loading is disabled, so adjacent
 variable files cannot add templates to the preview. Local plugin and collection
 directories are rejected. The supported playbooks disable executable local

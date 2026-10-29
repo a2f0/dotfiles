@@ -1,0 +1,7 @@
+---
+- name: Require 8 pixels of pointer movement before a drag starts
+  community.general.dconf:
+    key: /org/cinnamon/desktop/peripherals/mouse/drag-threshold
+    value: '8'
+    state: present
+  when: ansible_facts['distribution'] == 'Linux Mint'

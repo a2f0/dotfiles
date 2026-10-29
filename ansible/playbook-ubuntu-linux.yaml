@@ -29,6 +29,10 @@
       ansible.builtin.import_tasks: tasks/files.yaml
       tags:
         - files
+    - name: Import Linux Mint Cinnamon settings task
+      ansible.builtin.import_tasks: tasks/linux-mint/cinnamon.yaml
+      tags:
+        - defaults
     - name: Import mcabber task
       ansible.builtin.import_tasks: tasks/mcabber.yaml
       tags:
