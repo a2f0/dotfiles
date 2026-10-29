@@ -281,10 +281,7 @@ def audit(playbook, include, exclude, variables=None):
                         "Only in-place boolean macOS preferences are audited"
                     )
             elif action == "community.general.dconf":
-                if task.get("when", [MINT_CONDITION]) not in (
-                    MINT_CONDITION,
-                    [MINT_CONDITION],
-                ):
+                if task.get("when") not in (MINT_CONDITION, [MINT_CONDITION]):
                     raise UnsafePreview("dconf changes may only depend on the Linux Mint fact")
                 if (
                     not isinstance(value, dict)

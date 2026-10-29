@@ -847,15 +847,16 @@ class PreviewTests(unittest.TestCase):
         return path
 
     def test_dconf_key_needs_the_linux_mint_condition(self):
-        path = self.dconf_playbook(
-            "      community.general.dconf:\n"
-            "        key: /org/test/drag-threshold\n        value: '8'\n"
-            "      when: ansible_facts['os_family'] != 'Darwin'\n"
-        )
-        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
-            with self.assertRaisesRegex(UnsafePreview, "Linux Mint fact"):
-                main([str(path), "--check"])
-            run.assert_not_called()
+        for condition in ("", "      when: ansible_facts['os_family'] != 'Darwin'\n"):
+            path = self.dconf_playbook(
+                "      community.general.dconf:\n"
+                "        key: /org/test/drag-threshold\n        value: '8'\n"
+                + condition
+            )
+            with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
+                with self.assertRaisesRegex(UnsafePreview, "Linux Mint fact"):
+                    main([str(path), "--check"])
+                run.assert_not_called()
 
     def test_dconf_reset_and_non_integer_values_are_rejected(self):
         for arguments in (
@@ -864,7 +865,10 @@ class PreviewTests(unittest.TestCase):
             "        key: /org/test/\n        value: '8'\n",
             "        key: /org/test/drag-threshold\n        value: 8\n",
         ):
-            path = self.dconf_playbook("      community.general.dconf:\n" + arguments)
+            path = self.dconf_playbook(
+                "      community.general.dconf:\n" + arguments
+                + "      when: ansible_facts['distribution'] == 'Linux Mint'\n"
+            )
             with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
                 with self.assertRaisesRegex(UnsafePreview, "integer dconf keys"):
                     main([str(path), "--check"])
@@ -872,9 +876,10 @@ class PreviewTests(unittest.TestCase):
 
     def test_conflicting_dconf_writes_block_before_preview(self):
         key = "      community.general.dconf:\n        key: /org/test/drag-threshold\n"
+        mint = "      when: ansible_facts['distribution'] == 'Linux Mint'\n"
         path = self.dconf_playbook(
-            key + "        value: '8'\n"
-            "    - name: Lower dconf key\n" + key + "        value: '1'\n"
+            key + "        value: '8'\n" + mint
+            + "    - name: Lower dconf key\n" + key + "        value: '1'\n" + mint
         )
         with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
             with self.assertRaisesRegex(UnsafePreview, "Conflicting planned dconf"):
@@ -898,6 +903,7 @@ class PreviewTests(unittest.TestCase):
         path = self.dconf_playbook(
             "      community.general.dconf:\n"
             "        key: /org/test/drag-threshold\n        value: '8'\n"
+            "      when: ansible_facts['distribution'] == 'Linux Mint'\n"
         )
         ref = str(path) + ":4"
         plan = {
