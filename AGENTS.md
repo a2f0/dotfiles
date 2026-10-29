@@ -17,9 +17,10 @@ environment dependencies, hook installation, and repository structure. In agent
 shells, put the pinned tools from `~/.local/share/mise/installs` and the configured
 `.venv/bin` first on PATH; do not run `mise trust`.
 
-Run `bun run check` for pre-commit, Python tests, Markdown tests, and managed
-skills. CI additionally validates branch names and platform playbooks. Install dependencies and
-pre-commit hooks before committing.
+Run `bun run check` for pre-commit, Python tests, Markdown tests, managed
+skills, and harness permission rules. CI additionally validates branch names
+and platform playbooks. Install dependencies and pre-commit hooks before
+committing.
 
 Provision only through `runAnsible.sh` and the [provisioning guide](docs/provisioning.md).
 Arch and Vagrant effects lack a complete safe preview and remain blocked; do not
@@ -28,8 +29,8 @@ never provision a real system merely to validate maintenance changes.
 
 ## Output capture
 
-Run finite, noisy commands, such as installs, builds, tests, linters, and Git
-commands that run hooks, through
+Run finite, noisy commands, such as installs, builds, tests, linters, package
+scripts, and Git commands that run hooks, through
 `bun run agent:run --label <name> -- <command> [args...]`. It keeps complete
 output in a private log, preserves the exit status, and prints a compact
 receipt, with a bounded excerpt of the log on failure. Read more with
@@ -43,7 +44,10 @@ reduce output.
 
 For example, capture the hooks with
 `bun run agent:run --label pre-commit -- pre-commit run --all-files`. `bun run check`
-is a run group, so run it directly. The
+is a run group, so run it directly. Lint chosen Markdown files with the locked
+linter through
+`bun run agent-tool bun x markdownlint-cli2 --log -- <file>...`, which the
+generated harness rules allow without a prompt. The
 [development guide](docs/development.md#validation) has more invocation examples.
 
 ## Conventions
@@ -61,10 +65,11 @@ with an agent other than the one that wrote the change. Title and required
 check policy is in `agent-tool.json`; packages are not versioned.
 
 The `Github Actions` workflow runs on every push. Its `code-quality` job checks
-the agent skills, runs pre-commit and guard regressions, and applies the macOS
-playbook; its `ansible-ubuntu` job applies the Ubuntu playbook. Both first audit
-the tasks and require a complete safe `--check --diff` preview against the same
-runner, inventory, variables, interpreter, and selected tasks. CI isolates file
+the agent skills and permission rules, runs pre-commit and guard regressions,
+and applies the macOS playbook; its `ansible-ubuntu` job applies the Ubuntu
+playbook. Both first audit the tasks and require a complete safe
+`--check --diff` preview against the same runner, inventory, variables,
+interpreter, and selected tasks. CI isolates file
 destinations with `dotfiles_home` under `RUNNER_TEMP`; macOS preferences and
 restart handlers retain their functional validation. Never replace these applies
 with check-only tests. Both must pass. Branch
@@ -78,9 +83,14 @@ PR conversation, with
 `agent-tool pr threads reply <comment-id> --body-file <reply-file>`,
 name the commit that addresses it, and resolve only fully addressed findings.
 
-After upgrading `@a2f0/agent-tool`, run `bun run agents:sync` and commit the
-skills with `.agent-tool-skills.json`. Do not edit the managed skills in
-`.agents/skills` or `.claude/skills`.
+After upgrading `@a2f0/agent-tool` or changing `permissions.executables` in
+`agent-tool.json`, run `bun run agents:sync` and commit the skills with
+`.agent-tool-skills.json` and the generated `.claude/settings.json`,
+`.codex/rules/agent-tool.rules`, and `.agent-tool-permissions.json`. Do not
+edit the managed skills in `.agents/skills` or `.claude/skills`, or the
+generated permission files. Classify an installed CLI in
+`permissions.executables` only when this guidance tells agents to run it
+through `bun x`.
 
 Use the managed `update-dependencies` skill for dependency upgrades. Keep all
 runtime pins synchronized and check controller and target Python against the
