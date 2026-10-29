@@ -18,6 +18,11 @@
   "versions": {
     "packages": []
   },
+  "permissions": {
+    "executables": {
+      "markdownlint-cli2": "local"
+    }
+  },
   "pr": {
     "rejectClaudeBranding": true
   },

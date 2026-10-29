@@ -41,7 +41,7 @@ pre-commit run shellcheck
 pre-commit run luacheck
 pre-commit run check-yaml
 
-# Check that the shared agent skills are current
+# Check that the shared agent skills and harness permission rules are current
 bun run agents:check
 
 # Verify the Ansible preview safety gate
@@ -124,8 +124,8 @@ agent-tool pin; provisioning algorithms and validation remain repository-owned.
 ## Shared validation
 
 After dependency setup, `bun run check` records the local pre-commit, Python,
-Markdown, and managed-skill checks. CI also exercises the documented platform
-playbooks. `bun run lint:branch-name <name>` checks an explicit branch;
+Markdown, managed-skill, and harness permission checks. CI also exercises the
+documented platform playbooks. `bun run lint:branch-name <name>` checks an explicit branch;
 feature branches use `<type>/<topic>`, with no length cap. Keep provisioning
 behind the repository's audited preview and apply entrypoint.
 CI uses the same validation plan and additionally owns platform setup and audited
