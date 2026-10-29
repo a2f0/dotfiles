@@ -61,8 +61,11 @@ STABLE_EXPRESSIONS = {
     "item.dest",
 }
 CLONE_CONDITION = "clone_dotfiles | default(true) | bool"
+MINT_CONDITION = "ansible_facts['distribution'] == 'Linux Mint'"
+DCONF = "/usr/bin/dconf"
 STABLE_CONDITIONS = {
     CLONE_CONDITION,
+    MINT_CONDITION,
     "ansible_facts['os_family'] != 'Darwin'",
     "not ( (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_version'] is version('24.04', '==')) or (ansible_facts['distribution'] == 'Linux Mint' and ansible_facts['distribution_major_version'] is version('22', '==')) )",
     "dotfiles_dir_stat.stat.exists",
@@ -277,6 +280,22 @@ def audit(playbook, include, exclude, variables=None):
                     raise UnsafePreview(
                         "Only in-place boolean macOS preferences are audited"
                     )
+            elif action == "community.general.dconf":
+                if task.get("when", [MINT_CONDITION]) not in (
+                    MINT_CONDITION,
+                    [MINT_CONDITION],
+                ):
+                    raise UnsafePreview("dconf changes may only depend on the Linux Mint fact")
+                if (
+                    not isinstance(value, dict)
+                    or set(value) - {"key", "value", "state"}
+                    or value.get("state", "present") != "present"
+                    or not isinstance(value.get("key"), str)
+                    or not re.fullmatch(r"(/[A-Za-z0-9-]+)+", value["key"])
+                    or not isinstance(value.get("value"), str)
+                    or not re.fullmatch(r"-?[0-9]+", value["value"])
+                ):
+                    raise UnsafePreview("Only in-place integer dconf keys are audited")
             elif action == "ansible.builtin.command":
                 if (
                     not handler
@@ -295,7 +314,7 @@ def audit(playbook, include, exclude, variables=None):
                 handlers[ref] = record
             elif selected(tags, include, exclude):
                 if action == "community.general.osx_defaults":
-                    preference = (value["domain"], value["key"])
+                    preference = (action, value["domain"], value["key"])
                     if (
                         preference in planned_preferences
                         and planned_preferences[preference] != value["value"]
@@ -303,6 +322,14 @@ def audit(playbook, include, exclude, variables=None):
                         raise UnsafePreview(
                             "Conflicting planned macOS preference values"
                         )
+                    planned_preferences[preference] = value["value"]
+                elif action == "community.general.dconf":
+                    preference = (action, value["key"])
+                    if (
+                        preference in planned_preferences
+                        and planned_preferences[preference] != value["value"]
+                    ):
+                        raise UnsafePreview("Conflicting planned dconf values")
                     planned_preferences[preference] = value["value"]
                 expected[ref] = record
 
@@ -419,6 +446,7 @@ def trusted_runtime():
         packages / "ansible/plugins/callback/default.py",
         packages / "ansible_collections/ansible/posix/plugins/callback/json.py",
         packages / "ansible_collections/community/general/plugins/modules/osx_defaults.py",
+        packages / "ansible_collections/community/general/plugins/modules/dconf.py",
     ]
     if not all(
         path.is_file()
@@ -441,13 +469,24 @@ def trusted_runtime():
 
 
 def preference_snapshot(expected):
-    """Read selected macOS boolean preferences without writing them."""
-    preferences = set()
+    """Read selected macOS and dconf preferences without writing them."""
+    preferences, keys = set(), set()
     for action, task in expected.values():
         if action == "community.general.osx_defaults":
             value = task[action]
             preferences.add((value["domain"], value["key"]))
+        elif action == "community.general.dconf":
+            keys.add(task[action]["key"])
     snapshot = {}
+    for key in sorted(keys):
+        # dconf read only opens the user database; writes need D-Bus.
+        if not Path(DCONF).is_file():
+            snapshot[("dconf", key)] = ("unavailable",)
+            continue
+        result = subprocess.run([DCONF, "read", key], capture_output=True, text=True)
+        if result.returncode:
+            raise UnsafePreview("Cannot read dconf preference state")
+        snapshot[("dconf", key)] = (result.returncode, result.stdout.strip())
     for domain, key in sorted(preferences):
         result = subprocess.run(
             ["/usr/bin/defaults", "read", domain, key],
@@ -643,6 +682,8 @@ def describe_changes(plan, expected, handlers):
                     print(f"Would create {task[action]['state']}: {item['diff']['after']['path']}")
                 elif action == "community.general.osx_defaults":
                     print(f"Would update preference: {task[action]['domain']}/{task[action]['key']}")
+                elif action == "community.general.dconf":
+                    print(f"Would update dconf key: {task[action]['key']}")
 
 
 def main(argv=None):
@@ -750,7 +791,7 @@ def main(argv=None):
         plan = json.loads(preview.stdout)
         snapshots, restarts = inspect_preview(plan, expected, handlers)
         if preference_snapshot(expected) != preferences:
-            raise UnsafePreview("macOS preference state changed during preview")
+            raise UnsafePreview("Desktop preference state changed during preview")
         preview_restarts(restarts)
         if args.diff:
             describe_changes(plan, expected, handlers)
@@ -770,7 +811,7 @@ def main(argv=None):
                     "Configuration or target state changed after the preview"
                 )
         if preference_snapshot(expected) != preferences:
-            raise UnsafePreview("macOS preference state changed after preview")
+            raise UnsafePreview("Desktop preference state changed after preview")
         ensure_no_local_plugins(plugin_roots)
         print(
             "Applying the same playbook, inventory, variables, and selected tasks",

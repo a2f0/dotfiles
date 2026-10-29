@@ -838,6 +838,88 @@ class PreviewTests(unittest.TestCase):
                 main([str(path)])
             run.assert_not_called()
 
+    def dconf_playbook(self, task):
+        path = self.root / "dconf.yaml"
+        path.write_text(
+            "- hosts: all\n  gather_facts: false\n  tasks:\n"
+            "    - name: Set dconf key\n" + task
+        )
+        return path
+
+    def test_dconf_key_needs_the_linux_mint_condition(self):
+        path = self.dconf_playbook(
+            "      community.general.dconf:\n"
+            "        key: /org/test/drag-threshold\n        value: '8'\n"
+            "      when: ansible_facts['os_family'] != 'Darwin'\n"
+        )
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Linux Mint fact"):
+                main([str(path), "--check"])
+            run.assert_not_called()
+
+    def test_dconf_reset_and_non_integer_values_are_rejected(self):
+        for arguments in (
+            "        key: /org/test/drag-threshold\n        state: absent\n",
+            "        key: /org/test/drag-threshold\n        value: \"'x'\"\n",
+            "        key: /org/test/\n        value: '8'\n",
+            "        key: /org/test/drag-threshold\n        value: 8\n",
+        ):
+            path = self.dconf_playbook("      community.general.dconf:\n" + arguments)
+            with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
+                with self.assertRaisesRegex(UnsafePreview, "integer dconf keys"):
+                    main([str(path), "--check"])
+                run.assert_not_called()
+
+    def test_conflicting_dconf_writes_block_before_preview(self):
+        key = "      community.general.dconf:\n        key: /org/test/drag-threshold\n"
+        path = self.dconf_playbook(
+            key + "        value: '8'\n"
+            "    - name: Lower dconf key\n" + key + "        value: '1'\n"
+        )
+        with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
+            with self.assertRaisesRegex(UnsafePreview, "Conflicting planned dconf"):
+                main([str(path)])
+            run.assert_not_called()
+
+    def test_skipped_dconf_key_is_a_proven_conditional_skip(self):
+        result = {
+            "action": "community.general.dconf",
+            "changed": False,
+            "skipped": True,
+            "skip_reason": "Conditional result was False",
+            "false_condition": "ansible_facts['distribution'] == 'Linux Mint'",
+        }
+        task = {"community.general.dconf": {"key": "/org/test/drag-threshold", "value": "8"}}
+        self.assertEqual(
+            self.inspect(result, "community.general.dconf", task), ({}, set())
+        )
+
+    def test_dconf_drift_after_preview_blocks_apply(self):
+        path = self.dconf_playbook(
+            "      community.general.dconf:\n"
+            "        key: /org/test/drag-threshold\n        value: '8'\n"
+        )
+        ref = str(path) + ":4"
+        plan = {
+            "stats": {"127.0.0.1": {"failures": 0, "unreachable": 0, "ignored": 0, "rescued": 0}},
+            "plays": [{"tasks": [{"task": {"path": ref}, "hosts": {"127.0.0.1": {"action": "community.general.dconf", "changed": True}}}]}],
+        }
+        output = StringIO()
+        with patch("scripts.deploy.ansible_safe_run.Path.is_file", return_value=True), patch(
+            "scripts.deploy.ansible_safe_run.subprocess.run",
+            side_effect=[
+                subprocess.CompletedProcess([], 0, "1", ""),
+                subprocess.CompletedProcess([], 0, json.dumps(plan), ""),
+                subprocess.CompletedProcess([], 0, "1", ""),
+                subprocess.CompletedProcess([], 0, "4", ""),
+            ],
+        ) as run, redirect_stdout(output):
+            with self.assertRaisesRegex(UnsafePreview, "preference state changed after preview"):
+                main([str(path), "--diff"])
+        self.assertEqual(run.call_count, 4)
+        self.assertEqual(run.call_args.args[0], ["/usr/bin/dconf", "read", "/org/test/drag-threshold"])
+        self.assertIn("Would update dconf key: /org/test/drag-threshold", output.getvalue())
+
     def test_restart_preview_sends_no_signal(self):
         with patch("scripts.deploy.ansible_safe_run.sys.platform", "darwin"), patch(
             "scripts.deploy.ansible_safe_run.subprocess.run",
