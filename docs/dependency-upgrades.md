@@ -37,8 +37,10 @@ and verify both controller and target interpreters before previewing.
 floors for filelock and virtualenv without adding them as top-level tools. The
 existing ansible-lint and pre-commit ranges allow these versions, but an existing
 virtual environment otherwise satisfies those ranges with vulnerable releases.
-The constraints are consumed by the normal requirements install in development
-and both CI jobs.
+The constraints are consumed by the `.venv` requirements install in development
+and both CI jobs, not by mise's separate pipx environments. Activate `.venv` or
+put `.venv/bin` first on PATH when running validation; do not treat a mise pipx
+shim as evidence that these security floors were applied.
 
 filelock's [security advisories](https://github.com/tox-dev/filelock/security/advisories)
 cover local lock-file races; virtualenv's
