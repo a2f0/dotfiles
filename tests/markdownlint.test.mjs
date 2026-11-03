@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { parse as parseJsonc } from "jsonc-parser";
@@ -98,14 +98,18 @@ test("the secured parser resolves naturally under its reviewed CLI owner", () =>
   const securityOverrides = { "markdownlint@0.42.0": { re2js: "2.8.7" } };
   assert.deepEqual(manifest.overrides, securityOverrides);
   assert.deepEqual(lock.overrides, securityOverrides);
+  assert.equal(lock.packages["re2js"][0], "re2js@2.8.7");
   assert.equal(lock.packages["smol-toml"][0], "smol-toml@1.9.1");
 });
 
 test("markdownlint's regex dependency bounds repeated lookbehind matching", () => {
-  const require = createRequire(import.meta.url);
-  const owner = createRequire(require.resolve("markdownlint"));
+  const cliOwner = createRequire(cli);
+  const owner = createRequire(cliOwner.resolve("markdownlint"));
+  const enginePath = owner.resolve("re2js");
+  const engine = JSON.parse(readFileSync(join(dirname(enginePath), "../package.json"), "utf8"));
+  assert.equal(engine.version, "2.8.7");
   const result = spawnSync(process.execPath, ["-e", `
-    const { RE2JS } = require(${JSON.stringify(owner.resolve("re2js"))});
+    const { RE2JS } = require(${JSON.stringify(enginePath)});
     const matcher = RE2JS.compile("(?<=a)b", RE2JS.LOOKBEHINDS).matcher("ab".repeat(16000));
     let count = 0;
     while (matcher.find()) count++;

@@ -43,8 +43,9 @@ and both CI jobs.
 filelock's [security advisories](https://github.com/tox-dev/filelock/security/advisories)
 cover local lock-file races; virtualenv's
 [security advisories](https://github.com/pypa/virtualenv/security/advisories)
-cover generated activation scripts and environment creation. Use private caches
-and trusted environment paths; recreate affected generated environments rather
+cover generated activation scripts and environment creation. Set
+`PRE_COMMIT_HOME` to a new private directory owned by the current user when
+validating a virtualenv upgrade; recreate affected generated environments rather
 than assuming a package upgrade rewrites them. Revisit the floors when the owning
 tools require fixed versions themselves. Verify removal with a fresh resolved
 Python advisory audit, `pip check`, pre-commit, and the full validation group.
@@ -124,8 +125,7 @@ The tests resolve the engine through its actual markdownlint owner, bound the
 advisory's repeated matching case in a subprocess, and exercise front matter and
 MD011, MD013, and MD039 through the CLI. Keep the override limited to this owner;
 remove it when a supported markdownlint release naturally resolves a fixed
-engine, then rerun those tests and the lockfile audit. No smol-toml override is
-needed.
+engine, then rerun those tests and the lockfile audit.
 
 ## Unresolved advisory constraints
 
@@ -136,9 +136,3 @@ existing prototype pollution can bypass trust restrictions. The fix starts at
 rather than force a cross-minor parser/rendering replacement. Repository-controlled
 Markdown is the input. Remove this constraint when a supported owner upgrade or
 backport resolves the finding, with math integration tests and a fresh audit.
-
-The braces finding recorded in
-[PR #400](https://github.com/a2f0/dotfiles/pull/400) was
-[withdrawn upstream](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm); it is no
-longer an active security exception. Recheck current advisories on every upgrade;
-a successful lint run alone does not resolve an advisory.
