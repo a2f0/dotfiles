@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -94,9 +95,41 @@ test("the secured parser resolves naturally under its reviewed CLI owner", () =>
   assert.equal(owners[0][1][0], "markdownlint-cli2@0.24.0");
   assert.equal(owners[0][1][2].dependencies["smol-toml"], "1.9.1");
   const manifest = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
-  assert.equal(manifest.overrides, undefined);
-  assert.equal(lock.overrides, undefined);
+  const securityOverrides = { "markdownlint@0.42.0": { re2js: "2.8.7" } };
+  assert.deepEqual(manifest.overrides, securityOverrides);
+  assert.deepEqual(lock.overrides, securityOverrides);
   assert.equal(lock.packages["smol-toml"][0], "smol-toml@1.9.1");
+});
+
+test("markdownlint's regex dependency bounds repeated lookbehind matching", () => {
+  const require = createRequire(import.meta.url);
+  const owner = createRequire(require.resolve("markdownlint"));
+  const result = spawnSync(process.execPath, ["-e", `
+    const { RE2JS } = require(${JSON.stringify(owner.resolve("re2js"))});
+    const matcher = RE2JS.compile("(?<=a)b", RE2JS.LOOKBEHINDS).matcher("ab".repeat(16000));
+    let count = 0;
+    while (matcher.find()) count++;
+    if (count !== 16000) process.exit(1);
+    console.log(count);
+  `], { encoding: "utf8", timeout: 10000 });
+  assert.ifError(result.error);
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout.trim(), "16000");
+});
+
+test("regex-backed rules and front matter keep their CLI behavior", (t) => {
+  const directory = fixture(t, `
+[tool.markdownlint-cli2.config]
+default = false
+MD011 = true
+MD039 = true
+[tool.markdownlint-cli2.config.MD013]
+line_length = 20
+`, "---\nignored: this front matter exceeds the line limit\n---\n# Good\n\n(text)[link]\n\n[ padded ](https://example.com)\n\nThis prose exceeds twenty columns.\n");
+  const result = lint(directory);
+  assert.equal(result.status, 1, result.output);
+  for (const rule of ["MD011", "MD013", "MD039"]) assert.match(result.output, new RegExp(rule));
+  assert.doesNotMatch(result.output, /good\.md:2\b/);
 });
 
 test("malformed TOML remains a fatal configuration error", (t) => {
