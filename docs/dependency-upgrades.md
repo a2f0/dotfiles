@@ -16,11 +16,43 @@ manifests and locks. Keep duplicated runtime pins synchronized. Check the
 controller and target Python versions against the selected Ansible release's
 support matrix and read its upstream porting guide before changing the group.
 
-Keep Python on 3.14 while Ansible uses core 2.21: its
+Keep Python on 3.14 while Ansible 14 uses core 2.21: the community
+package requires `ansible-core~=2.21.5`, and its
 [support matrix](https://docs.ansible.com/projects/ansible-core/devel/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix)
-supports controller Python 3.12–3.14 and target Python 3.9–3.14. Python 3.15
-requires a stable compatible Ansible/core release, followed by the complete
-guarded previews and controller/target checks below.
+supports controller Python 3.12–3.14 and target Python 3.9–3.14. Do not
+independently install core 2.22 or community.general 14 over this collection
+bundle. Move those majors together with a compatible Ansible community release,
+read its porting guide, and repeat the complete guarded previews and
+controller/target checks below. There are no separately installed roles.
+
+Verify the executable's `python3 --version`, not only `.venv/pyvenv.cfg`, after
+changing Python. An in-place `venv --upgrade` can retain an old launcher. If
+that happens, preserve the old environment outside the checkout, create a fresh
+`.venv` with the exact selected interpreter, reinstall requirements and hooks,
+and verify both controller and target interpreters before previewing.
+
+## Python tooling security floors
+
+[`requirements-constraints.txt`](../requirements-constraints.txt) sets security
+floors for filelock and virtualenv without adding them as top-level tools. The
+existing ansible-lint and pre-commit ranges allow these versions, but an existing
+virtual environment otherwise satisfies those ranges with vulnerable releases.
+The constraints are consumed by the `.venv` requirements install in development
+and both CI jobs, not by mise's separate pipx environments. Activate `.venv` or
+put `.venv/bin` first on PATH when running validation; do not treat a mise pipx
+shim as evidence that these security floors were applied.
+
+filelock's [security advisories](https://github.com/tox-dev/filelock/security/advisories)
+cover local lock-file races; virtualenv's
+[security advisories](https://github.com/pypa/virtualenv/security/advisories)
+cover generated activation scripts and environment creation. Set
+`PRE_COMMIT_HOME` to a new private directory owned by the current user when
+validating a virtualenv upgrade; recreate affected generated environments rather
+than assuming a package upgrade rewrites them. Revisit the floors when the owning
+tools require fixed versions themselves. Verify removal with a fresh resolved
+Python advisory audit, `pip check`, pre-commit, and the full validation group.
+
+## Infrastructure boundaries
 
 Skip infrastructure groups without a complete real-environment preview.
 Missing Terraform credentials or variables and unavailable Arch hosts are
@@ -76,23 +108,33 @@ existing YAML rules; the lock-graph regression checks the reviewed CLI version
 and natural parser ownership.
 
 Bun uses [lockfile format 3 for nested or version-scoped overrides](https://bun.sh/docs/pm/overrides#limitations).
-Removing the last such override can return the generated lockfile to format 2,
-even with the same pinned Bun 1.4.3. Do not edit the format or integrity fields
-manually. Regenerate with the pinned executable and verify that a subsequent
-`bun install --frozen-lockfile` succeeds without changing the lockfile hash.
+The scoped RE2JS security override below requires this format. Do not edit the
+format or integrity fields manually. Regenerate with the pinned executable and
+verify that a subsequent `bun install --frozen-lockfile` succeeds without changing
+the lockfile hash. When adding or removing an override, regenerate the lock with
+`bun install` before using agent-tool's declared-dependency update helper, whose
+frozen precheck intentionally refuses a manifest/lock mismatch.
+
+## RE2JS security override
+
+markdownlint 0.42.0 pins RE2JS 2.8.6. The version-scoped override selects the
+minimal fixed patch, 2.8.7, for
+[GHSA-gg6h-894w-4m9c](https://github.com/le0pard/re2js/security/advisories/GHSA-gg6h-894w-4m9c).
+The advisory needs the opt-in `LOOKBEHINDS` flag; markdownlint does not enable
+it, but retaining a known-vulnerable engine is unnecessary. The patched release
+keeps the `re` tagged-template and `RE2JS.compile` APIs used by markdownlint.
+The tests resolve the engine through its actual markdownlint owner, bound the
+advisory's repeated matching case in a subprocess, and exercise front matter and
+MD011, MD013, and MD039 through the CLI. Keep the override limited to this owner;
+remove it when a supported markdownlint release naturally resolves a fixed
+engine, then rerun those tests and the lockfile audit.
 
 ## Unresolved advisory constraints
 
-[PR #400](https://github.com/a2f0/dotfiles/pull/400) recorded unresolved advisories
-for [braces 3.0.3](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) and
-[KaTeX 0.16.47](https://github.com/advisories/GHSA-238p-pmpm-9mq7). At that review,
-braces had no published patched version, and markdownlint's math extension
-constrained KaTeX to `^0.16.0`. Repository-controlled lint patterns and Markdown
-are their inputs. These explain the retained dependency choices; they are not a
-fresh audit or a claim about today's upstream releases.
-
-Recheck both advisories and their owning dependency ranges on the next upgrade.
-Remove these constraints once a supported owner upgrade or compatible targeted
-refresh resolves them and a fresh audit confirms the result. A successful lint
-run does not resolve an advisory; do not force an unsupported replacement to
-silence the audit.
+KaTeX 0.16.47 remains affected by
+[GHSA-238p-pmpm-9mq7](https://github.com/advisories/GHSA-238p-pmpm-9mq7): an
+existing prototype pollution can bypass trust restrictions. The fix starts at
+0.18.2, outside micromark-extension-math's `^0.16.0` range. Preserve that range
+rather than force a cross-minor parser/rendering replacement. Repository-controlled
+Markdown is the input. Remove this constraint when a supported owner upgrade or
+backport resolves the finding, with math integration tests and a fresh audit.
