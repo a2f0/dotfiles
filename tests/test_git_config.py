@@ -101,7 +101,20 @@ class GitConfigTests(unittest.TestCase):
 
     def test_ssh_falls_back_to_plain_ssh_until_provisioned(self):
         (self.config_dir / "ssh_config").unlink()
-        self.assertEqual(self.resolve_ssh(), ("github.com", "22"))
+        # A stub ssh records its arguments: without the file there is no -F.
+        bin_dir = self.home / "bin"
+        bin_dir.mkdir()
+        stub = bin_dir / "ssh"
+        stub.write_text('#!/bin/sh\nprintf "%s\\n" "$@" > "$HOME/ssh-args"\n')
+        stub.chmod(0o755)
+        command = self.run_git("config", "core.sshCommand").stdout.strip()
+        subprocess.run(
+            ["sh", "-c", f'{command} "$@"', command, "-G", "git@github.com"],
+            env={**self.env, "PATH": f"{bin_dir}{os.pathsep}{self.env['PATH']}"},
+            check=True,
+        )
+        args = (self.home / "ssh-args").read_text().splitlines()
+        self.assertEqual(args, ["-G", "git@github.com"])
 
     def test_known_hosts_pin_githubs_published_keys(self):
         result = subprocess.run(

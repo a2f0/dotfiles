@@ -46,10 +46,12 @@ Git reaches GitHub only over SSH. `files/gitconfig` rewrites
 which connects to `ssh.github.com` on port 443, so a blocked port 22 needs no
 HTTPS fallback; `files/github_known_hosts` pins GitHub's published host keys.
 It also clears the macOS keychain credential helper for `https://github.com`,
-so nothing waits on a keychain prompt. Have `gh` use SSH too:
+so nothing waits on a keychain prompt. Have `gh` use SSH too; a per-host
+setting overrides the global one, so set both:
 
 ```sh
 gh config set git_protocol ssh
+gh config set git_protocol ssh --host github.com
 ```
 
 ### Ubuntu and Linux Mint
