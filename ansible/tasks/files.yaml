@@ -10,6 +10,7 @@
     - '.bundle'
     - '.codex'
     - '.config'
+    - '.config/git'
     - '.imapfilter'
     - '.config/ghostty'
     - '.config/nvim'
@@ -36,6 +37,8 @@
     - { src: 'functions-zsh', dest: '.functions-zsh' }
     - { src: 'gemrc', dest: '.gemrc' }
     - { src: 'gitconfig', dest: '.gitconfig' }
+    - { src: 'git-ssh_config', dest: '.config/git/ssh_config' }
+    - { src: 'github_known_hosts', dest: '.config/git/github_known_hosts' }
     - { src: 'global.ircrc', dest: '.global.ircrc' }
     - { src: 'imapfilter.config.lua', dest: '.imapfilter/config.lua' }
     - { src: 'inputrc', dest: '.inputrc' }

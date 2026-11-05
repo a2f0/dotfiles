@@ -39,6 +39,21 @@ and isolated test runs.
 ./runAnsible.sh --tags 'files'   # run only the tasks with this tag
 ```
 
+### Git and GitHub
+
+Git reaches GitHub only over SSH. `files/gitconfig` rewrites
+`https://github.com/` URLs to SSH and runs SSH with `files/git-ssh_config`,
+which connects to `ssh.github.com` on port 443, so a blocked port 22 needs no
+HTTPS fallback; `files/github_known_hosts` pins GitHub's published host keys.
+It also clears the macOS keychain credential helper for `https://github.com`,
+so nothing waits on a keychain prompt. Have `gh` use SSH too; a per-host
+setting overrides the global one, so set both:
+
+```sh
+gh config set git_protocol ssh
+gh config set git_protocol ssh --host github.com
+```
+
 ### Ubuntu and Linux Mint
 
 Start from an existing checkout and identify it explicitly; the guard blocks
@@ -59,7 +74,7 @@ Vagrant commands. See [provisioning limits](docs/provisioning.md#arch-linux-and-
 ```sh
 bun run check                          # both below, Markdown lint tests, skill check
 pre-commit run --all-files             # hooks over every file
-python3 -m unittest discover -s tests  # preview guard and Terraform wrapper tests
+python3 -m unittest discover -s tests  # preview guard, Terraform, and Git tests
 ```
 
 The [development guide](docs/development.md) covers the repository layout,

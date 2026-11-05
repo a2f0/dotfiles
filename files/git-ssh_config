@@ -1,0 +1,15 @@
+# SSH configuration for Git only; gitconfig's core.sshCommand passes it with -F.
+# Git reaches GitHub over SSH on port 443 (ssh.github.com), which works where
+# port 22 is blocked, so there is never a reason to fall back to HTTPS and its
+# credential helper. URLs keep the usual git@github.com:owner/repo form.
+Host github.com
+  HostName ssh.github.com
+  Port 443
+  # ssh.github.com presents github.com's host keys.
+  HostKeyAlias github.com
+  UserKnownHostsFile ~/.ssh/known_hosts ~/.config/git/github_known_hosts
+
+# -F replaces the user and system files, so include them for every other host.
+Host *
+Include ~/.ssh/config
+Include /etc/ssh/ssh_config
