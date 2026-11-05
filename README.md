@@ -39,6 +39,19 @@ and isolated test runs.
 ./runAnsible.sh --tags 'files'   # run only the tasks with this tag
 ```
 
+### Git and GitHub
+
+Git reaches GitHub only over SSH. `files/gitconfig` runs SSH with
+`files/git-ssh_config`, which connects to `ssh.github.com` on port 443, so a
+blocked port 22 needs no HTTPS fallback; `files/github_known_hosts` pins
+GitHub's published host keys. It also clears the macOS keychain credential
+helper for `https://github.com`, so an HTTPS GitHub URL fails at once instead
+of waiting on a keychain prompt. Have `gh` use SSH too:
+
+```sh
+gh config set git_protocol ssh
+```
+
 ### Ubuntu and Linux Mint
 
 Start from an existing checkout and identify it explicitly; the guard blocks
