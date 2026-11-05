@@ -41,12 +41,12 @@ and isolated test runs.
 
 ### Git and GitHub
 
-Git reaches GitHub only over SSH. `files/gitconfig` runs SSH with
-`files/git-ssh_config`, which connects to `ssh.github.com` on port 443, so a
-blocked port 22 needs no HTTPS fallback; `files/github_known_hosts` pins
-GitHub's published host keys. It also clears the macOS keychain credential
-helper for `https://github.com`, so an HTTPS GitHub URL fails at once instead
-of waiting on a keychain prompt. Have `gh` use SSH too:
+Git reaches GitHub only over SSH. `files/gitconfig` rewrites
+`https://github.com/` URLs to SSH and runs SSH with `files/git-ssh_config`,
+which connects to `ssh.github.com` on port 443, so a blocked port 22 needs no
+HTTPS fallback; `files/github_known_hosts` pins GitHub's published host keys.
+It also clears the macOS keychain credential helper for `https://github.com`,
+so nothing waits on a keychain prompt. Have `gh` use SSH too:
 
 ```sh
 gh config set git_protocol ssh
@@ -72,7 +72,7 @@ Vagrant commands. See [provisioning limits](docs/provisioning.md#arch-linux-and-
 ```sh
 bun run check                          # both below, Markdown lint tests, skill check
 pre-commit run --all-files             # hooks over every file
-python3 -m unittest discover -s tests  # preview guard and Terraform wrapper tests
+python3 -m unittest discover -s tests  # preview guard, Terraform, and Git tests
 ```
 
 The [development guide](docs/development.md) covers the repository layout,

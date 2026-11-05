@@ -23,10 +23,13 @@
 [ssh]
         # The wrapper runs OpenSSH; skip Git's `-G` probe for the SSH variant.
         variant = ssh
+[url "git@github.com:"]
+        # GitHub is SSH only: HTTPS URLs, for fetch and push, go over SSH.
+        insteadOf = https://github.com/
 [credential "https://github.com"]
-        # GitHub is SSH only. An empty helper clears the osxkeychain helper that
-        # Xcode's system gitconfig sets, so an HTTPS URL fails fast instead of
-        # waiting on a keychain prompt.
+        # An empty helper clears the osxkeychain helper that Xcode's system
+        # gitconfig sets, so nothing that still reaches GitHub over HTTPS
+        # waits on a keychain prompt.
         helper =
 [branch]
         autosetupmerge = always
