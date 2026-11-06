@@ -106,7 +106,7 @@ if (( $+commands[starship] )); then
 fi
 
 # SSH shells do not receive Ghostty's automatic title integration.
-if [[ -n $SSH_TTY ]]; then
+if [[ -n $SSH_TTY && $TERM != dumb ]]; then
   autoload -Uz add-zsh-hook
   ssh_title() {
     local title="${HOST%%.*}: $PWD"
