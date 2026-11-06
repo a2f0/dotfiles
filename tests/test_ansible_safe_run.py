@@ -5,16 +5,20 @@ import sysconfig
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
+import signal
 import subprocess
 import tempfile
+import time
 import unittest
 from unittest.mock import patch
 
+from scripts.deploy import ansible_safe_run as safe_run
 from scripts.deploy.ansible_safe_run import (
     UnsafePreview,
     active_python_interpreter,
     audit,
     bound_fingerprint,
+    exit_on_termination,
     fingerprint,
     inspect_preview,
     main,
@@ -23,8 +27,29 @@ from scripts.deploy.ansible_safe_run import (
 )
 
 
+ansible_run = getattr(safe_run, "run_ansible", None)
+
+
+def alive(pid):
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    return True
+
+
 class PreviewTests(unittest.TestCase):
     def setUp(self):
+        # Route Ansible runs through each test's subprocess.run stub, in order
+        # with the preference reads; the termination test runs the real helper.
+        ansible = patch(
+            "scripts.deploy.ansible_safe_run.run_ansible",
+            side_effect=lambda command, **kwargs: safe_run.subprocess.run(
+                command, **kwargs
+            ),
+        )
+        ansible.start()
+        self.addCleanup(ansible.stop)
         self.directory = tempfile.TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
         self.root = Path(self.directory.name).resolve()
@@ -991,6 +1016,142 @@ class PreviewTests(unittest.TestCase):
             inspect_preview(
                 plan, {self.ref: ("ansible.builtin.file", self.task)}, handlers
             )
+
+    def test_termination_stops_ansible_and_removes_isolated_home(self):
+        path, _ = self.safe_directory_plan()
+        scripts, packages = self.root / "scripts", self.root / "packages"
+        scripts.mkdir()
+        # The fake controller forks a worker that ignores polite stops, as an
+        # Ansible worker or module can, and reports both PIDs once it is ready.
+        (scripts / "ansible-playbook").write_text(
+            "import os, pathlib, subprocess, sys, time\n"
+            "pid_file = pathlib.Path(os.environ['FAKE_ANSIBLE_PID'])\n"
+            "ready = pid_file.with_suffix('.ready')\n"
+            "worker = subprocess.Popen([sys.executable, '-c',\n"
+            "    'import pathlib, signal, sys, time\\n'\n"
+            "    'for signum in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):\\n'\n"
+            "    '    signal.signal(signum, signal.SIG_IGN)\\n'\n"
+            "    'pathlib.Path(sys.argv[1]).touch()\\n'\n"
+            "    'time.sleep(60)\\n', str(ready)])\n"
+            "while not ready.exists():\n"
+            "    time.sleep(0.01)\n"
+            "pid_file.with_suffix('.tmp').write_text(f'{os.getpid()} {worker.pid}')\n"
+            "pid_file.with_suffix('.tmp').rename(pid_file)\n"
+            "time.sleep(60)\n"
+        )
+        for name in (
+            "ansible/plugins/callback/default.py",
+            "ansible_collections/ansible/posix/plugins/callback/json.py",
+            "ansible_collections/community/general/plugins/modules/osx_defaults.py",
+            "ansible_collections/community/general/plugins/modules/dconf.py",
+        ):
+            (packages / name).parent.mkdir(parents=True, exist_ok=True)
+            (packages / name).write_text("")
+        for directory in ("modules", *(f"plugins/{name}" for name in (
+            "action", "become", "cache", "callback", "cliconf", "connection",
+            "doc_fragments", "filter", "httpapi", "inventory", "lookup",
+            "netconf", "shell", "strategy", "terminal", "test", "vars",
+        ))):
+            (packages / "ansible" / directory).mkdir(parents=True, exist_ok=True)
+        # Run the real entry point with only the installed-Ansible location faked.
+        driver = (
+            "import runpy, sys, sysconfig\n"
+            f"paths = {{'scripts': {str(scripts)!r}, 'purelib': {str(packages)!r}}}\n"
+            "sysconfig.get_path = paths.__getitem__\n"
+            "sys.argv = ['ansible_safe_run.py', sys.argv[1]]\n"
+            "runpy.run_path('scripts/deploy/ansible_safe_run.py', run_name='__main__')\n"
+        )
+        # SIGINT reaches only the guard, as Ctrl-C does once Ansible runs in
+        # its own process group.
+        for number, signum in enumerate(
+            (signal.SIGTERM, signal.SIGHUP, signal.SIGINT)
+        ):
+            status = 128 + signum
+            with self.subTest(signal=signum.name):
+                pid_file = self.root / f"ansible-{number}.pid"
+                temporary = self.root / f"tmp-{number}"
+                temporary.mkdir()
+                wrapper = subprocess.Popen(
+                    [sys.executable, "-c", driver, str(path)],
+                    cwd=Path(__file__).resolve().parents[1],
+                    env={
+                        **os.environ,
+                        "FAKE_ANSIBLE_PID": str(pid_file),
+                        "TMPDIR": str(temporary),
+                    },
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                )
+                children = []
+                try:
+                    deadline = time.monotonic() + 30
+                    while not pid_file.exists():
+                        if wrapper.poll() is not None or time.monotonic() > deadline:
+                            self.fail("The preview did not start")
+                        time.sleep(0.05)
+                    children = [int(pid) for pid in pid_file.read_text().split()]
+                    wrapper.send_signal(signum)
+                    wrapper.wait(timeout=30)
+                    # The orphaned worker is reaped by init once it is killed.
+                    deadline = time.monotonic() + 5
+                    while any(alive(pid) for pid in children) and time.monotonic() < deadline:
+                        time.sleep(0.05)
+                    self.assertEqual(
+                        [pid for pid in children if alive(pid)], [],
+                        "Ansible processes outlived the guard",
+                    )
+                    self.assertEqual(
+                        list(temporary.glob("dotfiles-ansible-home-*")), []
+                    )
+                    self.assertEqual(wrapper.returncode, status)
+                finally:
+                    if wrapper.poll() is None:
+                        wrapper.kill()
+                        wrapper.wait()
+                    for pid in children:
+                        if alive(pid):
+                            os.kill(pid, signal.SIGKILL)
+
+    def preserve_signal_handlers(self):
+        previous = {
+            signum: signal.getsignal(signum)
+            for signum in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
+        }
+        self.addCleanup(lambda: [signal.signal(*item) for item in previous.items()])
+
+    def test_termination_handling_keeps_ignored_signals_ignored(self):
+        self.preserve_signal_handlers()
+        signal.signal(signal.SIGHUP, signal.SIG_IGN)
+        signal.signal(signal.SIGTERM, signal.SIG_DFL)
+        exit_on_termination()
+        self.assertIs(signal.getsignal(signal.SIGHUP), signal.SIG_IGN)
+        self.assertTrue(callable(signal.getsignal(signal.SIGTERM)))
+
+    def test_termination_while_ansible_starts_still_stops_its_group(self):
+        self.preserve_signal_handlers()
+        exit_on_termination()
+        self.addCleanup(lambda: setattr(safe_run.termination, "pending", None))
+        started = []
+        real_popen = subprocess.Popen
+
+        def popen_then_terminate(*args, **kwargs):
+            # The signal lands after the child exists but before the guard
+            # has returned from starting it.
+            started.append(real_popen(*args, **kwargs))
+            os.kill(os.getpid(), signal.SIGTERM)
+            return started[-1]
+
+        command = [sys.executable, "-c", "import time; time.sleep(60)"]
+        with patch(
+            "scripts.deploy.ansible_safe_run.subprocess.Popen",
+            side_effect=popen_then_terminate,
+        ):
+            with self.assertRaises(SystemExit) as stopped:
+                ansible_run(command)
+        self.assertEqual(stopped.exception.code, 128 + signal.SIGTERM)
+        self.assertIsNotNone(started[0].poll())
+        with self.assertRaises(ProcessLookupError):
+            os.killpg(started[0].pid, 0)
 
     def test_repository_playbooks_are_audited(self):
         for name in ("macos", "ubuntu-linux"):
