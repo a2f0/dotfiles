@@ -23,6 +23,13 @@ pre-commit install
 ./runAnsible.sh --check          # macOS: preview changes without applying them
 ```
 
+## SSH terminal titles
+
+SSH Zsh sessions show `hostname: /full/current/path` in Ghostty's title at each
+prompt; local titles are unchanged. Install the dotfiles on the remote host and
+open a new SSH shell to activate this native Zsh hook. No plugins or Oh My Zsh
+are needed.
+
 ## Provisioning
 
 `runAnsible.sh` runs the playbook for the host after an automatic guarded
