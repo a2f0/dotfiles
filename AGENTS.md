@@ -58,6 +58,22 @@ generated harness rules allow without a prompt. The
 - Commits are signed; never skip signing with `--no-gpg-sign`. Do not add
   `Co-authored-by` trailers or attribution footers, and do not force-push.
 
+## State machines
+
+Make implicit state machines explicit when you write or change code: one closed
+state type (a discriminated union, enum, or sealed type) carrying each state's
+data, typed events, and one pure transition function, with effects run on
+entering a state and async work tagged so only the current request can finish.
+Follow the `explicit-state-machines` skill for what to convert, what to leave
+alone, and how to prove behavior did not change; `agent-tool state-machines`
+lists leads. Reviews flag new implicit machines.
+
+Here, stateful code is rare: Ansible tasks are declarative, and the guard in
+`scripts/deploy/ansible_safe_run.py` is a linear audit, preview, verify, and
+apply pipeline whose before/after file checks are validation, not progress
+state. A new resumable or retrying script would use a Python `enum` with one
+transition function beside it.
+
 ## Shipping
 
 Use the `ship-pr` skill with `agent-tool` (`bun run agent-tool ...`). Review
