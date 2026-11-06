@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import shlex
 import shutil
+import signal
 import subprocess
 import sys
 import sysconfig
@@ -778,8 +779,12 @@ def main(argv=None):
             **{name: str(path) for name, path in plugin_paths.items()},
         )
         preferences = preference_snapshot(expected)
-        preview = subprocess.run(
-            command + ["--check", "--diff"], env=environment, capture_output=True, text=True
+        preview = run_ansible(
+            command + ["--check", "--diff"],
+            env=environment,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
         )
         if preview.stderr:
             print(preview.stderr, file=sys.stderr, end="")
@@ -815,12 +820,109 @@ def main(argv=None):
             flush=True,
         )
         environment["ANSIBLE_STDOUT_CALLBACK"] = "default"
-        return subprocess.run(
+        return run_ansible(
             command + (["--diff"] if args.diff else []), env=environment
         ).returncode
 
 
+STOP_GRACE_SECONDS = 10
+STOP_SIGNALS = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
+
+
+class Terminated(SystemExit):
+    """The guard received a termination signal."""
+
+    def __init__(self, signum):
+        super().__init__(128 + signum)
+        self.signum = signum
+
+
+class TerminationSignals:
+    """Turn stop signals into Terminated. While Ansible starts, a signal is
+    held until the code that stops its process group owns the child."""
+
+    def __init__(self):
+        self.handled, self.deferring, self.pending = [], False, None
+
+    def install(self):
+        # Signals the caller ignores, such as SIGHUP under nohup, stay ignored.
+        self.handled = [
+            signum for signum in STOP_SIGNALS
+            if signal.getsignal(signum) is not signal.SIG_IGN
+        ]
+        for signum in self.handled:
+            signal.signal(signum, self.receive)
+
+    def receive(self, signum, frame):
+        for ignored in self.handled:
+            signal.signal(ignored, signal.SIG_IGN)
+        if self.deferring:
+            self.pending = signum
+        else:
+            raise Terminated(signum)
+
+    def defer(self):
+        self.deferring = True
+
+    def resume(self):
+        self.deferring = False
+        signum, self.pending = self.pending, None
+        if signum is not None:
+            raise Terminated(signum)
+
+
+termination = TerminationSignals()
+
+
+def run_ansible(command, **kwargs):
+    """Run Ansible as its own process group and stop the whole group when the
+    guard stops early: forked workers and modules outlive their controller."""
+    termination.defer()
+    try:
+        process = subprocess.Popen(command, process_group=0, **kwargs)
+    except BaseException:
+        termination.resume()
+        raise
+    try:
+        termination.resume()
+        stdout, stderr = process.communicate()
+    except BaseException as error:
+        if isinstance(error, Terminated):
+            signum = error.signum
+        elif isinstance(error, KeyboardInterrupt):
+            signum = signal.SIGINT
+        else:
+            signum = signal.SIGTERM
+        stop_process_group(process, signum)
+        raise
+    return subprocess.CompletedProcess(process.args, process.returncode, stdout, stderr)
+
+
+def stop_process_group(process, signum):
+    """Forward the stop to Ansible, then kill whatever remains of its group."""
+    for ignored in STOP_SIGNALS:
+        signal.signal(ignored, signal.SIG_IGN)
+    try:
+        os.killpg(process.pid, signum)
+        process.wait(timeout=STOP_GRACE_SECONDS)
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    finally:
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except OSError:
+            pass
+        process.wait()
+
+
+def exit_on_termination():
+    """Exit with 128 + signum on SIGINT, SIGTERM, or SIGHUP after stopping
+    Ansible and removing the isolated Ansible home."""
+    termination.install()
+
+
 if __name__ == "__main__":
+    exit_on_termination()
     try:
         sys.exit(main())
     except (UnsafePreview, json.JSONDecodeError, yaml.YAMLError, KeyError, TypeError, OSError) as error:
