@@ -1,8 +1,22 @@
 # Provisioning
 
 Use the commands in the [README](../README.md#provisioning) for everyday provisioning.
-Install the pinned tools and Python dependencies first; use `runAnsible.sh` so
-its preview guard runs before Ansible applies changes.
+Install the pinned tools first; `runAnsible.sh` creates the checkout's `.venv`
+with `python3` if absent and installs `requirements.txt`, including its constraints,
+on each invocation. Satisfied packages are reused. This also happens for `--check`
+and `--help`; only the environment is bootstrapped, not system configuration.
+Missing pip is bootstrapped with `ensurepip`, including in a partially created
+environment. Dependency installation must succeed before the preview guard or
+Ansible runs.
+The launcher works from outside the checkout and does not require activation or
+install into the ambient Python environment. Python must provide `venv` and pip;
+on Ubuntu, install `python3-venv` if the system Python lacks them.
+
+The bootstrap reuses an existing `.venv`; it does not upgrade its Python or delete
+it. Start with the pinned Python on PATH and follow the
+[Python upgrade procedure](dependency-upgrades.md#scope-and-compatibility) when
+changing that interpreter. Installing missing packages may access the configured
+package index and execute package build code, even with `--check` or `--help`.
 
 ## Ansible preview guard
 
@@ -16,7 +30,7 @@ preserved; reconcile conflicting destinations manually before running it.
 macOS restart handlers have an equivalent read-only preview with
 `killall -s Finder` / `killall -s SystemUIServer`; macOS `killall(1)` documents
 that `-s` sends no signals. The subsequent apply retains the normal handlers.
-The wrapper uses the active Python environment, including PyYAML from
+The wrapper uses the checkout's `.venv`, including PyYAML from
 `requirements.txt`, and accepts `--check`, `--diff`, `--tags`, `--skip-tags`,
 and `-e`/`--extra-vars`. It fixes the repository Ansible configuration and
 collection path to that Python's installed packages, removes inherited Ansible
@@ -30,10 +44,11 @@ directories are rejected. The supported playbooks disable executable local
 facts, Facter, and Ohai during preview and apply. Recursive file operations
 are rejected because their descendant changes cannot be proven by this guard.
 
-For isolated functional tests, set an absolute `dotfiles_home` and the Python
-interpreter used by the controller:
+For isolated functional tests, set an absolute `dotfiles_home` and use the same
+`.venv` interpreter as the controller; unrelated Python executables on PATH
+are not accepted:
 
-    ./runAnsible.sh --tags files -e "dotfiles_home=/tmp/dotfiles-test-home ansible_python_interpreter=$(command -v python3)"
+    ./runAnsible.sh --tags files -e "dotfiles_home=/tmp/dotfiles-test-home ansible_python_interpreter=$(pwd)/.venv/bin/python3"
 
 Both required CI jobs run the guarded apply against their actual runner and
 inventory, with configuration destinations under `RUNNER_TEMP`. The macOS

@@ -15,9 +15,8 @@ before continuing.
 ```bash
 # Install the pinned tools, Python dependencies, and pre-commit hooks
 mise install
-python3 -m venv .venv
+./runAnsible.sh --help            # bootstrap .venv without provisioning
 source .venv/bin/activate
-pip install -r requirements.txt
 pre-commit install
 
 # Install agent tooling and the local markdownlint hook (requires Bun)

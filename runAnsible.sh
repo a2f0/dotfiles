@@ -47,4 +47,24 @@ detect_playbook() {
 
 playbook="$(detect_playbook)"
 
-exec python3 -I scripts/deploy/ansible_safe_run.py "$playbook" "$@"
+script_dir="$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)"
+cd "$script_dir"
+
+if [ ! -e .venv ] && [ ! -L .venv ]; then
+  echo "Creating Python environment in $script_dir/.venv" >&2
+  python3 -I -m venv .venv
+elif [ ! -x .venv/bin/python3 ]; then
+  echo "The existing .venv has no usable Python; follow docs/dependency-upgrades.md to replace it." >&2
+  exit 1
+fi
+
+if ! "$script_dir/.venv/bin/python3" -I -m pip --version >/dev/null 2>&1; then
+  echo "Bootstrapping pip in $script_dir/.venv" >&2
+  "$script_dir/.venv/bin/python3" -I -m ensurepip --upgrade >&2
+fi
+
+echo "Ensuring Python dependencies in $script_dir/.venv" >&2
+"$script_dir/.venv/bin/python3" -I -m pip --require-virtualenv install \
+  --disable-pip-version-check --quiet -r requirements.txt
+
+exec "$script_dir/.venv/bin/python3" -I scripts/deploy/ansible_safe_run.py "$playbook" "$@"

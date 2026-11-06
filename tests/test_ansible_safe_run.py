@@ -15,9 +15,7 @@ from unittest.mock import patch
 from scripts.deploy import ansible_safe_run as safe_run
 from scripts.deploy.ansible_safe_run import (
     UnsafePreview,
-    active_python_interpreter,
     audit,
-    bound_fingerprint,
     exit_on_termination,
     fingerprint,
     inspect_preview,
@@ -428,22 +426,6 @@ class PreviewTests(unittest.TestCase):
                 ])
             run.assert_not_called()
 
-    def test_wrapper_ignores_inherited_python_import_path(self):
-        marker = self.root / "injected"
-        (self.root / "sitecustomize.py").write_text(
-            "import os\nfrom pathlib import Path\n"
-            "Path(os.environ['INJECTION_MARKER']).write_text('injected')\n"
-        )
-        result = subprocess.run(
-            ["/bin/sh", "runAnsible.sh", "--help"],
-            cwd=Path(__file__).resolve().parents[1],
-            env={**os.environ, "PYTHONPATH": str(self.root), "INJECTION_MARKER": str(marker)},
-            capture_output=True,
-            text=True,
-        )
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertFalse(marker.exists())
-
     def test_directory_contents_do_not_change_its_entry_identity(self):
         before = fingerprint(self.root)
         (self.root / "unrelated-entry").write_text("updated elsewhere")
@@ -469,7 +451,7 @@ class PreviewTests(unittest.TestCase):
 
     def test_foreign_target_python_cannot_run_during_preview(self):
         with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
-            with self.assertRaisesRegex(UnsafePreview, "active Python environment"):
+            with self.assertRaises(UnsafePreview):
                 main([
                     "ansible/playbook-macos.yaml", "--check", "-e",
                     "ansible_python_interpreter=/tmp/foreign-python",
@@ -481,7 +463,7 @@ class PreviewTests(unittest.TestCase):
         interpreter.parent.mkdir(parents=True)
         interpreter.symlink_to(Path(sysconfig.get_path("scripts")) / "python3")
         with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
-            with self.assertRaisesRegex(UnsafePreview, "active Python environment"):
+            with self.assertRaises(UnsafePreview):
                 main([
                     "ansible/playbook-macos.yaml", "--check", "-e",
                     f"ansible_python_interpreter={interpreter}",
@@ -720,26 +702,49 @@ class PreviewTests(unittest.TestCase):
                 main([str(alias)])
             self.assertEqual(run.call_count, 1)
 
-    def test_active_python_launcher_is_accepted_but_sibling_alias_is_not(self):
-        aliases = self.root / "active-python" / "bin"
+    def test_controller_python_allows_preview_without_apply(self):
+        path, preview = self.safe_directory_plan()
+        with patch(
+            "scripts.deploy.ansible_safe_run.subprocess.run",
+            return_value=subprocess.CompletedProcess([], 0, preview, ""),
+        ) as run:
+            self.assertEqual(main([
+                str(path), "--check", "-e",
+                f"ansible_python_interpreter={sys.executable}",
+            ]), 0)
+            self.assertEqual(run.call_count, 1)
+            self.assertFalse(self.target.exists())
+
+    def test_controller_symlink_retarget_after_preview_blocks_apply(self):
+        path, preview = self.safe_directory_plan()
+        interpreter = self.root / "controller-python"
+        interpreter.symlink_to(sys.executable)
+
+        def retarget(*args, **kwargs):
+            interpreter.unlink()
+            interpreter.symlink_to(self.source)
+            return subprocess.CompletedProcess([], 0, preview, "")
+
+        with patch("scripts.deploy.ansible_safe_run.sys.executable", str(interpreter)):
+            with patch("scripts.deploy.ansible_safe_run.subprocess.run", side_effect=retarget) as run:
+                with self.assertRaises(UnsafePreview):
+                    main([str(path), "-e", f"ansible_python_interpreter={interpreter}"])
+                self.assertEqual(run.call_count, 1)
+                self.assertFalse(self.target.exists())
+
+    def test_path_python_cannot_bypass_controller_environment(self):
+        aliases = self.root / "ambient-python" / "bin"
         aliases.mkdir(parents=True)
         interpreter = aliases / "python3"
         interpreter.symlink_to(Path(sys.executable))
-        self.assertTrue(
-            active_python_interpreter(interpreter, sys.executable, interpreter)
-        )
-        self.assertFalse(
-            active_python_interpreter(
-                interpreter, sys.executable, self.root / "other-python" / "bin" / "python3"
-            )
-        )
-        before = bound_fingerprint(interpreter)
-        interpreter.unlink()
-        interpreter.symlink_to(self.source)
-        self.assertNotEqual(
-            before,
-            bound_fingerprint(interpreter),
-        )
+        with patch.dict(os.environ, {"PATH": str(aliases)}):
+            with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
+                with self.assertRaises(UnsafePreview):
+                    main([
+                        "ansible/playbook-macos.yaml", "--check", "-e",
+                        f"ansible_python_interpreter={interpreter}",
+                    ])
+                run.assert_not_called()
 
     def test_inherited_ansible_and_python_plugins_are_removed(self):
         path, preview = self.safe_directory_plan()

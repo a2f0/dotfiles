@@ -7,7 +7,6 @@ import os
 from pathlib import Path
 import re
 import shlex
-import shutil
 import signal
 import subprocess
 import sys
@@ -17,7 +16,7 @@ import tempfile
 try:
     import yaml
 except ImportError as error:
-    raise SystemExit("PyYAML is required; install requirements.txt in the active Python environment") from error
+    raise SystemExit("PyYAML is required; run ./runAnsible.sh to bootstrap the checkout's .venv") from error
 
 
 class UnsafePreview(ValueError):
@@ -412,14 +411,9 @@ def bound_fingerprint(path):
     return (str(path.resolve()), fingerprint(path))
 
 
-def active_python_interpreter(path, executable=None, invoked=None):
-    """Accept exactly the active executable or the launcher used by this wrapper."""
-    candidate = Path(path).absolute()
-    executable = Path(executable or sys.executable).absolute()
-    invoked = invoked or shutil.which("python3")
-    return candidate == executable or (
-        invoked is not None and candidate == Path(invoked).absolute()
-    )
+def active_python_interpreter(path):
+    """Accept only the controller's executable, preserving its venv identity."""
+    return Path(path).absolute() == Path(sys.executable).absolute()
 
 
 def normalized_link_target(path, target):
@@ -731,7 +725,7 @@ def main(argv=None):
         "ansible_python_interpreter" in variables
         and not active_python_interpreter(variables["ansible_python_interpreter"])
     ):
-        raise UnsafePreview("Ansible target Python must be the active Python environment")
+        raise UnsafePreview(f"Ansible target Python must match the controller: {sys.executable}")
     plugin_roots = {args.playbook.resolve().parent, Path("ansible/inventory.yaml").resolve().parent, Path.cwd()}
     ensure_no_local_plugins(plugin_roots)
     expected, handlers, files = audit(

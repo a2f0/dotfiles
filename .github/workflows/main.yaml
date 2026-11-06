@@ -31,7 +31,9 @@ jobs:
         brew install shellcheck
         brew install luacheck
     - name: install and configure python dependencies
-      run: pip install -r ./requirements.txt
+      run: |
+        ./runAnsible.sh --help
+        echo "${GITHUB_WORKSPACE}/.venv/bin" >> "$GITHUB_PATH"
     - name: Run shared validation
       run: |
         pre-commit install
@@ -51,7 +53,9 @@ jobs:
         python-version-file: '.python-version'
         architecture: 'x64'
     - name: install and configure python dependencies
-      run: pip install -r ./requirements.txt
+      run: |
+        ./runAnsible.sh --help
+        echo "${GITHUB_WORKSPACE}/.venv/bin" >> "$GITHUB_PATH"
     - name: Run ansible Ubuntu 24.04
       run: |
         ./runAnsible.sh -e "dotfiles_dir=${GITHUB_WORKSPACE} dotfiles_home=${RUNNER_TEMP}/dotfiles-home clone_dotfiles=false ansible_python_interpreter=$(command -v python3)"

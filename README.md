@@ -15,12 +15,10 @@ pre-commit hooks ([details](docs/development.md#setup-and-installation)).
 
 ```sh
 mise install                     # pinned Bun, Node, Python, Ansible, pre-commit
-python3 -m venv .venv            # with the pinned Python from mise
-. .venv/bin/activate
-pip install -r requirements.txt
+./runAnsible.sh --help           # bootstrap .venv without provisioning
+. .venv/bin/activate             # use the same environment for development
 bun install
 pre-commit install
-./runAnsible.sh --check          # macOS: preview changes without applying them
 ```
 
 ## SSH terminal titles
@@ -32,11 +30,12 @@ are needed.
 
 ## Provisioning
 
-`runAnsible.sh` runs the playbook for the host after an automatic guarded
-dry-run. It rejects destructive or unsupported changes and preserves existing
-configuration files, so reconcile conflicting destinations manually before
-running it. The [provisioning guide](docs/provisioning.md) describes the guard
-and isolated test runs.
+`runAnsible.sh` creates a checkout-local `.venv` with `python3` when needed,
+installs `requirements.txt` (including PyYAML), and runs the playbook for the host
+after an automatic guarded dry-run. No activation or global pip install is needed.
+It rejects destructive or unsupported changes and preserves existing configuration
+files, so reconcile conflicting destinations manually before running it. The
+[provisioning guide](docs/provisioning.md) describes the guard and isolated test runs.
 
 ### macOS
 
@@ -67,7 +66,7 @@ Start from an existing checkout and identify it explicitly; the guard blocks
 cloning into an absent checkout. Add `--check` to preview only.
 
 ```sh
-./runAnsible.sh -e "dotfiles_dir=$(pwd) clone_dotfiles=false ansible_python_interpreter=$(command -v python3)"
+./runAnsible.sh -e "dotfiles_dir=$(pwd) clone_dotfiles=false ansible_python_interpreter=$(pwd)/.venv/bin/python3"
 ```
 
 ### Arch Linux
