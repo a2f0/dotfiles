@@ -15,7 +15,7 @@ pre-commit hooks ([details](docs/development.md#setup-and-installation)).
 
 ```sh
 mise install                     # pinned Bun, Node, Python, Ansible, pre-commit
-./runAnsible.sh --check          # bootstrap .venv, then preview without applying
+./runAnsible.sh --help           # bootstrap .venv without provisioning
 . .venv/bin/activate             # use the same environment for development
 bun install
 pre-commit install
@@ -66,7 +66,7 @@ Start from an existing checkout and identify it explicitly; the guard blocks
 cloning into an absent checkout. Add `--check` to preview only.
 
 ```sh
-./runAnsible.sh -e "dotfiles_dir=$(pwd) clone_dotfiles=false ansible_python_interpreter=$(command -v python3)"
+./runAnsible.sh -e "dotfiles_dir=$(pwd) clone_dotfiles=false ansible_python_interpreter=$(pwd)/.venv/bin/python3"
 ```
 
 ### Arch Linux

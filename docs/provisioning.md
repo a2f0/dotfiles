@@ -10,6 +10,12 @@ The launcher works from outside the checkout and does not require activation or
 install into the ambient Python environment. Python must provide `venv` and pip;
 on Ubuntu, install `python3-venv` if the system Python lacks them.
 
+The bootstrap reuses an existing `.venv`; it does not upgrade its Python or delete
+it. Start with the pinned Python on PATH and follow the
+[Python upgrade procedure](dependency-upgrades.md#scope-and-compatibility) when
+changing that interpreter. Installing missing packages may access the configured
+package index and execute package build code, even with `--check` or `--help`.
+
 ## Ansible preview guard
 
 `runAnsible.sh` invokes `scripts/deploy/ansible_safe_run.py` to audit the selected playbook and its static imports before

@@ -56,7 +56,7 @@ if [ ! -x .venv/bin/python3 ]; then
 fi
 
 echo "Ensuring Python dependencies in $script_dir/.venv" >&2
-.venv/bin/python3 -I -m pip --require-virtualenv install \
+"$script_dir/.venv/bin/python3" -I -m pip --require-virtualenv install \
   --disable-pip-version-check --quiet -r requirements.txt
 
-exec .venv/bin/python3 -I scripts/deploy/ansible_safe_run.py "$playbook" "$@"
+exec "$script_dir/.venv/bin/python3" -I scripts/deploy/ansible_safe_run.py "$playbook" "$@"

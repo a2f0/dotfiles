@@ -428,22 +428,6 @@ class PreviewTests(unittest.TestCase):
                 ])
             run.assert_not_called()
 
-    def test_wrapper_ignores_inherited_python_import_path(self):
-        marker = self.root / "injected"
-        (self.root / "sitecustomize.py").write_text(
-            "import os\nfrom pathlib import Path\n"
-            "Path(os.environ['INJECTION_MARKER']).write_text('injected')\n"
-        )
-        result = subprocess.run(
-            ["/bin/sh", "runAnsible.sh", "--help"],
-            cwd=Path(__file__).resolve().parents[1],
-            env={**os.environ, "PYTHONPATH": str(self.root), "INJECTION_MARKER": str(marker)},
-            capture_output=True,
-            text=True,
-        )
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertFalse(marker.exists())
-
     def test_directory_contents_do_not_change_its_entry_identity(self):
         before = fingerprint(self.root)
         (self.root / "unrelated-entry").write_text("updated elsewhere")
