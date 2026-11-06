@@ -104,6 +104,19 @@ class BootstrapTests(unittest.TestCase):
         )
         self.assertEqual(probe.returncode, 0, probe.stderr)
 
+    def test_broken_interpreter_does_not_rewrite_existing_environment(self):
+        self.python.parent.mkdir(parents=True)
+        missing = self.root / "removed-python"
+        self.python.symlink_to(missing)
+        config = self.checkout / ".venv/pyvenv.cfg"
+        config.write_text(f"home = {missing.parent}\n")
+        original_config = config.read_bytes()
+        result = self.launch()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(config.read_bytes(), original_config)
+        self.assertEqual(self.python.readlink(), missing)
+        self.assertEqual(result.stdout, "")
+
     def test_install_failure_stops_before_guard(self):
         self.requirements.write_text("dotfiles-unavailable-test-dependency==0\n")
         result = self.launch()

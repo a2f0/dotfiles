@@ -16,7 +16,6 @@ from scripts.deploy import ansible_safe_run as safe_run
 from scripts.deploy.ansible_safe_run import (
     UnsafePreview,
     audit,
-    bound_fingerprint,
     exit_on_termination,
     fingerprint,
     inspect_preview,
@@ -702,6 +701,36 @@ class PreviewTests(unittest.TestCase):
             with self.assertRaisesRegex(UnsafePreview, "Configuration or target state changed"):
                 main([str(alias)])
             self.assertEqual(run.call_count, 1)
+
+    def test_controller_python_allows_preview_without_apply(self):
+        path, preview = self.safe_directory_plan()
+        with patch(
+            "scripts.deploy.ansible_safe_run.subprocess.run",
+            return_value=subprocess.CompletedProcess([], 0, preview, ""),
+        ) as run:
+            self.assertEqual(main([
+                str(path), "--check", "-e",
+                f"ansible_python_interpreter={sys.executable}",
+            ]), 0)
+            self.assertEqual(run.call_count, 1)
+            self.assertFalse(self.target.exists())
+
+    def test_controller_symlink_retarget_after_preview_blocks_apply(self):
+        path, preview = self.safe_directory_plan()
+        interpreter = self.root / "controller-python"
+        interpreter.symlink_to(sys.executable)
+
+        def retarget(*args, **kwargs):
+            interpreter.unlink()
+            interpreter.symlink_to(self.source)
+            return subprocess.CompletedProcess([], 0, preview, "")
+
+        with patch("scripts.deploy.ansible_safe_run.sys.executable", str(interpreter)):
+            with patch("scripts.deploy.ansible_safe_run.subprocess.run", side_effect=retarget) as run:
+                with self.assertRaises(UnsafePreview):
+                    main([str(path), "-e", f"ansible_python_interpreter={interpreter}"])
+                self.assertEqual(run.call_count, 1)
+                self.assertFalse(self.target.exists())
 
     def test_path_python_cannot_bypass_controller_environment(self):
         aliases = self.root / "ambient-python" / "bin"
