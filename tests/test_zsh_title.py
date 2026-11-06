@@ -61,15 +61,19 @@ class ZshTitleTests(unittest.TestCase):
         )
 
     def test_control_characters_cannot_inject_a_title(self):
-        # zshrc's en_US.UTF-8 locale also classifies C1 characters as controls.
         name = "caf\u00e9 %s\a\x1b]2;INJECTED\a\x1b\\\u009b\u009c\n"
         # Keep ordinary Unicode, percent signs, and literal backslashes intact.
         directory = self.home / name
         directory.mkdir()
-        output = self.run_shell(
-            f'cd "$DIRECTORY"\n{PROMPT_HOOKS}', DIRECTORY=str(directory)
-        )
-        self.assertEqual(output, self.title(self.home / "caf\u00e9 %s]2;INJECTED\\"))
+        for locale in ("en_US.UTF-8", "C"):
+            with self.subTest(locale=locale):
+                output = self.run_shell(
+                    f'LC_ALL={locale}\ncd "$DIRECTORY"\n{PROMPT_HOOKS}',
+                    DIRECTORY=str(directory),
+                )
+                self.assertEqual(
+                    output, self.title(self.home / "caf\u00e9 %s]2;INJECTED\\")
+                )
 
     def test_non_ssh_shell_leaves_terminal_title_unchanged(self):
         output = self.run_shell(PROMPT_HOOKS, ssh=False)

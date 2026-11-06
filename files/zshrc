@@ -110,6 +110,8 @@ if [[ -n $SSH_TTY && $TERM != dumb ]]; then
   autoload -Uz add-zsh-hook
   ssh_title() {
     local title="${HOST%%.*}: $PWD"
+    # Also strip UTF-8 C1 controls when the shell falls back to the C locale.
+    title=${title//$'\xc2'[$'\x80'-$'\x9f']/}
     # Do not let directory names inject terminal control sequences.
     printf '\e]2;%s\a' "${title//[[:cntrl:]]/}"
   }
