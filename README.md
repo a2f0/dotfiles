@@ -25,11 +25,10 @@ pre-commit install
 
 ## SSH terminal titles
 
-Interactive Zsh sessions over SSH update the terminal title to
-`hostname: /full/current/path` at each prompt, including after `cd`. This works
-with Ghostty on macOS and Linux without plugins or Oh My Zsh; local shell titles
-are unchanged. The configuration must be installed on the host you SSH into.
-Open a new SSH shell after updating its dotfiles to activate the hook.
+SSH Zsh sessions show `hostname: /full/current/path` in Ghostty's title at each
+prompt; local titles are unchanged. Install the dotfiles on the remote host and
+open a new SSH shell to activate this native Zsh hook. No plugins or Oh My Zsh
+are needed.
 
 ## Provisioning
 
