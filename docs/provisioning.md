@@ -5,7 +5,9 @@ Install the pinned tools first; `runAnsible.sh` creates the checkout's `.venv`
 with `python3` if absent and installs `requirements.txt`, including its constraints,
 on each invocation. Satisfied packages are reused. This also happens for `--check`
 and `--help`; only the environment is bootstrapped, not system configuration.
-Dependency installation must succeed before the preview guard or Ansible runs.
+Missing pip is bootstrapped with `ensurepip`, including in a partially created
+environment. Dependency installation must succeed before the preview guard or
+Ansible runs.
 The launcher works from outside the checkout and does not require activation or
 install into the ambient Python environment. Python must provide `venv` and pip;
 on Ubuntu, install `python3-venv` if the system Python lacks them.
@@ -42,8 +44,9 @@ directories are rejected. The supported playbooks disable executable local
 facts, Facter, and Ohai during preview and apply. Recursive file operations
 are rejected because their descendant changes cannot be proven by this guard.
 
-For isolated functional tests, set an absolute `dotfiles_home` and the Python
-interpreter used by the controller:
+For isolated functional tests, set an absolute `dotfiles_home` and use the same
+`.venv` interpreter as the controller; unrelated Python executables on PATH
+are not accepted:
 
     ./runAnsible.sh --tags files -e "dotfiles_home=/tmp/dotfiles-test-home ansible_python_interpreter=$(pwd)/.venv/bin/python3"
 

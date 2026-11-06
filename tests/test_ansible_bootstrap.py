@@ -53,7 +53,7 @@ class BootstrapTests(unittest.TestCase):
             if not key.startswith(("PYTHON", "PIP_")) and key != "VIRTUAL_ENV"
         }
         self.env.update(
-            PATH=str(Path(sys._base_executable).parent) + os.pathsep + self.env["PATH"],
+            PATH=str(Path(sys.base_prefix) / "bin") + os.pathsep + self.env["PATH"],
             PIP_CONFIG_FILE=os.devnull,
             PIP_NO_INDEX="1",
             PIP_FIND_LINKS=str(self.wheelhouse),
@@ -85,6 +85,24 @@ class BootstrapTests(unittest.TestCase):
         self.assertTrue(Path(module).is_relative_to(Path(prefix)))
         self.assertEqual(parsed, {"enabled": True})
         self.assertFalse((self.root / ".venv").exists())
+
+    def test_partial_environment_bootstraps_missing_pip(self):
+        subprocess.run(
+            [str(Path(sys.base_prefix) / "bin/python3"), "-I", "-m", "venv",
+             "--without-pip", str(self.checkout / ".venv")],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        result = self.launch()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        probe = subprocess.run(
+            [str(self.python), "-I", "-c",
+             "import yaml; assert yaml.safe_load('enabled: true') == {'enabled': True}"],
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(probe.returncode, 0, probe.stderr)
 
     def test_install_failure_stops_before_guard(self):
         self.requirements.write_text("dotfiles-unavailable-test-dependency==0\n")

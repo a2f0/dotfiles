@@ -55,6 +55,11 @@ if [ ! -x .venv/bin/python3 ]; then
   python3 -I -m venv .venv
 fi
 
+if ! "$script_dir/.venv/bin/python3" -I -m pip --version >/dev/null 2>&1; then
+  echo "Bootstrapping pip in $script_dir/.venv" >&2
+  "$script_dir/.venv/bin/python3" -I -m ensurepip --upgrade
+fi
+
 echo "Ensuring Python dependencies in $script_dir/.venv" >&2
 "$script_dir/.venv/bin/python3" -I -m pip --require-virtualenv install \
   --disable-pip-version-check --quiet -r requirements.txt

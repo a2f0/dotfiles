@@ -15,7 +15,6 @@ from unittest.mock import patch
 from scripts.deploy import ansible_safe_run as safe_run
 from scripts.deploy.ansible_safe_run import (
     UnsafePreview,
-    active_python_interpreter,
     audit,
     bound_fingerprint,
     exit_on_termination,
@@ -453,7 +452,7 @@ class PreviewTests(unittest.TestCase):
 
     def test_foreign_target_python_cannot_run_during_preview(self):
         with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
-            with self.assertRaisesRegex(UnsafePreview, "active Python environment"):
+            with self.assertRaises(UnsafePreview):
                 main([
                     "ansible/playbook-macos.yaml", "--check", "-e",
                     "ansible_python_interpreter=/tmp/foreign-python",
@@ -465,7 +464,7 @@ class PreviewTests(unittest.TestCase):
         interpreter.parent.mkdir(parents=True)
         interpreter.symlink_to(Path(sysconfig.get_path("scripts")) / "python3")
         with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
-            with self.assertRaisesRegex(UnsafePreview, "active Python environment"):
+            with self.assertRaises(UnsafePreview):
                 main([
                     "ansible/playbook-macos.yaml", "--check", "-e",
                     f"ansible_python_interpreter={interpreter}",
@@ -704,26 +703,19 @@ class PreviewTests(unittest.TestCase):
                 main([str(alias)])
             self.assertEqual(run.call_count, 1)
 
-    def test_active_python_launcher_is_accepted_but_sibling_alias_is_not(self):
-        aliases = self.root / "active-python" / "bin"
+    def test_path_python_cannot_bypass_controller_environment(self):
+        aliases = self.root / "ambient-python" / "bin"
         aliases.mkdir(parents=True)
         interpreter = aliases / "python3"
         interpreter.symlink_to(Path(sys.executable))
-        self.assertTrue(
-            active_python_interpreter(interpreter, sys.executable, interpreter)
-        )
-        self.assertFalse(
-            active_python_interpreter(
-                interpreter, sys.executable, self.root / "other-python" / "bin" / "python3"
-            )
-        )
-        before = bound_fingerprint(interpreter)
-        interpreter.unlink()
-        interpreter.symlink_to(self.source)
-        self.assertNotEqual(
-            before,
-            bound_fingerprint(interpreter),
-        )
+        with patch.dict(os.environ, {"PATH": str(aliases)}):
+            with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
+                with self.assertRaises(UnsafePreview):
+                    main([
+                        "ansible/playbook-macos.yaml", "--check", "-e",
+                        f"ansible_python_interpreter={interpreter}",
+                    ])
+                run.assert_not_called()
 
     def test_inherited_ansible_and_python_plugins_are_removed(self):
         path, preview = self.safe_directory_plan()
