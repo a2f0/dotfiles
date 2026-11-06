@@ -271,8 +271,24 @@ versions with `agent-tool bun update <name[@version]>` and drop packages with
 `agent-tool bun remove <name>`; both use the pinned Bun and refuse to add a
 package. A new dependency goes through `agent-tool bun add <name@version>`, which
 asks for approval; never introduce one by editing `package.json` and
-reinstalling. Refresh transitive dependencies through
-their owning direct dependency; do not hand-edit integrity hashes or lock entries.
+reinstalling. For existing Bun catalog entries use
+`agent-tool bun update --catalog default <name@version>...` (or the existing named
+catalog). Name an explicit exact/ranged registry spec; keep `catalog:` references,
+workspace membership, other entries, and peer compatibility contracts intact.
+The helper refuses intake and ambiguous layouts and uses the owning manager to
+refresh the lock; do not replace catalog references with direct versions.
+
+For an already-resolved transitive registry package with an eligible owner range,
+use `agent-tool bun update --resolved <name>...` with the owning Bun 1.4.4 or newer.
+It selects every locked copy of those names, never a requested version or glob,
+and accepts only a result with identical manifests and unchanged non-target lock
+entries/metadata. It preserves release-age, overrides and patches. If an older
+manager is pinned, or a required new child prevents a target-only result, this
+path is unsupported: prefer an owning-dependency upgrade through the normal
+helper, or obtain approval for an explicitly reviewed manager workflow. Do not
+silently substitute a broad refresh or add a transitive package directly. Inspect
+the receipt/logs and re-audit; a no-op or warning can leave an advisory unresolved.
+Never hand-edit integrity hashes or lock entries.
 Review intentional patches, overrides, and pins before removal; retain them until
 upstream fixes and regression checks demonstrate they are unnecessary.
 Avoid unrelated global installations or environment changes. Use task-local or
