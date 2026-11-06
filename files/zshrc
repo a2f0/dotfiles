@@ -105,6 +105,17 @@ if (( $+commands[starship] )); then
   eval "$(starship init zsh)"
 fi
 
+# SSH shells do not receive Ghostty's automatic title integration.
+if [[ -n $SSH_TTY ]]; then
+  autoload -Uz add-zsh-hook
+  ssh_title() {
+    local title="${HOST%%.*}: $PWD"
+    # Do not let directory names inject terminal control sequences.
+    printf '\e]2;%s\a' "${title//[[:cntrl:]]/}"
+  }
+  add-zsh-hook precmd ssh_title
+fi
+
 # history settings
 HISTSIZE=1000               # how many lines of history to keep in memory
 HISTFILE=~/.zsh_history     # where to save history to disk

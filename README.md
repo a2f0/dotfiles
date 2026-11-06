@@ -23,6 +23,14 @@ pre-commit install
 ./runAnsible.sh --check          # macOS: preview changes without applying them
 ```
 
+## SSH terminal titles
+
+Interactive Zsh sessions over SSH update the terminal title to
+`hostname: /full/current/path` at each prompt, including after `cd`. This works
+with Ghostty on macOS and Linux without plugins or Oh My Zsh; local shell titles
+are unchanged. The configuration must be installed on the host you SSH into.
+Open a new SSH shell after updating its dotfiles to activate the hook.
+
 ## Provisioning
 
 `runAnsible.sh` runs the playbook for the host after an automatic guarded
