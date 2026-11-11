@@ -12,6 +12,12 @@ The launcher works from outside the checkout and does not require activation or
 install into the ambient Python environment. Python must provide `venv` and pip;
 on Ubuntu, install `python3-venv` if the system Python lacks them.
 
+The launcher defaults `dotfiles_dir` to its own checkout, `clone_dotfiles` to
+`false`, and `ansible_python_interpreter` to its `.venv/bin/python3`. These values
+are shared by the audit, preview, and apply, so Ubuntu and Linux Mint need no
+extra variables for a normal first run. Explicit `-e` overrides still pass through
+the guard; enabling cloning or selecting another Python remains blocked.
+
 The bootstrap reuses an existing `.venv`; it does not upgrade its Python or delete
 it. Start with the pinned Python on PATH and follow the
 [Python upgrade procedure](dependency-upgrades.md#scope-and-compatibility) when
@@ -44,11 +50,10 @@ directories are rejected. The supported playbooks disable executable local
 facts, Facter, and Ohai during preview and apply. Recursive file operations
 are rejected because their descendant changes cannot be proven by this guard.
 
-For isolated functional tests, set an absolute `dotfiles_home` and use the same
-`.venv` interpreter as the controller; unrelated Python executables on PATH
-are not accepted:
+For isolated functional tests, set an absolute `dotfiles_home`. The launcher uses
+its `.venv` interpreter for both controller and target automatically:
 
-    ./runAnsible.sh --tags files -e "dotfiles_home=/tmp/dotfiles-test-home ansible_python_interpreter=$(pwd)/.venv/bin/python3"
+    ./runAnsible.sh --tags files -e "dotfiles_home=/tmp/dotfiles-test-home"
 
 Both required CI jobs run the guarded apply against their actual runner and
 inventory, with configuration destinations under `RUNNER_TEMP`. The macOS

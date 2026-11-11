@@ -5,7 +5,9 @@ import sysconfig
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
+import platform
 import signal
+import shutil
 import subprocess
 import tempfile
 import time
@@ -659,6 +661,43 @@ class PreviewTests(unittest.TestCase):
             check, apply = [call.args[0] for call in run.call_args_list]
             self.assertEqual(check[:-2], apply)
             self.assertEqual(check[-2:], ["--check", "--diff"])
+            variables = json.loads(apply[apply.index("-e") + 1])
+            self.assertEqual(variables, {
+                "dotfiles_dir": str(Path.cwd()),
+                "clone_dotfiles": False,
+                "ansible_python_interpreter": sys.executable,
+            })
+
+    def test_explicit_extra_vars_override_checkout_defaults_in_order(self):
+        path, preview = self.safe_directory_plan()
+        source = self.root / "checkout with spaces"
+        source.mkdir()
+        with patch(
+            "scripts.deploy.ansible_safe_run.subprocess.run",
+            return_value=subprocess.CompletedProcess([], 0, preview, ""),
+        ) as run:
+            self.assertEqual(main([
+                str(path), "--check", "-e", "dotfiles_dir=/unused-checkout",
+                "-e", json.dumps({"dotfiles_dir": str(source), "clone_dotfiles": False}),
+                "-e", f"dotfiles_home={self.target} clone_dotfiles=false",
+            ]), 0)
+        command = run.call_args.args[0]
+        variables = json.loads(command[command.index("-e") + 1])
+        self.assertEqual(variables, {
+            "dotfiles_dir": str(source),
+            "clone_dotfiles": "false",
+            "ansible_python_interpreter": sys.executable,
+            "dotfiles_home": str(self.target),
+        })
+
+    def test_explicit_clone_cannot_bypass_guard(self):
+        for value in ("clone_dotfiles=true", '{"clone_dotfiles": true}'):
+            with self.subTest(value=value), patch(
+                "scripts.deploy.ansible_safe_run.subprocess.run",
+            ) as run:
+                with self.assertRaisesRegex(UnsafePreview, "Conditional clone"):
+                    main(["ansible/playbook-ubuntu-linux.yaml", "--check", "-e", value])
+                run.assert_not_called()
 
     def test_diff_shows_target_without_exposing_ansible_values(self):
         path, preview = self.safe_directory_plan()
@@ -1169,6 +1208,48 @@ class PreviewTests(unittest.TestCase):
             self.assertGreater(len(expected), 5)
         with self.assertRaises(UnsafePreview):
             audit(Path("ansible/playbook-arch-linux-vm.yaml"), {"all"}, set())
+
+    def test_launcher_previews_checkout_with_spaces_from_another_directory(self):
+        release = {}
+        if sys.platform.startswith("linux"):
+            try:
+                release = platform.freedesktop_os_release()
+            except OSError:
+                pass
+        if not (
+            sys.platform == "darwin"
+            or (release.get("ID") == "ubuntu" and release.get("VERSION_ID") == "24.04")
+            or (release.get("ID") == "linuxmint" and release.get("VERSION_ID", "").split(".")[0] == "22")
+        ):
+            self.skipTest("Real launcher preview requires macOS, Ubuntu 24.04, or Mint 22")
+        if sys.prefix == sys.base_prefix:
+            self.skipTest("Real launcher preview requires installed venv dependencies")
+        repo = Path(__file__).resolve().parents[1]
+        checkout = self.root / "checkout with spaces"
+        checkout.mkdir()
+        for name in ("ansible", "files"):
+            shutil.copytree(repo / name, checkout / name)
+        shutil.copy2(repo / "runAnsible.sh", checkout)
+        guard = checkout / "scripts/deploy/ansible_safe_run.py"
+        guard.parent.mkdir(parents=True)
+        shutil.copy2(repo / "scripts/deploy/ansible_safe_run.py", guard)
+        # Reuse installed dependencies without a network install in this test.
+        (checkout / ".venv").symlink_to(sys.prefix, target_is_directory=True)
+        (checkout / "requirements.txt").write_text("")
+        home = self.root / "new home"
+        result = subprocess.run(
+            [str(checkout / "runAnsible.sh"), "--check", "--diff", "--tags", "files",
+             "-e", json.dumps({"dotfiles_home": str(home)})],
+            cwd=self.root,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=90,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("Safe preview:", result.stdout)
+        self.assertIn(f"Would create link: {home / '.bashrc'}", result.stdout)
+        self.assertFalse(home.exists())
 
 
 if __name__ == "__main__":
