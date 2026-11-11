@@ -12,10 +12,10 @@ This is a dotfiles repository that manages system configuration and package inst
 
 ## Setup and validation
 
-Follow [development](docs/development.md) for pinned tool setup, Python virtual
-environment dependencies, hook installation, and repository structure. In agent
-shells, put the pinned tools from `~/.local/share/mise/installs` and the configured
-`.venv/bin` first on PATH. Do not run `mise install` or `mise trust` in this
+See [development](docs/development.md) for Python dependencies, hook installation,
+and repository layout. For agent shells, use the already installed pinned tools
+from `~/.local/share/mise/installs` and the configured `.venv/bin` first on PATH.
+Do not run the guide's interactive `mise install` step or `mise trust` in this
 checkout; install a missing tool by explicit version outside it.
 
 Run `bun run check` for pre-commit, Python tests, Markdown tests, managed

@@ -29,9 +29,9 @@ The launcher selects the host's playbook and installs its Python dependencies in
 rejects destructive or unsupported changes. Existing configuration files are
 preserved, so resolve any reported conflicts before trying again.
 
-Arch Linux provisioning is currently blocked because its package, reboot, and
-cleanup tasks cannot be safely previewed. Do not run its playbooks or Vagrant
-provisioning directly.
+[Arch Linux provisioning](docs/provisioning.md#arch-linux-and-vagrant) is currently
+blocked because its package, reboot, and cleanup tasks cannot be safely previewed.
+Do not run its playbooks or Vagrant provisioning directly.
 
 ## Documentation
 
