@@ -12,10 +12,11 @@ This is a dotfiles repository that manages system configuration and package inst
 
 ## Setup and validation
 
-Follow [development](docs/development.md) for pinned tool setup, Python virtual
-environment dependencies, hook installation, and repository structure. In agent
-shells, put the pinned tools from `~/.local/share/mise/installs` and the configured
-`.venv/bin` first on PATH; do not run `mise trust`.
+See [development](docs/development.md) for Python dependencies, hook installation,
+and repository layout. For agent shells, use the already installed pinned tools
+from `~/.local/share/mise/installs` and the configured `.venv/bin` first on PATH.
+Do not run the guide's interactive `mise install` step or `mise trust` in this
+checkout; install a missing tool by explicit version outside it.
 
 Run `bun run check` for pre-commit, Python tests, Markdown tests, managed
 skills, and harness permission rules. CI additionally validates branch names
@@ -118,7 +119,10 @@ cleanup/reboots to validate an upgrade. Read
 constraints, and [provisioning](docs/provisioning.md) for preview limits.
 
 Keep the root README focused on purpose, setup, and essential safe usage for
-people; instructions for coding agents belong in this file. Put
+people; instructions for coding agents belong in this file. Keep contributor
+setup and check commands in `docs/development.md`, and Git/SSH setup and
+provisioning internals in `docs/provisioning.md`; link to them from the README
+rather than duplicating their instructions. Put
 reusable upgrade procedures and active constraints, override rationale, and removal
 conditions in `docs/dependency-upgrades.md`, linking to focused operational docs
 where needed. Record each upgrade's version inventory, audit/test/preview results,
