@@ -689,7 +689,13 @@ def main(argv=None):
     args = parser.parse_args(argv)
     include, tags_argument = tag_flags(args.tags, ["all"])
     exclude, skip_argument = tag_flags(args.skip_tags, [])
-    variables = {}
+    # The launcher runs from its checkout and has already bootstrapped Python.
+    # Pass these defaults explicitly so audit, preview, and apply agree.
+    variables = {
+        "dotfiles_dir": str(Path.cwd()),
+        "clone_dotfiles": False,
+        "ansible_python_interpreter": sys.executable,
+    }
     for value in args.extra_vars:
         if value.startswith("{"):
             parsed = json.loads(value)

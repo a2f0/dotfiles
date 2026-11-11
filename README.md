@@ -62,11 +62,12 @@ gh config set git_protocol ssh --host github.com
 
 ### Ubuntu and Linux Mint
 
-Start from an existing checkout and identify it explicitly; the guard blocks
-cloning into an absent checkout. Add `--check` to preview only.
+Run from an existing checkout. The launcher uses that checkout and its `.venv`
+Python automatically, with cloning disabled. Add `--check` to preview only.
 
 ```sh
-./runAnsible.sh -e "dotfiles_dir=$(pwd) clone_dotfiles=false ansible_python_interpreter=$(pwd)/.venv/bin/python3"
+./runAnsible.sh                  # preview, then apply
+./runAnsible.sh --check          # preview only
 ```
 
 ### Arch Linux

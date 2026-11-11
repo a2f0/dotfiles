@@ -40,7 +40,7 @@ jobs:
         bun run check
     - name: Run ansible MacOS
       run: |
-        ./runAnsible.sh -e "dotfiles_home=${RUNNER_TEMP}/dotfiles-home ansible_python_interpreter=$(command -v python3)"
+        ./runAnsible.sh -e "dotfiles_home=${RUNNER_TEMP}/dotfiles-home"
 
   ansible-ubuntu:
     runs-on: ubuntu-24.04
@@ -58,4 +58,4 @@ jobs:
         echo "${GITHUB_WORKSPACE}/.venv/bin" >> "$GITHUB_PATH"
     - name: Run ansible Ubuntu 24.04
       run: |
-        ./runAnsible.sh -e "dotfiles_dir=${GITHUB_WORKSPACE} dotfiles_home=${RUNNER_TEMP}/dotfiles-home clone_dotfiles=false ansible_python_interpreter=$(command -v python3)"
+        ./runAnsible.sh -e "dotfiles_home=${RUNNER_TEMP}/dotfiles-home"
