@@ -6,11 +6,8 @@ procedures; [AGENTS.md](../AGENTS.md) owns branch, review, and shipping policy.
 
 ## Setup and installation
 
-The setup below is for an interactive developer shell. Agent shells use the
-already installed pinned tools under `~/.local/share/mise/installs`, plus
-`.venv/bin`, on PATH; they do not run `mise install` or `mise trust` in this
-checkout. Install a missing tool by explicit version outside the checkout
-before continuing.
+Install the pinned tools and Python dependencies, then enable the hooks.
+The linters also need `shellcheck` and `luacheck`.
 
 ```bash
 # Install the pinned tools, Python dependencies, and pre-commit hooks
@@ -32,6 +29,9 @@ sudo luarocks install luacheck
 ## Validation
 
 ```bash
+# Run the full local check
+bun run check
+
 # Run all pre-commit hooks on all files
 bun run agent:run --label pre-commit -- pre-commit run --all-files
 

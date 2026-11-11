@@ -24,6 +24,26 @@ it. Start with the pinned Python on PATH and follow the
 changing that interpreter. Installing missing packages may access the configured
 package index and execute package build code, even with `--check` or `--help`.
 
+## Git and GitHub
+
+Git reaches GitHub only over SSH. `files/gitconfig` rewrites
+`https://github.com/` URLs to SSH and runs SSH with `files/git-ssh_config`,
+which connects to `ssh.github.com` on port 443, so a blocked port 22 needs no
+HTTPS fallback; `files/github_known_hosts` pins GitHub's published host keys.
+It also clears the macOS keychain credential helper for `https://github.com`,
+so nothing waits on a keychain prompt. Have `gh` use SSH too; a per-host
+setting overrides the global one, so set both:
+
+    gh config set git_protocol ssh
+    gh config set git_protocol ssh --host github.com
+
+## SSH terminal titles
+
+SSH Zsh sessions show `hostname: /full/current/path` in Ghostty's title at each
+prompt; local titles are unchanged. Install the dotfiles on the remote host and
+open a new SSH shell to activate this native Zsh hook. No plugins or Oh My Zsh
+are needed.
+
 ## Ansible preview guard
 
 `runAnsible.sh` invokes `scripts/deploy/ansible_safe_run.py` to audit the selected playbook and its static imports before
