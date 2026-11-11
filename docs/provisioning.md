@@ -46,8 +46,11 @@ keys conditioned on the Linux Mint fact are audited; the CI Ubuntu job proves
 their conditional skip, not the write. A user-level configuration or collection cannot shadow the audited
 tasks. Implicit `group_vars` and `host_vars` loading is disabled, so adjacent
 variable files cannot add templates to the preview. Local plugin and collection
-directories are rejected. The supported playbooks disable executable local
-facts, Facter, and Ohai during preview and apply. Recursive file operations
+directories are rejected. The supported playbooks collect only distribution and
+user facts, which supply the OS guards, home paths, and file owners. Both the
+normal and minimum fact sets are disabled before selecting those collectors;
+unrelated host discovery and executable local facts, Facter, and Ohai do not run
+during preview or apply. Recursive file operations
 are rejected because their descendant changes cannot be proven by this guard.
 
 For isolated functional tests, set an absolute `dotfiles_home`. The launcher uses

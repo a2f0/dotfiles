@@ -811,7 +811,7 @@ class PreviewTests(unittest.TestCase):
             "- hosts: all\n  gather_facts: false\n  tasks:\n"
             "    - name: Gather safe facts\n      ansible.builtin.setup:\n"
             "        fact_path: /dev/null\n"
-            "        gather_subset: ['!facter', '!ohai']\n"
+            "        gather_subset: ['!all', '!min', 'distribution', 'user']\n"
             "    - name: Inspect home directory\n      ansible.builtin.file:\n"
             "        path: \"{{ dotfiles_home | default(ansible_facts['user_dir']) }}\"\n"
             "        state: directory\n"
@@ -1196,6 +1196,49 @@ class PreviewTests(unittest.TestCase):
         self.assertIsNotNone(started[0].poll())
         with self.assertRaises(ProcessLookupError):
             os.killpg(started[0].pid, 0)
+
+    def test_fact_gathering_rejects_unneeded_or_executable_collectors(self):
+        required = ["!all", "!min", "distribution", "user"]
+        for subsets in (
+            ["!facter", "!ohai"],
+            ["all"],
+            ["!all", "distribution", "user"],
+            *(required + [extra] for extra in ("hardware", "network", "local", "facter", "ohai")),
+        ):
+            with self.subTest(subsets=subsets):
+                path = self.root / "facts.yaml"
+                path.write_text(
+                    "- hosts: all\n  gather_facts: false\n  tasks:\n"
+                    "    - name: Gather facts\n      ansible.builtin.setup:\n"
+                    "        fact_path: /dev/null\n"
+                    f"        gather_subset: {json.dumps(subsets)}\n"
+                )
+                with patch("scripts.deploy.ansible_safe_run.subprocess.run") as run:
+                    with self.assertRaisesRegex(UnsafePreview, "Fact gathering"):
+                        main([str(path), "--check"])
+                    run.assert_not_called()
+
+    def test_repository_fact_gathering_uses_only_required_collectors(self):
+        from ansible.module_utils.facts import collector, default_collectors
+
+        for name, system in (("macos", "Darwin"), ("ubuntu-linux", "Linux")):
+            with self.subTest(playbook=name):
+                playbook = Path(f"ansible/playbook-{name}.yaml")
+                play = safe_run.yaml.safe_load(playbook.read_text())[0]
+                setup = play["pre_tasks"][0]["ansible.builtin.setup"]
+                self.assertFalse(play["gather_facts"])
+                self.assertEqual(setup["fact_path"], "/dev/null")
+                classes = collector.collector_classes_from_gather_subset(
+                    all_collector_classes=default_collectors.collectors,
+                    gather_subset=setup["gather_subset"],
+                    # Local facts are in setup's minimum set: !all alone is
+                    # insufficient to exclude them; !min is also required.
+                    minimal_gather_subset={"local"},
+                    platform_info={"system": system},
+                )
+                self.assertEqual(
+                    {item.name for item in classes}, {"distribution", "user"}
+                )
 
     def test_repository_playbooks_are_audited(self):
         for name in ("macos", "ubuntu-linux"):
