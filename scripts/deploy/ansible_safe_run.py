@@ -225,9 +225,12 @@ def audit(playbook, include, exclude, variables=None):
             if action == "ansible.builtin.setup":
                 if value != {
                     "fact_path": "/dev/null",
-                    "gather_subset": ["!facter", "!ohai"],
+                    "gather_subset": ["!all", "!min", "distribution", "user"],
                 } or "when" in task:
-                    raise UnsafePreview("Fact gathering must disable executable local facts")
+                    raise UnsafePreview(
+                        "Fact gathering must collect only distribution and user facts "
+                        "without executable local facts"
+                    )
             elif action in READ_ONLY:
                 pass
             elif action == "ansible.builtin.file":

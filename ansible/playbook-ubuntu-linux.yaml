@@ -9,7 +9,7 @@
     - name: Gather host facts without local executable facts
       ansible.builtin.setup:
         fact_path: /dev/null
-        gather_subset: ['!facter', '!ohai']
+        gather_subset: ['!all', '!min', 'distribution', 'user']
       tags:
         - always
     - name: Ensure this playbook only runs on Ubuntu 24.04 or Linux Mint 22
