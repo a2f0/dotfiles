@@ -2,8 +2,8 @@
 
 Shell, Git, editor, terminal, tmux, mail, and chat configuration, installed with
 Ansible. The configuration lives in `files/`; playbooks in `ansible/` link it into
-your home directory on macOS, Ubuntu 24.04, and Linux Mint 22. The macOS and
-Linux Mint playbooks also set desktop preferences.
+your home directory on macOS, Ubuntu 24.04, and Linux Mint 22. On macOS and
+Linux Mint, the playbooks also set desktop preferences.
 
 ## Quick start
 
@@ -21,7 +21,7 @@ Preview the changes before applying them:
 ```sh
 ./runAnsible.sh --check          # preview only
 ./runAnsible.sh                  # preview, then apply
-./runAnsible.sh --tags 'files'   # link configuration files only
+./runAnsible.sh --tags 'files'   # configuration files and directories only
 ```
 
 The launcher selects the host's playbook and installs its Python dependencies in
