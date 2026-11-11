@@ -1,9 +1,10 @@
 # dotfiles
 
 Shell, Git, editor, terminal, tmux, mail, and chat configuration, installed with
-Ansible. The configuration lives in `files/`; playbooks in `ansible/` link it into
-your home directory on macOS, Ubuntu 24.04, and Linux Mint 22. On macOS and
-Linux Mint, the playbooks also set desktop preferences.
+Ansible. The configuration lives in [files/](files/); playbooks in
+[ansible/](ansible/) link it into your home directory on macOS, Ubuntu 24.04,
+and Linux Mint 22. On macOS and Linux Mint, the playbooks also set desktop
+preferences.
 
 ## Quick start
 
