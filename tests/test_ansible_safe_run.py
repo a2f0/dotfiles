@@ -5,6 +5,7 @@ import sysconfig
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
+import platform
 import signal
 import shutil
 import subprocess
@@ -1209,6 +1210,20 @@ class PreviewTests(unittest.TestCase):
             audit(Path("ansible/playbook-arch-linux-vm.yaml"), {"all"}, set())
 
     def test_launcher_previews_checkout_with_spaces_from_another_directory(self):
+        release = {}
+        if sys.platform.startswith("linux"):
+            try:
+                release = platform.freedesktop_os_release()
+            except OSError:
+                pass
+        if not (
+            sys.platform == "darwin"
+            or (release.get("ID") == "ubuntu" and release.get("VERSION_ID") == "24.04")
+            or (release.get("ID") == "linuxmint" and release.get("VERSION_ID", "").split(".")[0] == "22")
+        ):
+            self.skipTest("Real launcher preview requires macOS, Ubuntu 24.04, or Mint 22")
+        if sys.prefix == sys.base_prefix:
+            self.skipTest("Real launcher preview requires installed venv dependencies")
         repo = Path(__file__).resolve().parents[1]
         checkout = self.root / "checkout with spaces"
         checkout.mkdir()

@@ -50,11 +50,10 @@ directories are rejected. The supported playbooks disable executable local
 facts, Facter, and Ohai during preview and apply. Recursive file operations
 are rejected because their descendant changes cannot be proven by this guard.
 
-For isolated functional tests, set an absolute `dotfiles_home` and use the same
-`.venv` interpreter as the controller; unrelated Python executables on PATH
-are not accepted:
+For isolated functional tests, set an absolute `dotfiles_home`. The launcher uses
+its `.venv` interpreter for both controller and target automatically:
 
-    ./runAnsible.sh --tags files -e "dotfiles_home=/tmp/dotfiles-test-home ansible_python_interpreter=$(pwd)/.venv/bin/python3"
+    ./runAnsible.sh --tags files -e "dotfiles_home=/tmp/dotfiles-test-home"
 
 Both required CI jobs run the guarded apply against their actual runner and
 inventory, with configuration destinations under `RUNNER_TEMP`. The macOS
