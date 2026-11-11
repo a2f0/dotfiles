@@ -691,13 +691,15 @@ class PreviewTests(unittest.TestCase):
         })
 
     def test_explicit_clone_cannot_bypass_guard(self):
-        for value in ("clone_dotfiles=true", '{"clone_dotfiles": true}'):
-            with self.subTest(value=value), patch(
-                "scripts.deploy.ansible_safe_run.subprocess.run",
-            ) as run:
-                with self.assertRaisesRegex(UnsafePreview, "Conditional clone"):
-                    main(["ansible/playbook-ubuntu-linux.yaml", "--check", "-e", value])
-                run.assert_not_called()
+        for name in ("ubuntu-linux", "arch-linux"):
+            for value in ("clone_dotfiles=true", '{"clone_dotfiles": true}'):
+                for tags in ([], ["--tags", "files"]):
+                    with self.subTest(playbook=name, value=value, tags=tags), patch(
+                        "scripts.deploy.ansible_safe_run.subprocess.run",
+                    ) as run:
+                        with self.assertRaisesRegex(UnsafePreview, "Conditional clone"):
+                            main([f"ansible/playbook-{name}.yaml", "--check", "-e", value, *tags])
+                        run.assert_not_called()
 
     def test_diff_shows_target_without_exposing_ansible_values(self):
         path, preview = self.safe_directory_plan()
@@ -1221,50 +1223,162 @@ class PreviewTests(unittest.TestCase):
     def test_repository_fact_gathering_uses_only_required_collectors(self):
         from ansible.module_utils.facts import collector, default_collectors
 
-        for name, system in (("macos", "Darwin"), ("ubuntu-linux", "Linux")):
-            with self.subTest(playbook=name):
-                playbook = Path(f"ansible/playbook-{name}.yaml")
-                play = safe_run.yaml.safe_load(playbook.read_text())[0]
-                setup = play["pre_tasks"][0]["ansible.builtin.setup"]
-                self.assertFalse(play["gather_facts"])
-                self.assertEqual(setup["fact_path"], "/dev/null")
-                classes = collector.collector_classes_from_gather_subset(
-                    all_collector_classes=default_collectors.collectors,
-                    gather_subset=setup["gather_subset"],
-                    # Local facts are in setup's minimum set: !all alone is
-                    # insufficient to exclude them; !min is also required.
-                    minimal_gather_subset={"local"},
-                    platform_info={"system": system},
-                )
-                self.assertEqual(
-                    {item.name for item in classes}, {"distribution", "user"}
-                )
+        for name, system in (("macos", "Darwin"), ("ubuntu-linux", "Linux"), ("arch-linux", "Linux")):
+            for tags in ({"all"}, {"files"}):
+                with self.subTest(playbook=name, tags=tags):
+                    playbook = Path(f"ansible/playbook-{name}.yaml")
+                    play = safe_run.yaml.safe_load(playbook.read_text())[0]
+                    self.assertIs(play.get("gather_facts"), False)
+                    expected, _, _ = audit(playbook, tags, set(), {"clone_dotfiles": False})
+                    setups = [task[action] for action, task in expected.values()
+                              if action == "ansible.builtin.setup"]
+                    self.assertEqual(setups, [{
+                        "fact_path": "/dev/null",
+                        "gather_subset": ["!all", "!min", "distribution", "user"],
+                    }])
+                    classes = collector.collector_classes_from_gather_subset(
+                        all_collector_classes=default_collectors.collectors,
+                        gather_subset=setups[0]["gather_subset"],
+                        # !all alone retains local facts; !min is required.
+                        minimal_gather_subset={"local"},
+                        platform_info={"system": system},
+                    )
+                    self.assertEqual(
+                        {item.name for item in classes}, {"distribution", "user"}
+                    )
 
     def test_repository_playbooks_are_audited(self):
-        for name in ("macos", "ubuntu-linux"):
-            expected, _, _ = audit(
-                Path(f"ansible/playbook-{name}.yaml"),
-                {"all"},
-                set(),
-                {"clone_dotfiles": "false"},
-            )
-            self.assertGreater(len(expected), 5)
-        with self.assertRaises(UnsafePreview):
-            audit(Path("ansible/playbook-arch-linux-vm.yaml"), {"all"}, set())
+        for name in ("macos", "ubuntu-linux", "arch-linux"):
+            for tags in ({"all"}, {"files"}):
+                with self.subTest(playbook=name, tags=tags):
+                    expected, _, _ = audit(
+                        Path(f"ansible/playbook-{name}.yaml"),
+                        tags, set(), {"clone_dotfiles": False},
+                    )
+                    self.assertGreater(len(expected), 5)
 
-    def test_launcher_previews_checkout_with_spaces_from_another_directory(self):
-        release = {}
+    def test_arch_default_separates_files_from_legacy_system_tasks(self):
+        play = safe_run.yaml.safe_load(Path("ansible/playbook-arch-linux.yaml").read_text())[0]
+        self.assertEqual(play["connection"], "local")
+        self.assertIs(play["become"], False)
+        self.assertEqual(play["pre_tasks"][1]["when"], "ansible_facts['os_family'] not in ['Archlinux']")
+        self.assertEqual(play["pre_tasks"][1]["tags"], ["always"])
+        self.assertIn("ansible.builtin.fail", play["pre_tasks"][1])
+        files = [
+            "tasks/clone-dotfiles-into-home.yaml", "tasks/files.yaml",
+            "tasks/arch-linux/files.yaml", "tasks/mcabber.yaml", "tasks/weechat.yaml",
+        ]
+        self.assertEqual([task["ansible.builtin.import_tasks"] for task in play["tasks"]], files)
+        legacy = Path("ansible/playbook-arch-linux-system.yaml")
+        self.assertTrue(legacy.is_file(), "Keep the original mixed system playbook")
+        system = safe_run.yaml.safe_load(legacy.read_text())[0]
+        privileged = [
+            "tasks/arch-linux/reflector.yaml", "tasks/arch-linux/install-xorg-packages.yaml",
+            "tasks/arch-linux/install-console-packages.yaml", "tasks/arch-linux/users.yaml",
+        ]
+        self.assertEqual(
+            [task["ansible.builtin.import_tasks"] for task in system["tasks"]],
+            privileged[:3] + files[:3] + privileged[3:] + files[3:],
+        )
+        self.assertEqual(
+            [task["ansible.builtin.import_tasks"] for task in system["tasks"] if task.get("become")],
+            privileged,
+        )
+        vagrant = Path("Vagrantfile").read_text()
+        self.assertIn('ansible.playbook = "ansible/playbook-arch-linux-system.yaml"', vagrant)
+        self.assertNotIn('ansible.playbook = "ansible/playbook-arch-linux.yaml"', vagrant)
+
+    def test_arch_files_use_safe_home_relative_mappings(self):
+        tasks = safe_run.yaml.safe_load(Path("ansible/tasks/arch-linux/files.yaml").read_text())
+        home = "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/"
+        source = "{{ dotfiles_dir }}/files/"
+        links, directories = [], []
+        for task in tasks:
+            with self.subTest(task=task["name"]):
+                spec = task["ansible.builtin.file"]
+                destination = spec.get("dest", spec.get("path"))
+                self.assertTrue(destination.startswith(home), destination)
+                if spec["state"] == "link":
+                    self.assertIs(spec.get("force"), False)
+                    self.assertIs(spec.get("follow"), False)
+                    self.assertTrue(spec["src"].startswith(source))
+                for item in task.get("loop", [{}]):
+                    self.assertNotIn("{{", str(item))
+                    relative = destination.removeprefix(home)
+                    if isinstance(item, dict):
+                        relative = relative.replace("{{ item.dest }}", item.get("dest", ""))
+                    else:
+                        relative = relative.replace("{{ item }}", item)
+                    self.assertFalse(relative.startswith(("/", "~")))
+                    self.assertNotIn("..", Path(relative).parts)
+                    self.assertNotIn("{{", relative)
+                    if spec["state"] == "link":
+                        src = spec["src"].removeprefix(source).replace("{{ item.src }}", item.get("src", ""))
+                        self.assertTrue((Path("files") / src).exists(), src)
+                        links.append((src, relative))
+                    else:
+                        directories.append(relative.rstrip("/"))
+        self.assertCountEqual(links, [
+            ("visual-studio-code-settings.json", ".config/Code - OSS/User/settings.json"),
+            ("visual-studio-code-keybindings.json", ".config/Code - OSS/User/keybindings.json"),
+            ("visual-studio-code-settings.json", ".config/Code/User/settings.json"),
+            ("visual-studio-code-keybindings.json", ".config/Code/User/keybindings.json"),
+            ("cursor-settings.json", ".config/Cursor/User/settings.json"),
+            ("antigravity-settings.json", ".config/Antigravity/User/settings.json"),
+            ("xinitrc", ".xinitrc"), ("Xresources", ".Xresources"),
+            ("xmonad.hs", ".xmonad/xmonad.hs"), ("xmobarrc.hs", ".xmobarrc"),
+        ])
+        self.assertCountEqual(directories, [
+            ".config/Code - OSS/User", ".config/Code/User", ".config/Cursor/User",
+            ".config/Antigravity/User", ".xmonad",
+        ])
+
+    def test_arch_system_and_vm_are_blocked_before_subprocess(self):
+        for name in ("arch-linux-system", "arch-linux-vm"):
+            for tags in ([], ["--tags", "files"], ["--skip-tags", "all,always"]):
+                for mode in ([], ["--check"]):
+                    with self.subTest(playbook=name, tags=tags, mode=mode), patch(
+                        "scripts.deploy.ansible_safe_run.subprocess.run",
+                    ) as run:
+                        with self.assertRaises(UnsafePreview):
+                            main([f"ansible/playbook-{name}.yaml", *mode, *tags])
+                        run.assert_not_called()
+
+    def test_unselected_imports_cannot_hide_unsafe_modules(self):
+        path, _ = self.safe_directory_plan()
+        play = safe_run.yaml.safe_load(path.read_text())
+        play[0]["tasks"][0]["tags"] = ["files"]
+        play[0]["tasks"].append({
+            "name": "Unselected system tasks", "tags": ["system"],
+            "ansible.builtin.import_tasks": "unsafe-import.yaml",
+        })
+        path.write_text(safe_run.yaml.safe_dump(play))
+        for action, arguments in (
+            ("community.general.pacman", {"name": "example", "state": "present"}),
+            ("ansible.builtin.user", {"name": "example"}),
+            ("ansible.builtin.reboot", {}),
+            ("ansible.builtin.command", "touch /should-not-exist"),
+        ):
+            (self.root / "unsafe-import.yaml").write_text(safe_run.yaml.safe_dump([
+                {"name": "Unsafe imported task", action: arguments},
+            ]))
+            for tags in (["--tags", "files"], ["--skip-tags", "system"], ["--skip-tags", "all,always"]):
+                with self.subTest(action=action, tags=tags), patch(
+                    "scripts.deploy.ansible_safe_run.subprocess.run",
+                ) as run:
+                    with self.assertRaisesRegex(UnsafePreview, "No safe preview|Opaque commands"):
+                        main([str(path), "--check", *tags])
+                    run.assert_not_called()
+
+    def host_release(self):
         if sys.platform.startswith("linux"):
             try:
-                release = platform.freedesktop_os_release()
+                return platform.freedesktop_os_release()
             except OSError:
                 pass
-        if not (
-            sys.platform == "darwin"
-            or (release.get("ID") == "ubuntu" and release.get("VERSION_ID") == "24.04")
-            or (release.get("ID") == "linuxmint" and release.get("VERSION_ID", "").split(".")[0] == "22")
-        ):
-            self.skipTest("Real launcher preview requires macOS, Ubuntu 24.04, or Mint 22")
+        return {}
+
+    def launcher_checkout(self):
         if sys.prefix == sys.base_prefix:
             self.skipTest("Real launcher preview requires installed venv dependencies")
         repo = Path(__file__).resolve().parents[1]
@@ -1279,20 +1393,59 @@ class PreviewTests(unittest.TestCase):
         # Reuse installed dependencies without a network install in this test.
         (checkout / ".venv").symlink_to(sys.prefix, target_is_directory=True)
         (checkout / "requirements.txt").write_text("")
-        home = self.root / "new home"
-        result = subprocess.run(
+        return checkout
+
+    def launcher_preview(self, checkout, home):
+        return subprocess.run(
             [str(checkout / "runAnsible.sh"), "--check", "--diff", "--tags", "files",
              "-e", json.dumps({"dotfiles_home": str(home)})],
-            cwd=self.root,
-            capture_output=True,
-            text=True,
-            check=False,
-            timeout=90,
+            cwd=self.root, capture_output=True, text=True, check=False, timeout=90,
         )
+
+    def test_launcher_previews_checkout_with_spaces_from_another_directory(self):
+        release = self.host_release()
+        if not (
+            sys.platform == "darwin"
+            or release.get("ID") == "arch"
+            or (release.get("ID") == "ubuntu" and release.get("VERSION_ID") == "24.04")
+            or (release.get("ID") == "linuxmint" and release.get("VERSION_ID", "").split(".")[0] == "22")
+        ):
+            self.skipTest("Real launcher preview requires macOS, Arch Linux, Ubuntu 24.04, or Mint 22")
+        checkout = self.launcher_checkout()
+        home = self.root / "new home"
+        result = self.launcher_preview(checkout, home)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("Safe preview:", result.stdout)
         self.assertIn(f"Would create link: {home / '.bashrc'}", result.stdout)
+        if release.get("ID") == "arch":
+            for name in (".xinitrc", ".config/Code - OSS/User/settings.json", ".config/Cursor/User/settings.json"):
+                self.assertIn(f"Would create link: {home / name}", result.stdout)
         self.assertFalse(home.exists())
+
+    def test_arch_launcher_preserves_conflicting_files_and_symlinks(self):
+        if self.host_release().get("ID") != "arch":
+            self.skipTest("Arch launcher conflicts require actual Arch Linux")
+        checkout = self.launcher_checkout()
+        for name in (".xinitrc", ".config/Code - OSS/User/settings.json"):
+            for kind in ("file", "link"):
+                with self.subTest(destination=name, kind=kind), tempfile.TemporaryDirectory(dir=self.root) as directory:
+                    home = Path(directory)
+                    target = home / name
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    other = home / "irreplaceable-source"
+                    other.write_text("keep this configuration\n")
+                    if kind == "file":
+                        target.write_text("keep this existing file\n")
+                    else:
+                        target.symlink_to(other)
+                    before = {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}
+                    result = self.launcher_preview(checkout, home)
+                    self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+                    self.assertIn("Apply blocked:", result.stderr)
+                    self.assertNotIn("Applying the same", result.stdout)
+                    self.assertEqual(
+                        {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}, before,
+                    )
 
 
 if __name__ == "__main__":

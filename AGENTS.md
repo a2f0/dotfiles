@@ -8,7 +8,10 @@ Claude Code loads it directly when the repository has no `CLAUDE.md`; its
 
 ## Repository Overview
 
-This is a dotfiles repository that manages system configuration and package installation across multiple operating systems (primarily macOS and Arch Linux) using Ansible playbooks. The repository contains configuration files for various development tools and system utilities, along with automation scripts for provisioning environments.
+This repository installs shell, Git, editor, terminal, mail, and chat
+configuration with Ansible. The guarded launcher supports macOS, Ubuntu 24.04,
+Linux Mint 22, and files-only Arch Linux. Legacy Arch system and VM setup remains
+unsupported.
 
 ## Setup and validation
 
@@ -24,9 +27,14 @@ and platform playbooks. Install dependencies and pre-commit hooks before
 committing.
 
 Provision only through `runAnsible.sh` and the [provisioning guide](docs/provisioning.md).
-Arch and Vagrant effects lack a complete safe preview and remain blocked; do not
-bypass the guard with direct playbook or Vagrant commands. Preserve host state and
-never provision a real system merely to validate maintenance changes.
+Arch's default playbook is files-only. Its legacy system and Vagrant workflows
+remain blocked; do not bypass the guard with direct playbook or Vagrant commands.
+Use the [Arch VM guide](docs/arch-vm.md) for a disposable QEMU guest, with no shared
+host directories or personal SSH keys. Run its provisioning through the launcher
+inside the guest. Track QEMU with `agent-tool proc start` and stop it before
+finishing; remove disposable disks and keys after preserving test evidence.
+Preserve host state and never provision a real system merely to validate
+maintenance changes.
 
 ## Output capture
 

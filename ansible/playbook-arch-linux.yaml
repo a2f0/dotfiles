@@ -1,10 +1,23 @@
 ---
-- name: Configure Arch Linux
+- name: Configure Arch Linux dotfiles
   hosts: all
+  connection: local
+  become: false
+  gather_facts: false
   vars:
     dotfiles_dir: ~/dotfiles
     ansible_python_interpreter: /usr/bin/python3
   pre_tasks:
+    - name: Gather only distribution and user facts
+      ansible.builtin.setup:
+        fact_path: /dev/null
+        gather_subset:
+          - '!all'
+          - '!min'
+          - distribution
+          - user
+      tags:
+        - always
     - name: Ensure this playbook only runs on Arch Linux
       ansible.builtin.fail:
         msg: "This playbook is intended for Arch Linux systems only"
@@ -12,15 +25,6 @@
       tags:
         - always
   tasks:
-    - name: Import reflector task
-      ansible.builtin.import_tasks: tasks/arch-linux/reflector.yaml
-      become: true
-    - name: Import install xorg packages task
-      ansible.builtin.import_tasks: tasks/arch-linux/install-xorg-packages.yaml
-      become: true
-    - name: Import install console packages task
-      ansible.builtin.import_tasks: tasks/arch-linux/install-console-packages.yaml
-      become: true
     - name: Import clone dotfiles task
       ansible.builtin.import_tasks: tasks/clone-dotfiles-into-home.yaml
     - name: Import files task
@@ -31,9 +35,6 @@
       ansible.builtin.import_tasks: tasks/arch-linux/files.yaml
       tags:
         - files
-    - name: Import users task
-      ansible.builtin.import_tasks: tasks/arch-linux/users.yaml
-      become: true
     - name: Import mcabber task
       ansible.builtin.import_tasks: tasks/mcabber.yaml
       tags:

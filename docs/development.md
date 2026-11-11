@@ -66,7 +66,8 @@ normally.
   - **`inventory.yaml`** - Ansible inventory configuration for localhost
   - **`tasks/`** - Ansible task files organized by operating system and functionality
 - **`files/`** - Contains all dotfiles and configuration files that get symlinked to home directory
-- **`Vagrantfile`** - VM configuration for testing Arch Linux setup
+- **`Vagrantfile`** - Legacy Arch VM setup; provisioning remains blocked. Use the
+  [QEMU test VM guide](arch-vm.md) for guarded Arch dotfiles testing.
 - **`terraform/`** - Manages this repository's `SLACK_WEBHOOK_URL` Actions
   secret. State is in the Cloudflare R2 bucket `dotfiles-terraform-state`;
   `run.sh` reads its key and `main.tfvars` from the gitignored `.secrets` link
@@ -81,7 +82,8 @@ The system uses Ansible to create symbolic links from `files/` directory to appr
 
 - **ansible/tasks/files.yaml** - Core dotfile symlinking (shell configs, git, vim, etc.)
 - **ansible/tasks/macos/files.yaml** - macOS-specific configurations
-- **ansible/tasks/arch-linux/** - Arch Linux specific tasks including package installation and system configuration
+- **ansible/tasks/arch-linux/** - Arch file links plus legacy package and system
+  tasks; only the files-only default playbook is supported.
 
 ### Shell Scripts and Functions
 
