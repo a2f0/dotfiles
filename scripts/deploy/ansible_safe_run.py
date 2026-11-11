@@ -67,6 +67,7 @@ STABLE_CONDITIONS = {
     CLONE_CONDITION,
     MINT_CONDITION,
     "ansible_facts['os_family'] != 'Darwin'",
+    "ansible_facts['os_family'] not in ['Archlinux']",
     "not ( (ansible_facts['distribution'] == 'Ubuntu' and ansible_facts['distribution_version'] is version('24.04', '==')) or (ansible_facts['distribution'] == 'Linux Mint' and ansible_facts['distribution_major_version'] is version('22', '==')) )",
     "dotfiles_dir_stat.stat.exists",
     "not dotfiles_dir_stat.stat.isdir",

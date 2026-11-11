@@ -3,8 +3,8 @@
 Shell, Git, editor, terminal, tmux, mail, and chat configuration, installed with
 Ansible. The configuration lives in [files/](files/); playbooks in
 [ansible/](ansible/) link it into your home directory on macOS, Ubuntu 24.04,
-and Linux Mint 22. On macOS and Linux Mint, the playbooks also set desktop
-preferences.
+Linux Mint 22, and Arch Linux. On macOS and Linux Mint, the playbooks also set
+desktop preferences.
 
 ## Quick start
 
@@ -30,9 +30,9 @@ The launcher selects the host's playbook and installs its Python dependencies in
 rejects destructive or unsupported changes. Existing configuration files are
 preserved, so resolve any reported conflicts before trying again.
 
-[Arch Linux provisioning](docs/provisioning.md#arch-linux-and-vagrant) is currently
-blocked because its package, reboot, and cleanup tasks cannot be safely previewed.
-Do not run its playbooks or Vagrant provisioning directly.
+[Arch Linux setup](docs/provisioning.md#arch-linux-and-vagrant) is files-only.
+Legacy package installation, system upgrades, and Vagrant provisioning remain
+blocked; do not run those playbooks directly.
 
 ## Documentation
 

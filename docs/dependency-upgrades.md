@@ -59,7 +59,9 @@ Missing Terraform credentials or variables and unavailable Arch hosts are
 validation limits, not evidence of a safe upgrade. Do not change Terraform state
 or run Arch cleanup/reboots to validate an upgrade. The
 [provisioning guide](provisioning.md) describes the Ansible guard, CI applies,
-blocked Arch/Vagrant effects, and the Terraform state backend.
+supported Arch files-only setup, blocked legacy system/Vagrant effects, and the
+Terraform state backend. The [Arch VM guide](arch-vm.md) covers isolated guest
+testing; booting that guest does not authorize legacy upgrades or cleanup.
 
 ## Terraform
 

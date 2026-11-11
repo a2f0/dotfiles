@@ -46,7 +46,7 @@ SHELL
     ansible.compatibility_mode = "2.0"
   end
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "ansible/playbook-arch-linux.yaml"
+    ansible.playbook = "ansible/playbook-arch-linux-system.yaml"
     ansible.compatibility_mode = "2.0"
     # ansible.raw_arguments = ['-vvv']
   end

@@ -86,12 +86,23 @@ pre-commit revisions without updating them during validation.
 
 ## Arch Linux and Vagrant
 
-The guard currently blocks Arch provisioning: pacman, reflector, reboot, and
-VM cleanup effects lack a complete non-destructive preview. Do not use a direct
-playbook run or Vagrant provisioning as an upgrade-safety bypass. Arch tasks
-and package lists remain available, but the existing `Vagrantfile` also runs
-destructive keyring and cache operations directly. Review those effects and
-establish a complete preview before any future provisioning work.
+The default Arch playbook only creates configuration directories and links. It
+uses the same audited preview and non-overwrite checks as macOS and Ubuntu, and
+honors `dotfiles_home` for isolated testing. It does not install packages, change
+users, rewrite mirrors, or reboot.
+
+The old system setup is retained in `ansible/playbook-arch-linux-system.yaml`;
+`ansible/playbook-arch-linux-vm.yaml` and `Vagrantfile` also remain legacy,
+unsupported paths. The guard has no complete preview for their pacman, reflector,
+user-management, and VM cleanup effects. Vagrant additionally deletes and
+rebuilds the keyring, clears package caches, and syncs the checkout into the
+guest. Its legacy VM playbook also copies the host's SSH keys. Do not bypass
+the guard with direct playbook runs or Vagrant provisioning.
+
+For an Arch guest on macOS, use the [QEMU test VM guide](arch-vm.md). It uses
+Arch's official x86_64 cloud image and software emulation on Apple Silicon,
+without depending on old Vagrant boxes. Booting the guest is separate from
+running its guarded dotfiles setup.
 
 ## Terraform
 

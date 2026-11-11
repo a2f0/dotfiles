@@ -1,47 +1,50 @@
 ---
 - name: Make sure editor config directories exist
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/{{ item }}"
     state: directory
     owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
   loop:
-    - ~/.config/Code - OSS/User/
-    - ~/.config/Code/User/
-    - ~/.config/Cursor/User
-    - ~/.config/Antigravity/User
+    - '.config/Code - OSS/User'
+    - '.config/Code/User'
+    - '.config/Cursor/User'
+    - '.config/Antigravity/User'
 
 - name: Create editor config symlinks
   ansible.builtin.file:
     src: "{{ dotfiles_dir }}/files/{{ item.src }}"
-    dest: "{{ item.dest }}"
+    dest: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/{{ item.dest }}"
     state: link
-    force: true
+    force: false
+    follow: false
   loop:
-    - { src: 'visual-studio-code-settings.json', dest: '~/.config/Code - OSS/User/settings.json' }
-    - { src: 'visual-studio-code-keybindings.json', dest: '~/.config/Code - OSS/User/keybindings.json' }
-    - { src: 'visual-studio-code-settings.json', dest: '~/.config/Code/User/settings.json' }
-    - { src: 'visual-studio-code-keybindings.json', dest: '~/.config/Code/User/keybindings.json' }
-    - { src: 'cursor-settings.json', dest: '~/.config/Cursor/User/settings.json' }
-    - { src: 'antigravity-settings.json', dest: '~/.config/Antigravity/User/settings.json' }
+    - { src: 'visual-studio-code-settings.json', dest: '.config/Code - OSS/User/settings.json' }
+    - { src: 'visual-studio-code-keybindings.json', dest: '.config/Code - OSS/User/keybindings.json' }
+    - { src: 'visual-studio-code-settings.json', dest: '.config/Code/User/settings.json' }
+    - { src: 'visual-studio-code-keybindings.json', dest: '.config/Code/User/keybindings.json' }
+    - { src: 'cursor-settings.json', dest: '.config/Cursor/User/settings.json' }
+    - { src: 'antigravity-settings.json', dest: '.config/Antigravity/User/settings.json' }
 
 - name: Create symlink for ~/.xinitrc
   ansible.builtin.file:
     src: "{{ dotfiles_dir }}/files/xinitrc"
-    dest: ~/.xinitrc
+    dest: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.xinitrc"
     state: link
-    force: true
+    force: false
+    follow: false
 
 - name: Create symlink for ~/.Xresources
   ansible.builtin.file:
     src: "{{ dotfiles_dir }}/files/Xresources"
-    dest: ~/.Xresources
+    dest: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.Xresources"
     state: link
-    force: true
+    force: false
+    follow: false
 
 - name: Make sure ~/.xmonad exists
   ansible.builtin.file:
-    path: ~/.xmonad
+    path: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.xmonad"
     state: directory
     owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
@@ -49,13 +52,15 @@
 - name: Create symlink for ~/.xmonad/xmonad.hs
   ansible.builtin.file:
     src: "{{ dotfiles_dir }}/files/xmonad.hs"
-    dest: ~/.xmonad/xmonad.hs
+    dest: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.xmonad/xmonad.hs"
     state: link
-    force: true
+    force: false
+    follow: false
 
 - name: Create symlink for ~/.xmobarrc
   ansible.builtin.file:
     src: "{{ dotfiles_dir }}/files/xmobarrc.hs"
-    dest: ~/.xmobarrc
+    dest: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.xmobarrc"
     state: link
-    force: true
+    force: false
+    follow: false
