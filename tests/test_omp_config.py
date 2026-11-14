@@ -24,6 +24,7 @@ class OmpConfigTests(unittest.TestCase):
         for name in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE"):
             self.env.pop(name, None)
         self.command("git", "init", "--quiet")
+        self.command("git", "config", "core.excludesFile", os.devnull)
         for name in (".gitignore", ".pre-commit-config.yaml"):
             shutil.copy2(REPO / name, self.root / name)
         self.command("git", "add", "--force", ".gitignore", ".pre-commit-config.yaml")
