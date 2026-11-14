@@ -52,8 +52,8 @@ hostname (before the first dot) in OMP's status line, alongside the model,
 directory, Git branch, and PR. Other extension statuses share that inline
 segment; the duplicate footer status row is disabled.
 
-Install OMP separately and authenticate on each machine. Provision only its
-configuration with:
+Install OMP separately. On a new machine, provision its configuration before
+the first launch, then complete setup and authenticate locally:
 
     ./runAnsible.sh --tags omp
 
@@ -66,7 +66,8 @@ Before the first apply, review any existing `~/.omp/agent/config.yml` and merge
 desired non-secret preferences into `files/omp/config.yml`. Move the existing
 file to a private backup outside the checkout; the guard deliberately refuses
 to overwrite it. Reconcile an existing `extensions/hostname.ts` the same way.
-Restart OMP after installing the extension.
+Until conflicts are reconciled, use `./runAnsible.sh --skip-tags omp` to
+provision the other dotfiles. Restart OMP after installing the extension.
 
 OMP preserves the config symlink when `/settings`, `/model`, or `omp config set`
 saves global preferences, so those changes update the tracked file. Review them
