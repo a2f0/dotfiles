@@ -49,6 +49,11 @@ bun run agent:run --label markdownlint-tests -- bun run test:markdownlint
 bun run agent:run --label omp-hostname-tests -- bun run test:omp
 ```
 
+The OMP config regression runs the pinned pre-commit EOF hook in a temporary
+repository. `bun run check` warms that hook's cache in its first step. Before
+running Python tests standalone offline, run the full check once with network
+access; direct runs reuse the normal pre-commit cache (`PRE_COMMIT_HOME` if set).
+
 Use `bun run agent:run --label <name> -- <command> [args...]` for noisy finite
 commands. It preserves the command's exit status and full private logs while
 returning a compact receipt and a bounded failure excerpt. Inspect required

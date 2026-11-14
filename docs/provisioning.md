@@ -71,9 +71,10 @@ provision the other dotfiles. Restart OMP after installing the extension.
 
 OMP preserves the config symlink when `/settings`, `/model`, or `omp config set`
 saves global preferences, so intentional preference changes update the tracked
-file. The shared preferences include diagnostic consent (`dev.autoqaConsent:
-granted`). Review saved changes before committing; keep credentials in OMP's
-local credential store or local environment, never in the tracked config.
+file. Diagnostic consent is intentionally shared at the owner's request:
+`dev.autoqaConsent: granted`. Review saved changes before committing; keep
+credentials in OMP's local credential store or local environment, never in the
+tracked config.
 
 Keep OMP's native YAML format: block-style lists and no final newline. The
 end-of-file hook exempts only this file so hooks and OMP do not repeatedly
@@ -82,7 +83,8 @@ rewrite it. Other YAML and whitespace checks still apply.
 OMP creates `config.yml.lock` beside the resolved symlink target. Git ignores
 that runtime lock; it is not configuration and must not be committed or deleted
 while OMP may be using it. Ordinary saves that preserve the preferences should
-leave the checkout clean; actual settings changes remain visible in Git.
+leave the checkout clean. Actual preference changes and new first-run onboarding
+state (`setupVersion`) remain visible in Git and require review before committing.
 
 ## Ansible preview guard
 
