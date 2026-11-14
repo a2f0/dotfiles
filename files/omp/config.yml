@@ -1,10 +1,7 @@
-setupVersion: 3
 update:
   auto: true
 modelRoles:
   default: openai-codex/gpt-6-astra:xhigh
-dev:
-  autoqaConsent: granted
 codexResets:
   autoRedeemWeekly: "yes"
 statusLine:

@@ -70,8 +70,10 @@ Restart OMP after installing the extension.
 
 OMP preserves the config symlink when `/settings`, `/model`, or `omp config set`
 saves global preferences, so those changes update the tracked file. Review them
-before committing. Keep credentials in OMP's local credential store or local
-environment, never in the tracked config.
+before committing, excluding machine-specific onboarding state (`setupVersion`)
+and diagnostic consent (`dev.autoqaConsent`) that OMP may add. Complete setup
+and consent prompts separately on each machine. Keep credentials in OMP's local
+credential store or local environment, never in the tracked config.
 
 ## Ansible preview guard
 
