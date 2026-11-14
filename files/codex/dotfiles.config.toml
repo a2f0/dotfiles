@@ -1,0 +1,12 @@
+model = "gpt-6-astra"
+model_reasoning_effort = "xhigh"
+approvals_reviewer = "user"
+
+[shell_environment_policy]
+inherit = "all"
+
+[tui]
+status_line = ["model-with-reasoning", "hostname", "current-dir", "git-branch", "context-remaining"]
+status_line_use_colors = true
+
+# MCP servers and tool approval policies stay in ~/.codex/config.toml.

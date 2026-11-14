@@ -8,7 +8,6 @@
   loop:
     - 'install/bin'
     - '.bundle'
-    - '.codex'
     - '.config'
     - '.config/git'
     - '.imapfilter'
@@ -65,3 +64,8 @@
   ansible.builtin.import_tasks: omp.yaml
   tags:
     - omp
+
+- name: Import Codex configuration tasks
+  ansible.builtin.import_tasks: codex.yaml
+  tags:
+    - codex

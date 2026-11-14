@@ -86,6 +86,45 @@ while OMP may be using it. Ordinary saves that preserve the preferences should
 leave the checkout clean. Actual preference changes and new first-run onboarding
 state (`setupVersion`) remain visible in Git and require review before committing.
 
+## Codex configuration
+
+`files/codex/dotfiles.config.toml` manages the named profile
+`~/.codex/dotfiles.config.toml`, not the writable main config. Install Codex
+0.169.0 or newer separately, provision the profile, and select it explicitly:
+
+    ./runAnsible.sh --tags codex
+    codex --profile dotfiles
+
+The normal `files` tag includes this profile on macOS, Ubuntu/Linux Mint, and
+files-only Arch. Codex's native status line shows the model/reasoning, hostname,
+directory, Git branch, and remaining context; no extension is needed.
+
+The profile shares model, reasoning, approval-reviewer, and shell-environment
+preferences. Codex's
+[named profiles](https://developers.openai.com/codex/config-advanced/)
+overlay `~/.codex/config.toml`; CLI overrides and trusted project configuration
+take precedence over the profile. Plain `codex` still uses the local main config.
+There is no default-profile setting, and not all subcommands accept `--profile`,
+so the dotfiles do not alias the `codex` command.
+
+Keep project trust records and other local settings in `~/.codex/config.toml`.
+All MCP server definitions and tool approval policies stay there too, including
+machine-specific command paths; this profile does not define MCP servers.
+Authentication, sessions, history, databases, caches, and logs
+are not linked or imported. Never point `CODEX_HOME` into the checkout or put
+credentials in the profile.
+
+Codex saves `/statusline` changes to the selected profile while preserving its
+symlink. Keep the native `status_line_use_colors` setting so an unchanged save
+does not add it later. Startup and unchanged status-line saves should leave the
+profile unchanged; intentional preference changes remain visible for review.
+
+An existing `~/.codex/dotfiles.config.toml` blocks installation rather than being
+overwritten. Review and merge its desired non-secret preferences, then move it
+to a private backup outside the checkout before applying. The existing main
+config needs no migration. Use `./runAnsible.sh --skip-tags codex` to provision
+other dotfiles without installing this profile.
+
 ## Ansible preview guard
 
 `runAnsible.sh` invokes `scripts/deploy/ansible_safe_run.py` to audit the selected playbook and its static imports before
