@@ -99,17 +99,18 @@ The normal `files` tag includes this profile on macOS, Ubuntu/Linux Mint, and
 files-only Arch. Codex's native status line shows the model/reasoning, hostname,
 directory, Git branch, and remaining context; no extension is needed.
 
-The profile shares model, reasoning, approval-reviewer, shell-environment, and
-portable MCP-server preferences. Codex's
-[named profiles](https://learn.chatgpt.com/docs/config-file/config-advanced)
+The profile shares model, reasoning, approval-reviewer, and shell-environment
+preferences. Codex's
+[named profiles](https://developers.openai.com/codex/config-advanced/)
 overlay `~/.codex/config.toml`; CLI overrides and trusted project configuration
 take precedence over the profile. Plain `codex` still uses the local main config.
 There is no default-profile setting, and not all subcommands accept `--profile`,
 so the dotfiles do not alias the `codex` command.
 
-Keep project trust records, machine-specific MCP commands, and other local
-settings in `~/.codex/config.toml`. In particular, the existing Sentry command
-path stays local. Authentication, sessions, history, databases, caches, and logs
+Keep project trust records and other local settings in `~/.codex/config.toml`.
+All MCP server definitions and tool approval policies stay there too, including
+machine-specific command paths; this profile does not define MCP servers.
+Authentication, sessions, history, databases, caches, and logs
 are not linked or imported. Never point `CODEX_HOME` into the checkout or put
 credentials in the profile.
 

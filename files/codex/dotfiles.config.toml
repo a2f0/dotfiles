@@ -9,15 +9,4 @@ inherit = "all"
 status_line = ["model-with-reasoning", "hostname", "current-dir", "git-branch", "context-remaining"]
 status_line_use_colors = true
 
-[mcp_servers.serena]
-command = "uvx"
-args = ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--context", "codex", "--open-web-dashboard", "false"]
-
-[mcp_servers.stripe]
-url = "https://mcp.stripe.com"
-
-[mcp_servers.stripe.tools.stripe_api_write]
-approval_mode = "approve"
-
-[mcp_servers.revenuecat]
-url = "https://mcp.revenuecat.ai/mcp"
+# MCP servers and tool approval policies stay in ~/.codex/config.toml.
