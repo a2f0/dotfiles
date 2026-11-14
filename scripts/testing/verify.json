@@ -29,6 +29,14 @@
       ]
     },
     {
+      "label": "omp-hostname-tests",
+      "command": [
+        "bun",
+        "run",
+        "test:omp"
+      ]
+    },
+    {
       "label": "skills",
       "command": [
         "bun",

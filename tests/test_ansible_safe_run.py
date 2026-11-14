@@ -1395,9 +1395,9 @@ class PreviewTests(unittest.TestCase):
         (checkout / "requirements.txt").write_text("")
         return checkout
 
-    def launcher_preview(self, checkout, home):
+    def launcher_preview(self, checkout, home, tags="files"):
         return subprocess.run(
-            [str(checkout / "runAnsible.sh"), "--check", "--diff", "--tags", "files",
+            [str(checkout / "runAnsible.sh"), "--check", "--diff", "--tags", tags,
              "-e", json.dumps({"dotfiles_home": str(home)})],
             cwd=self.root, capture_output=True, text=True, check=False, timeout=90,
         )
@@ -1413,14 +1413,49 @@ class PreviewTests(unittest.TestCase):
             self.skipTest("Real launcher preview requires macOS, Arch Linux, Ubuntu 24.04, or Mint 22")
         checkout = self.launcher_checkout()
         home = self.root / "new home"
-        result = self.launcher_preview(checkout, home)
+        for tags in ("files", "omp"):
+            with self.subTest(tags=tags):
+                result = self.launcher_preview(checkout, home, tags=tags)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn("Safe preview:", result.stdout)
+                for name in (".omp/agent/config.yml", ".omp/agent/extensions/hostname.ts"):
+                    self.assertIn(f"Would create link: {home / name}", result.stdout)
+                if tags == "files":
+                    self.assertIn(f"Would create link: {home / '.bashrc'}", result.stdout)
+                    if release.get("ID") == "arch":
+                        for name in (".xinitrc", ".config/Code - OSS/User/settings.json", ".config/Cursor/User/settings.json"):
+                            self.assertIn(f"Would create link: {home / name}", result.stdout)
+                else:
+                    targets = [
+                        line.split(": ", 1)[1] for line in result.stdout.splitlines()
+                        if line.startswith(("Would create link:", "Would create directory:"))
+                    ]
+                    self.assertTrue(targets)
+                    for target in targets:
+                        self.assertTrue(Path(target).is_relative_to(home / ".omp"), target)
+                self.assertFalse(home.exists())
+
+        # OMP-only migration must ignore unrelated conflicting dotfiles.
+        home.mkdir()
+        bashrc = home / ".bashrc"
+        bashrc.write_text("keep this shell configuration\n")
+        result = self.launcher_preview(checkout, home, tags="omp")
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("Safe preview:", result.stdout)
-        self.assertIn(f"Would create link: {home / '.bashrc'}", result.stdout)
-        if release.get("ID") == "arch":
-            for name in (".xinitrc", ".config/Code - OSS/User/settings.json", ".config/Cursor/User/settings.json"):
-                self.assertIn(f"Would create link: {home / name}", result.stdout)
-        self.assertFalse(home.exists())
+        self.assertEqual(bashrc.read_text(), "keep this shell configuration\n")
+        self.assertFalse((home / ".omp").exists())
+
+        # Existing OMP settings and runtime data must survive a blocked migration.
+        agent = home / ".omp/agent"
+        agent.mkdir(parents=True)
+        (agent / "config.yml").write_text("theme:\n  dark: light\n")
+        (agent / "agent.db").write_bytes(b"private runtime data")
+        before = {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}
+        result = self.launcher_preview(checkout, home, tags="omp")
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("Apply blocked:", result.stderr)
+        self.assertEqual(
+            {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}, before,
+        )
 
     def test_arch_launcher_preserves_conflicting_files_and_symlinks(self):
         if self.host_release().get("ID") != "arch":
