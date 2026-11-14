@@ -46,6 +46,7 @@ bun run agents:check
 # Verify the Ansible preview safety gate
 bun run agent:run --label preview-tests -- python3 -m unittest discover -s tests
 bun run agent:run --label markdownlint-tests -- bun run test:markdownlint
+bun run agent:run --label omp-hostname-tests -- bun run test:omp
 ```
 
 Use `bun run agent:run --label <name> -- <command> [args...]` for noisy finite
@@ -125,8 +126,10 @@ agent-tool pin; provisioning algorithms and validation remain repository-owned.
 ## Shared validation
 
 After dependency setup, `bun run check` records the local pre-commit, Python,
-Markdown, managed-skill, and harness permission checks. CI also exercises the
-documented platform playbooks. `bun run lint:branch-name <name>` checks an explicit branch;
+Markdown, OMP hostname extension, managed-skill, and harness permission checks.
+The hostname tests run with Bun, matching OMP's extension runtime.
+CI also exercises the documented platform playbooks.
+`bun run lint:branch-name <name>` checks an explicit branch;
 feature branches use `<type>/<topic>`, with no length cap. Keep provisioning
 behind the repository's audited preview and apply entrypoint.
 CI uses the same validation plan and additionally owns platform setup and audited

@@ -10,6 +10,7 @@
     "agents:check": "agent-tool skills check && agent-tool permissions check",
     "agents:sync": "agent-tool skills install --apply && agent-tool permissions install --apply",
     "test:markdownlint": "node --test tests/markdownlint.test.mjs",
+    "test:omp": "bun test tests/omp-hostname.test.ts",
     "lint:branch-name": "agent-tool branch check",
     "check": "agent-tool run-group scripts/testing/verify.json"
   },
