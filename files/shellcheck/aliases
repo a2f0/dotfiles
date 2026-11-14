@@ -30,4 +30,10 @@ if [ "$(uname)" = Darwin ]; then
     alias lsusb="system_profiler SPUSBDataType"
     alias md5sum="md5"
     alias resetwireless="sudo ifconfig en0 down;sudo ifconfig en0 up"
+
+    # top is setuid root, so its ncurses ignores ~/.terminfo and $TERMINFO
+    # and reads only the system database, which lacks xterm-ghostty.
+    if [ "$TERM" = xterm-ghostty ]; then
+        alias top="TERM=xterm-256color top"
+    fi
 fi
