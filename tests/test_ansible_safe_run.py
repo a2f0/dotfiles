@@ -1413,13 +1413,19 @@ class PreviewTests(unittest.TestCase):
             self.skipTest("Real launcher preview requires macOS, Arch Linux, Ubuntu 24.04, or Mint 22")
         checkout = self.launcher_checkout()
         home = self.root / "new home"
-        for tags in ("files", "omp"):
+        for tags in ("files", "omp", "codex"):
             with self.subTest(tags=tags):
                 result = self.launcher_preview(checkout, home, tags=tags)
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
                 self.assertIn("Safe preview:", result.stdout)
-                for name in (".omp/agent/config.yml", ".omp/agent/extensions/hostname.ts"):
-                    self.assertIn(f"Would create link: {home / name}", result.stdout)
+                if tags in ("files", "omp"):
+                    for name in (".omp/agent/config.yml", ".omp/agent/extensions/hostname.ts"):
+                        self.assertIn(f"Would create link: {home / name}", result.stdout)
+                if tags in ("files", "codex"):
+                    self.assertIn(
+                        f"Would create link: {home / '.codex/dotfiles.config.toml'}",
+                        result.stdout,
+                    )
                 if tags == "files":
                     self.assertIn(f"Would create link: {home / '.bashrc'}", result.stdout)
                     if release.get("ID") == "arch":
@@ -1432,7 +1438,7 @@ class PreviewTests(unittest.TestCase):
                     ]
                     self.assertTrue(targets)
                     for target in targets:
-                        self.assertTrue(Path(target).is_relative_to(home / ".omp"), target)
+                        self.assertTrue(Path(target).is_relative_to(home / f".{tags}"), target)
                 self.assertFalse(home.exists())
 
         # OMP-only migration must ignore unrelated conflicting dotfiles.
@@ -1451,6 +1457,29 @@ class PreviewTests(unittest.TestCase):
         (agent / "agent.db").write_bytes(b"private runtime data")
         before = {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}
         result = self.launcher_preview(checkout, home, tags="omp")
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("Apply blocked:", result.stderr)
+        self.assertEqual(
+            {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}, before,
+        )
+
+        # A named Codex profile must coexist with writable local config and auth.
+        codex = home / ".codex"
+        codex.mkdir()
+        (codex / "config.toml").write_text('[projects."/local/project"]\ntrust_level = "trusted"\n')
+        (codex / "auth.json").write_bytes(b"private credential fixture")
+        before = {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}
+        result = self.launcher_preview(checkout, home, tags="codex")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn(f"Would create link: {codex / 'dotfiles.config.toml'}", result.stdout)
+        self.assertEqual(
+            {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}, before,
+        )
+
+        # Never replace an existing profile, even while the main config is local.
+        (codex / "dotfiles.config.toml").write_text('model_reasoning_effort = "low"\n')
+        before = {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}
+        result = self.launcher_preview(checkout, home, tags="codex")
         self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("Apply blocked:", result.stderr)
         self.assertEqual(
