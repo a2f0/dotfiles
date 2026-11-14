@@ -44,6 +44,35 @@ prompt; local titles are unchanged. Install the dotfiles on the remote host and
 open a new SSH shell to activate this native Zsh hook. No plugins or Oh My Zsh
 are needed.
 
+## OMP configuration
+
+`files/omp/config.yml` manages the default profile's
+`~/.omp/agent/config.yml`. `files/omp/extensions/hostname.ts` supplies the short
+hostname (before the first dot) in OMP's status line, alongside the model,
+directory, Git branch, and PR. Other extension statuses share that inline
+segment; the duplicate footer status row is disabled.
+
+Install OMP separately and authenticate on each machine. Provision only its
+configuration with:
+
+    ./runAnsible.sh --tags omp
+
+The normal `files` tag includes these tasks on macOS, Ubuntu/Linux Mint, and
+files-only Arch. Only the config file and hostname extension are linked;
+credentials, databases, sessions, logs, caches, other extensions, and named
+profiles remain local.
+
+Before the first apply, review any existing `~/.omp/agent/config.yml` and merge
+desired non-secret preferences into `files/omp/config.yml`. Move the existing
+file to a private backup outside the checkout; the guard deliberately refuses
+to overwrite it. Reconcile an existing `extensions/hostname.ts` the same way.
+Restart OMP after installing the extension.
+
+OMP preserves the config symlink when `/settings`, `/model`, or `omp config set`
+saves global preferences, so those changes update the tracked file. Review them
+before committing. Keep credentials in OMP's local credential store or local
+environment, never in the tracked config.
+
 ## Ansible preview guard
 
 `runAnsible.sh` invokes `scripts/deploy/ansible_safe_run.py` to audit the selected playbook and its static imports before

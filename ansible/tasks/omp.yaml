@@ -1,0 +1,22 @@
+---
+- name: Make sure OMP directories exist
+  ansible.builtin.file:
+    path: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/{{ item }}"
+    state: directory
+    owner: "{{ ansible_facts['user_id'] }}"
+    mode: "0700"
+  loop:
+    - '.omp'
+    - '.omp/agent'
+    - '.omp/agent/extensions'
+
+- name: Create OMP configuration symlinks
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/omp/{{ item }}"
+    dest: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.omp/agent/{{ item }}"
+    state: link
+    force: false
+    follow: false
+  loop:
+    - 'config.yml'
+    - 'extensions/hostname.ts'

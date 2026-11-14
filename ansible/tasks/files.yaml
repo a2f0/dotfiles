@@ -60,3 +60,8 @@
     - { src: 'tmux.conf', dest: '.tmux.conf' }
     - { src: 'weechat/weechat.conf', dest: '.config/weechat/weechat.conf' }
     - { src: 'weechat/irc.conf', dest: '.config/weechat/irc.conf' }
+
+- name: Import OMP configuration tasks
+  ansible.builtin.import_tasks: omp.yaml
+  tags:
+    - omp
