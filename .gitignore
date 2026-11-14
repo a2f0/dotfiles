@@ -49,6 +49,9 @@ terraform.rc
 # codex
 /files/.codex/config.toml
 
+# OMP keeps its runtime lock beside the resolved config symlink target.
+/files/omp/config.yml.lock
+
 # build artifacts
 a.out
 

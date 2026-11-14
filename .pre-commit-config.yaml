@@ -5,6 +5,8 @@ repos:
     -   id: check-yaml
         args: [--allow-multiple-documents]
     -   id: end-of-file-fixer
+        # OMP serializes this shared config without a final newline.
+        exclude: ^files/omp/config\.yml$
     -   id: trailing-whitespace
     -   id: check-merge-conflict
     -   id: forbid-new-submodules
