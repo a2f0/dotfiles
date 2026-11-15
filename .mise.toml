@@ -6,3 +6,6 @@ python = "3.14.10"
 "pipx:ansible-core" = "2.21.6"
 "pipx:ansible-lint" = "26.10.1"
 "pipx:pre-commit" = "4.7.0"
+
+[settings]
+lockfile = true

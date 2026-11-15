@@ -16,6 +16,13 @@ manifests and locks. Keep duplicated runtime pins synchronized. Check the
 controller and target Python versions against the selected Ansible release's
 support matrix and read its upstream porting guide before changing the group.
 
+[`mise.lock`](../mise.lock) and the PyPI dependency graphs under
+[`.mise/locks`](../.mise/locks) are committed. When `.mise.toml` changes,
+regenerate them with `mise lock` while uv 0.12.10 or later is on PATH, and
+confirm that `mise install --locked` succeeds. CI's mise action installs with
+`--locked`, so its `version` must read the lockfile's `lockfile_version`
+(format 4 needs mise 2026.11.1 or later); bump that pin before the lock's format.
+
 Keep Python on 3.14 while Ansible 14 uses core 2.21: the community
 package requires `ansible-core~=2.21.5`, and its
 [support matrix](https://docs.ansible.com/projects/ansible-core/devel/reference_appendices/release_and_maintenance.html#ansible-core-support-matrix)
