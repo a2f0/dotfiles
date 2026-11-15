@@ -1,7 +1,7 @@
 update:
   auto: true
 modelRoles:
-  default: openai-codex/gpt-6-astra:xhigh
+  default: anthropic/claude-opus-5-5:xhigh
 codexResets:
   autoRedeemWeekly: "yes"
 statusLine:
@@ -22,3 +22,4 @@ statusLine:
   showHookStatus: false
 dev:
   autoqaConsent: granted
+setupVersion: 3
