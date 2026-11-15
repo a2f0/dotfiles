@@ -113,7 +113,7 @@ The repository uses pre-commit hooks for quality assurance:
 The markdownlint hook uses the Bun-locked local `markdownlint-cli2` with the
 `.markdownlint.yaml` rules. Install Bun dependencies before running hooks, and
 use the Node version pinned in `.nvmrc` / `.mise.toml`. CI installs Bun and Node
-from `.mise.toml` before running the hook.
+from `.mise.toml` and `mise.lock` before running the hook.
 
 ## Maintenance scripts
 
