@@ -127,6 +127,51 @@ to a private backup outside the checkout before applying. The existing main
 config needs no migration. Use `./runAnsible.sh --skip-tags codex` to provision
 other dotfiles without installing this profile.
 
+## Claude Code configuration
+
+`files/claude/settings.json` manages the user settings file
+`~/.claude/settings.json`. Its status line runs `files/claude/statusline.py`,
+linked as `~/.claude/statusline.py`, which shows the working folder the way
+OMP's `path` segment does: a linked Git worktree shows `🌳 project`, adding
+`/directory` when the directory is not named after the branch; temporary
+directories show `🗑` and their path inside the temporary root; the
+`~/Projects/`, `~/repos/`, and `/work/` prefixes are dropped; the home directory
+becomes `~`; and paths over 40 characters keep their end. The folder is a
+`file://` link where the terminal supports links. Claude Code keeps its own
+footer badges below this row, and leaves the row blank in folders you have not
+trusted. The script needs Python 3.9 or newer as `python3`, and `git`.
+
+Install Claude Code separately, then provision its configuration:
+
+    ./runAnsible.sh --tags claude
+
+The normal `files` tag includes these tasks on macOS, Ubuntu/Linux Mint, and
+files-only Arch. Only the settings file and status-line script are linked;
+credentials, `~/.claude.json` (account, MCP servers, and folder trust),
+`settings.local.json`, sessions, history, plugins, and caches remain local.
+
+Before the first apply, review any existing `~/.claude/settings.json` and merge
+desired non-secret preferences into `files/claude/settings.json`. Move the
+existing file to a private backup outside the checkout; the guard deliberately
+refuses to overwrite it. Reconcile an existing `~/.claude/statusline.py` the
+same way. Until conflicts are reconciled, use
+`./runAnsible.sh --skip-tags claude` to provision the other dotfiles.
+
+Claude Code saves user settings from `/model`, `/effort`, `/config`,
+`/statusline`, and plugin commands through the symlink into the tracked file,
+staging each save beside it as `settings.json.tmp.*`, which Git ignores. Keep
+`~/.claude/settings.json` a direct link into the checkout: Claude Code resolves
+only one link, so a link to another link is replaced by a regular file or fails
+to save
+([anthropics/claude-code#78162](https://github.com/anthropics/claude-code/issues/78162)).
+Review saved changes before committing; keep credentials, API keys, and
+machine-specific paths out of the tracked file.
+
+Prompt acknowledgements such as `skipDangerousModePermissionPrompt` and
+`skipWorkflowUsageWarning` are not tracked. Claude Code adds them to the tracked
+file when you accept those prompts; commit them only to share that consent with
+every machine.
+
 ## Ansible preview guard
 
 `runAnsible.sh` invokes `scripts/deploy/ansible_safe_run.py` to audit the selected playbook and its static imports before
