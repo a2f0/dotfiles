@@ -49,7 +49,9 @@ are needed.
 `files/omp/config.yml` manages the default profile's
 `~/.omp/agent/config.yml`. `files/omp/extensions/hostname.ts` supplies the short
 hostname (before the first dot) in OMP's status line, alongside the model,
-directory, Git branch, and PR. Other extension statuses share that inline
+directory, Git branch, and PR. `statusLine.compactThinkingLevel: false` names
+the model's thinking level (effort) beside it, such as `◕ xhigh`, instead of
+showing only an icon. Other extension statuses share the hostname's inline
 segment; the duplicate footer status row is disabled.
 
 Install OMP separately. On a new machine, provision its configuration before

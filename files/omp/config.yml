@@ -20,6 +20,7 @@ statusLine:
     - cost
     - context_pct
   showHookStatus: false
+  compactThinkingLevel: false
 dev:
   autoqaConsent: granted
 setupVersion: 3
