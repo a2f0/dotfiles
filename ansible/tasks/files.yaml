@@ -69,3 +69,8 @@
   ansible.builtin.import_tasks: codex.yaml
   tags:
     - codex
+
+- name: Import Claude Code configuration tasks
+  ansible.builtin.import_tasks: claude.yaml
+  tags:
+    - claude

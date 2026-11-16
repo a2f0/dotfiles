@@ -53,6 +53,9 @@ terraform.rc
 # OMP keeps its runtime lock beside the resolved config symlink target.
 /files/omp/config.yml.lock
 
+# Claude Code stages settings saves beside the resolved symlink target.
+/files/claude/settings.json.tmp.*
+
 # build artifacts
 a.out
 

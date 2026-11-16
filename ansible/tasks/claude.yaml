@@ -1,0 +1,18 @@
+---
+- name: Make sure the Claude Code directory exists
+  ansible.builtin.file:
+    path: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.claude"
+    state: directory
+    owner: "{{ ansible_facts['user_id'] }}"
+    mode: "0700"
+
+- name: Create Claude Code configuration symlinks
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/claude/{{ item }}"
+    dest: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.claude/{{ item }}"
+    state: link
+    force: false
+    follow: false
+  loop:
+    - 'settings.json'
+    - 'statusline.py'
