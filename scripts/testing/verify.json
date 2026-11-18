@@ -2,6 +2,14 @@
   "label": "verify",
   "steps": [
     {
+      "label": "pre-commit",
+      "command": [
+        "pre-commit",
+        "run",
+        "--all-files"
+      ]
+    },
+    {
       "label": "import-cycles",
       "command": [
         "bun",
@@ -9,14 +17,6 @@
         "agent-tool",
         "graph",
         "check"
-      ]
-    },
-    {
-      "label": "pre-commit",
-      "command": [
-        "pre-commit",
-        "run",
-        "--all-files"
       ]
     },
     {
