@@ -130,6 +130,11 @@ agent-tool pin; provisioning algorithms and validation remain repository-owned.
 
 ## Shared validation
 
+The TypeScript code under `files/`, `scripts/`, and `tests/` must be free of
+import cycles, including type-only cycles. Only tests may import from `tests/`.
+Run `bun run agent-tool graph check`
+to check these rules on their own or `bun run check` to run them with CI's other checks.
+
 After dependency setup, `bun run check` records the local pre-commit, Python,
 Markdown, OMP hostname extension, managed-skill, and harness permission checks.
 The hostname tests run with Bun, matching OMP's extension runtime.

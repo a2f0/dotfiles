@@ -10,6 +10,16 @@
       ]
     },
     {
+      "label": "import-cycles",
+      "command": [
+        "bun",
+        "run",
+        "agent-tool",
+        "graph",
+        "check"
+      ]
+    },
+    {
       "label": "preview-guard-tests",
       "command": [
         "python3",
