@@ -2,6 +2,16 @@
   "label": "verify",
   "steps": [
     {
+      "label": "import-cycles",
+      "command": [
+        "bun",
+        "run",
+        "agent-tool",
+        "graph",
+        "check"
+      ]
+    },
+    {
       "label": "pre-commit",
       "command": [
         "pre-commit",

@@ -1,5 +1,9 @@
 {
   "schemaVersion": 1,
+  "graph": {
+    "include": ["files/**", "scripts/**", "tests/**"],
+    "tests": ["tests/**"]
+  },
   "subject": {
     "maxLength": 50
   },
