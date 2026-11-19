@@ -67,14 +67,21 @@ class OfflineimapConfigTests(unittest.TestCase):
         self.assertEqual(client.returncode, 0, error)
         self.assertEqual(output, GREETING + reply)
 
-    def test_rejects_mismatched_hostname(self):
-        client, conn = self.connect("127.0.0.1")
+    def assert_certificate_rejected(self, host, reason):
+        client, conn = self.connect(host)
         with self.assertRaises(ssl.SSLError):
             self.server.wrap_socket(conn, server_side=True)
         output, error = client.communicate(timeout=5)
         self.assertNotEqual(client.returncode, 0)
-        self.assertIn(b"hostname mismatch", error)
+        self.assertIn(reason, error)
         self.assertEqual(output, b"")
+
+    def test_rejects_mismatched_hostname(self):
+        self.assert_certificate_rejected("127.0.0.1", b"hostname mismatch")
+
+    def test_rejects_untrusted_certificate(self):
+        del self.client_env["SSL_CERT_FILE"]
+        self.assert_certificate_rejected("localhost", b"self-signed certificate")
 
     @unittest.skipUnless(shutil.which("offlineimap"), "OfflineIMAP is required for login")
     def test_offlineimap_lists_folders_after_login(self):
