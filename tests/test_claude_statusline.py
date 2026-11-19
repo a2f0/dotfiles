@@ -130,15 +130,15 @@ class WorktreeTests(unittest.TestCase):
             },
         }
         state = self.root / ".claude.json"
-        state.write_text(json.dumps(config))
         plain = self.render(self.project)
-        self.assertNotIn("7d", plain)
+        state.write_text(json.dumps(config))
+        self.assertEqual(self.render(self.project), plain)
         for unusable in ("invalid", {"seven_day": [1]}, {"spend_limit": {"used_percentage": 10}}):
             with self.subTest(rate_limits=unusable):
                 self.assertEqual(self.render(self.project, rate_limits=unusable), plain)
         transcript = self.root / "session.jsonl"
-        owner = {"type": "session-owner", "sessionId": "session", "accountUuid": "test-account"}
-        transcript.write_text(json.dumps(owner, separators=(",", ":")) + "\n")
+        owner = {"accountUuid": "test-account", "sessionId": "session", "type": "session-owner"}
+        transcript.write_text(json.dumps(owner) + '\n{"type":"session-owner",')
         session = {"five_hour": {"used_percentage": 15}}
         fallback = self.render(self.project, rate_limits=session)
         self.assertIn("7d All 30% used (2h ago) · Fable 0% used (2h ago)\n", fallback)

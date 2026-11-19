@@ -135,17 +135,13 @@ def session_account(data):
             tail = source.read(1024 * 1024)
         if offset:
             tail = tail.partition(b"\n")[2]
-        marker = b'\n{"type":"session-owner",'
-        tail = b"\n" + tail
-        start = tail.rfind(marker)
-        if start < 0:
-            return None
-        end = tail.find(b"\n", start + 1)
-        if end < 0:
-            return None
-        owner = json.loads(tail[start + 1:end])
-        if owner.get("sessionId") == session_id:
-            return owner.get("accountUuid")
+        # Only newline-terminated records have finished appending.
+        for line in reversed(tail.split(b"\n")[:-1]):
+            if b'"session-owner"' not in line:
+                continue
+            owner = json.loads(line)
+            if isinstance(owner, dict) and owner.get("type") == "session-owner" and owner.get("sessionId") == session_id:
+                return owner.get("accountUuid")
     except (OSError, TypeError, ValueError):
         pass
     return None
