@@ -84,6 +84,36 @@ class OfflineimapConfigTests(unittest.TestCase):
         del self.client_env["SSL_CERT_FILE"]
         self.assert_certificate_rejected("localhost", b"self-signed certificate")
 
+    @unittest.skipUnless(ssl.HAS_TLSv1_1, "the local TLS server cannot negotiate TLS 1.1")
+    def test_rejects_tls_1_1_even_when_the_system_allows_it(self):
+        # Only this loopback server and its test client allow the obsolete protocol.
+        self.server.minimum_version = self.server.maximum_version = ssl.TLSVersion.TLSv1_1
+        self.server.set_ciphers("DEFAULT:@SECLEVEL=0")
+        policy = self.directory / "client.cnf"
+        policy.write_text(
+            "openssl_conf=init\n[init]\nssl_conf=ssl\n[ssl]\nsystem_default=legacy\n"
+            "[legacy]\nMinProtocol=TLSv1.1\nCipherString=DEFAULT:@SECLEVEL=0\n"
+        )
+        self.client_env["OPENSSL_CONF"] = str(policy)
+        client, conn = self.connect("localhost")
+        with self.assertRaises(ssl.SSLError):
+            self.server.wrap_socket(conn, server_side=True)
+        output, error = client.communicate(timeout=5)
+        self.assertNotEqual(client.returncode, 0, error)
+        self.assertEqual(output, b"")
+
+        # Prove the fixture works when the client explicitly permits TLS 1.1.
+        raw = self.config.get("Repository gmail-remote", "transporttunnel", raw=True)
+        self.repo["transporttunnel"] = raw + " -min_protocol TLSv1.1"
+        client, conn = self.connect("localhost")
+        with self.server.wrap_socket(conn, server_side=True) as tls:
+            self.assertEqual(tls.version(), "TLSv1.1")
+            tls.sendall(GREETING)
+            tls.unwrap().close()
+        output, error = client.communicate(timeout=5)
+        self.assertEqual(client.returncode, 0, error)
+        self.assertEqual(output, GREETING)
+
     def test_offlineimap_lists_folders_after_login(self):
         executable = shutil.which("offlineimap")
         self.assertIsNotNone(executable, "Install OfflineIMAP to run the Gmail login test")
