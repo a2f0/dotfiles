@@ -11,6 +11,7 @@ and paths longer than 40 characters keep their end. The folder is a file link.
 import json
 from datetime import datetime, timezone
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -116,8 +117,44 @@ def live_usage(window, now):
     return percentage(window.get("used_percentage"))
 
 
+def session_account(data):
+    account = os.environ.get("CLAUDE_CODE_ACCOUNT_UUID")
+    if account:
+        return account
+    # Claude stamps compact session-owner records throughout its JSONL transcript.
+    # Bound redraw I/O and decode only the last complete owner record.
+    session_id = data.get("session_id")
+    transcript = data.get("transcript_path")
+    if not session_id or not transcript:
+        return None
+    try:
+        with open(transcript, "rb") as source:
+            size = source.seek(0, os.SEEK_END)
+            offset = max(0, size - 1024 * 1024)
+            source.seek(offset)
+            tail = source.read(1024 * 1024)
+        if offset:
+            tail = tail.partition(b"\n")[2]
+        marker = b'\n{"type":"session-owner",'
+        tail = b"\n" + tail
+        start = tail.rfind(marker)
+        if start < 0:
+            return None
+        end = tail.find(b"\n", start + 1)
+        if end < 0:
+            return None
+        owner = json.loads(tail[start + 1:end])
+        if owner.get("sessionId") == session_id:
+            return owner.get("accountUuid")
+    except (OSError, TypeError, ValueError):
+        pass
+    return None
+
+
 def cached_weekly_usage(path, now, session_account):
     """Read the current account's last /usage snapshot, dropping reset windows."""
+    if not session_account:
+        return {}
     try:
         with path.open(encoding="utf-8") as source:
             config = json.load(source)
@@ -125,7 +162,7 @@ def cached_weekly_usage(path, now, session_account):
         account = cache["accountUuid"]
         if not account or account != config["oauthAccount"]["accountUuid"]:
             return {}
-        if session_account and account != session_account:
+        if account != session_account:
             return {}
         age = now.timestamp() - cache["fetchedAtMs"] / 1000
         rows = cache["utilization"]["limits"]
@@ -147,7 +184,9 @@ def cached_weekly_usage(path, now, session_account):
                 label = "Fable"
             else:
                 continue
-            reset = datetime.fromisoformat(row["resets_at"].replace("Z", "+00:00"))
+            # Python 3.9 accepts only three or six fractional-second digits.
+            stamp = re.sub(r"\.(\d+)", lambda m: "." + m[1][:6].ljust(6, "0"), row["resets_at"])
+            reset = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
             used = percentage(row["percent"])
             if used and reset > now:
                 usage[label] = f"{used} used ({age_label})"
@@ -170,7 +209,7 @@ def main():
         live = live_usage(limits.get("seven_day"), now)
         if live or live_usage(limits.get("five_hour"), now):
             config_dir = Path(os.environ.get("CLAUDE_CONFIG_DIR") or Path.home())
-            account = os.environ.get("CLAUDE_CODE_ACCOUNT_UUID")
+            account = session_account(data)
             weekly = cached_weekly_usage(config_dir / ".claude.json", now, account)
             if live:
                 parts.append(f"7d All {live} used")

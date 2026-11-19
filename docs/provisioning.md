@@ -156,8 +156,8 @@ percentage used. `Account 7d` shows Fable usage from the signed-in account’s
 `/usage` snapshot in `~/.claude.json` (under `CLAUDE_CONFIG_DIR` when set).
 It also shows cached all-model usage if only the live five-hour window is
 available. Each cached figure shows its age and disappears when its window
-resets. Open `/usage` to refresh the snapshot. If the session identifies a
-different account, the status line omits the snapshot.
+resets. Open `/usage` to refresh the snapshot. Cached figures require a matching session account ID from Claude Code’s
+environment or a recent session-owner record in its transcript.
 
 Install Claude Code separately, then provision its configuration:
 

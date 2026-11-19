@@ -99,14 +99,19 @@ class WorktreeTests(unittest.TestCase):
     def render(self, cwd, **data):
         result = subprocess.run(
             [sys.executable, str(SCRIPT)],
-            input=json.dumps({"workspace": {"current_dir": str(cwd)}, **data}),
+            input=json.dumps({
+                "workspace": {"current_dir": str(cwd)},
+                "session_id": "session",
+                "transcript_path": str(self.root / "session.jsonl"),
+                **data,
+            }),
             env=self.env, check=True, capture_output=True, text=True, timeout=30,
         )
         return result.stdout
 
     def test_weekly_caps_combine_live_and_account_scoped_cache(self):
         now = datetime.now(timezone.utc)
-        window = {"resets_at": (now + timedelta(days=1)).isoformat()}
+        window = {"resets_at": (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S.1234Z")}
         scoped = {"kind": "weekly_scoped", "scope": {"model": {"display_name": "Fable"}}}
         rows = [
             dict(window, kind="weekly_all", percent=30),
@@ -131,6 +136,9 @@ class WorktreeTests(unittest.TestCase):
         for unusable in ("invalid", {"seven_day": [1]}, {"spend_limit": {"used_percentage": 10}}):
             with self.subTest(rate_limits=unusable):
                 self.assertEqual(self.render(self.project, rate_limits=unusable), plain)
+        transcript = self.root / "session.jsonl"
+        owner = {"type": "session-owner", "sessionId": "session", "accountUuid": "test-account"}
+        transcript.write_text(json.dumps(owner, separators=(",", ":")) + "\n")
         session = {"five_hour": {"used_percentage": 15}}
         fallback = self.render(self.project, rate_limits=session)
         self.assertIn("7d All 30% used (2h ago) · Fable 0% used (2h ago)\n", fallback)
@@ -142,6 +150,13 @@ class WorktreeTests(unittest.TestCase):
         rows[0]["resets_at"] = (now - timedelta(seconds=1)).isoformat()
         state.write_text(json.dumps(config))
         self.assertTrue(self.render(self.project, rate_limits=limits).endswith(both))
+        transcript.unlink()
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))
+        previous = dict(owner, accountUuid="previous-account")
+        transcript.write_text(json.dumps(previous, separators=(",", ":")) + "\n")
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))
+        with transcript.open("a") as source:
+            source.write(json.dumps(owner, separators=(",", ":")) + "\n")
         self.env["CLAUDE_CODE_ACCOUNT_UUID"] = "previous-account"
         self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))
         self.env["CLAUDE_CODE_ACCOUNT_UUID"] = "test-account"
