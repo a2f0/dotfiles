@@ -126,7 +126,11 @@ class WorktreeTests(unittest.TestCase):
         state = self.root / ".claude.json"
         state.write_text(json.dumps(config))
         self.assertIn("7d All 30% used (2h ago) · Fable 0% used (2h ago)\n", self.render(self.project))
-        limits = {"seven_day": {"used_percentage": 41.2}}
+        fallback = self.render(self.project)
+        for unusable in ("invalid", {"seven_day": [1]}, {"seven_day": {"used_percentage": 80, "resets_at": 1}}):
+            with self.subTest(rate_limits=unusable):
+                self.assertEqual(self.render(self.project, rate_limits=unusable), fallback)
+        limits = {"seven_day": {"used_percentage": 41.2, "resets_at": now.timestamp() + 3600}}
         self.assertIn("7d All 41% used · Fable 0% used (2h ago)\n", self.render(self.project, rate_limits=limits))
         config["oauthAccount"]["accountUuid"] = "switched-account"
         state.write_text(json.dumps(config))

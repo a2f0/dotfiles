@@ -106,6 +106,19 @@ def percentage(value):
     return None
 
 
+def live_weekly_usage(limits, now):
+    if not isinstance(limits, dict):
+        return None
+    week = limits.get("seven_day")
+    if not isinstance(week, dict):
+        return None
+    if "resets_at" in week:
+        reset = week["resets_at"]
+        if type(reset) not in (int, float) or not reset > now.timestamp():
+            return None
+    return percentage(week.get("used_percentage"))
+
+
 def cached_weekly_usage(path, now):
     """Read the current account's last /usage snapshot, dropping reset windows."""
     try:
@@ -152,9 +165,9 @@ def main():
         parts.append(folder(cwd, home, scratch_roots(home), worktree_label(cwd)))
 
     config_dir = Path(os.environ.get("CLAUDE_CONFIG_DIR") or Path.home())
-    weekly = cached_weekly_usage(config_dir / ".claude.json", datetime.now(timezone.utc))
-    window = (data.get("rate_limits") or {}).get("seven_day") or {}
-    live = percentage(window.get("used_percentage"))
+    now = datetime.now(timezone.utc)
+    weekly = cached_weekly_usage(config_dir / ".claude.json", now)
+    live = live_weekly_usage(data.get("rate_limits"), now)
     if live:
         weekly["All"] = f"{live} used"
     if weekly:
