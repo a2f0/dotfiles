@@ -107,7 +107,9 @@ state (`setupVersion`) remain visible in Git and require review before committin
 
 The normal `files` tag includes this profile on macOS, Ubuntu/Linux Mint, and
 files-only Arch. Codex's native status line shows the model/reasoning, hostname,
-directory, Git branch, and remaining context; no extension is needed.
+directory, Git branch, remaining context, and the percentage of the weekly cap
+left when Codex reports a limit. In Codex 0.170.0, press `s` at the final
+`/model` picker choice to use it only for the current session.
 
 The profile shares model, reasoning, approval-reviewer, and shell-environment
 preferences. Codex's
@@ -149,6 +151,14 @@ becomes `~`; and paths over 40 characters keep their end. The folder is a
 footer badges below this row, and leaves the row blank in folders you have not
 trusted. The script needs Python 3.9 or newer as `python3`, and `git`.
 
+Once the session reports subscription limits, `7d All` shows its live weekly
+percentage used. `Account 7d` shows Fable usage from the signed-in account’s
+`/usage` snapshot in `~/.claude.json` (under `CLAUDE_CONFIG_DIR` when set).
+It also shows cached all-model usage if only the live five-hour window is
+available. Each cached figure shows its age and disappears when its window
+resets. Open `/usage` to refresh the snapshot. Cached figures require a matching session account ID from Claude Code’s
+environment or a recent session-owner record in its transcript.
+
 Install Claude Code separately, then provision its configuration:
 
     ./runAnsible.sh --tags claude
@@ -165,6 +175,9 @@ refuses to overwrite it. Reconcile an existing `~/.claude/statusline.py` the
 same way. Until conflicts are reconciled, use
 `./runAnsible.sh --skip-tags claude` to provision the other dotfiles.
 
+In Claude Code’s `/model` picker, press `s` on the highlighted model to use it
+for this session. Enter saves the default for future sessions.
+
 Claude Code saves user settings from `/model`, `/effort`, `/config`,
 `/statusline`, and plugin commands through the symlink into the tracked file,
 staging each save beside it as `settings.json.tmp.*`, which Git ignores. Keep
@@ -175,10 +188,9 @@ to save
 Review saved changes before committing; keep credentials, API keys, and
 machine-specific paths out of the tracked file.
 
-Prompt acknowledgements such as `skipDangerousModePermissionPrompt` and
-`skipWorkflowUsageWarning` are not tracked. Claude Code adds them to the tracked
-file when you accept those prompts; commit them only to share that consent with
-every machine.
+The owner has opted to share the dangerous-mode prompt acknowledgement across
+these personal machines. Entering bypass mode still requires a separate choice. Review other prompt acknowledgements that Claude Code
+saves here before sharing them.
 
 ## Ansible preview guard
 

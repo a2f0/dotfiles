@@ -1,5 +1,6 @@
-"""Claude Code's status line names the folder the way OMP's path segment does."""
+"""Claude Code status line folder and weekly cap regressions."""
 
+from datetime import datetime, timedelta, timezone
 import importlib.util
 import json
 import os
@@ -70,6 +71,7 @@ class WorktreeTests(unittest.TestCase):
         self.addCleanup(directory.cleanup)
         self.root = Path(directory.name).resolve()
         self.env = os.environ | {
+            "CLAUDE_CONFIG_DIR": str(self.root),
             "GIT_CONFIG_GLOBAL": os.devnull,
             "GIT_CONFIG_NOSYSTEM": "1",
             "GIT_AUTHOR_NAME": "Test",
@@ -79,6 +81,7 @@ class WorktreeTests(unittest.TestCase):
         }
         for name in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE"):
             self.env.pop(name, None)
+        self.env.pop("CLAUDE_CODE_ACCOUNT_UUID", None)
         self.project = self.root / "project"
         self.git("init", "--quiet", "-b", "main", str(self.project))
         self.git("-C", str(self.project), "commit", "--quiet", "--allow-empty", "-m", "init")
@@ -93,13 +96,80 @@ class WorktreeTests(unittest.TestCase):
         self.git("-C", str(repository), "worktree", "add", "--quiet", "-b", branch, str(path))
         return path
 
-    def render(self, cwd):
+    def render(self, cwd, **data):
         result = subprocess.run(
             [sys.executable, str(SCRIPT)],
-            input=json.dumps({"workspace": {"current_dir": str(cwd)}}),
+            input=json.dumps({
+                "workspace": {"current_dir": str(cwd)},
+                "session_id": "session",
+                "transcript_path": str(self.root / "session.jsonl"),
+                **data,
+            }),
             env=self.env, check=True, capture_output=True, text=True, timeout=30,
         )
         return result.stdout
+
+    def test_weekly_caps_combine_live_and_account_scoped_cache(self):
+        now = datetime.now(timezone.utc)
+        window = {"resets_at": (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%S.1234Z")}
+        scoped = {"kind": "weekly_scoped", "scope": {"model": {"display_name": "Fable"}}}
+        rows = [
+            dict(window, kind="weekly_all", percent=30),
+            dict(window, **scoped, percent=0),
+            dict(window, kind="session", percent=90),
+            dict(window, kind="weekly_scoped", percent=80, scope={"model": {"display_name": "Opus"}}),
+            dict(scoped, percent=50, resets_at=(now - timedelta(minutes=1)).isoformat()),
+            dict(window, kind="weekly_scoped", percent=75, scope={"surface": {"display_name": "Code"}}),
+        ]
+        config = {
+            "oauthAccount": {"accountUuid": "test-account"},
+            "cachedUsageUtilization": {
+                "accountUuid": "test-account",
+                "fetchedAtMs": int((now - timedelta(hours=2)).timestamp() * 1000),
+                "utilization": {"limits": rows},
+            },
+        }
+        state = self.root / ".claude.json"
+        plain = self.render(self.project)
+        state.write_text(json.dumps(config))
+        self.assertEqual(self.render(self.project), plain)
+        for unusable in ("invalid", {"seven_day": [1]}, {"spend_limit": {"used_percentage": 10}}):
+            with self.subTest(rate_limits=unusable):
+                self.assertEqual(self.render(self.project, rate_limits=unusable), plain)
+        transcript = self.root / "session.jsonl"
+        owner = {"accountUuid": "test-account", "sessionId": "session", "type": "session-owner"}
+        transcript.write_text(json.dumps(owner) + '\n{"type":"session-owner",')
+        session = {"five_hour": {"used_percentage": 15}}
+        fallback = self.render(self.project, rate_limits=session)
+        self.assertIn("7d All 30% used (2h ago) · Fable 0% used (2h ago)\n", fallback)
+        expired = {"seven_day": {"used_percentage": 80, "resets_at": 1}}
+        self.assertEqual(self.render(self.project, rate_limits=session | expired), fallback)
+        limits = {"seven_day": {"used_percentage": 41.2, "resets_at": now.timestamp() + 3600}}
+        both = "7d All 41% used | Account 7d Fable 0% used (2h ago)\n"
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(both))
+        rows[0]["resets_at"] = (now - timedelta(seconds=1)).isoformat()
+        state.write_text(json.dumps(config))
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(both))
+        transcript.unlink()
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))
+        previous = dict(owner, accountUuid="previous-account")
+        transcript.write_text(json.dumps(previous, separators=(",", ":")) + "\n")
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))
+        with transcript.open("a") as source:
+            source.write(json.dumps(owner, separators=(",", ":")) + "\n")
+        self.env["CLAUDE_CODE_ACCOUNT_UUID"] = "previous-account"
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))
+        self.env["CLAUDE_CODE_ACCOUNT_UUID"] = "test-account"
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(both))
+        self.env.pop("CLAUDE_CODE_ACCOUNT_UUID")
+        config["cachedUsageUtilization"]["utilization"]["limits"] = [dict(window, kind="weekly_all", percent=30)]
+        state.write_text(json.dumps(config))
+        self.assertTrue(self.render(self.project, rate_limits=session).endswith(" | Account 7d All 30% used (2h ago)\n"))
+        config["oauthAccount"]["accountUuid"] = "switched-account"
+        state.write_text(json.dumps(config))
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))
+        state.write_text("{")
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))
 
     def test_worktrees_show_the_project_and_any_unbranched_directory(self):
         named = self.worktree(self.project, "feature", "feature")
