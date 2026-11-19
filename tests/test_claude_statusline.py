@@ -137,13 +137,19 @@ class WorktreeTests(unittest.TestCase):
         expired = {"seven_day": {"used_percentage": 80, "resets_at": 1}}
         self.assertEqual(self.render(self.project, rate_limits=session | expired), fallback)
         limits = {"seven_day": {"used_percentage": 41.2, "resets_at": now.timestamp() + 3600}}
-        # The interactive client may omit an account ID. The snapshot is then
-        # explicitly account-wide, and never mixed with a different session.
-        self.assertIn("Account 7d All 30% used (2h ago) · Fable 0% used (2h ago)", self.render(self.project, rate_limits=limits))
+        both = "7d All 41% used | Account 7d Fable 0% used (2h ago)\n"
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(both))
+        rows[0]["resets_at"] = (now - timedelta(seconds=1)).isoformat()
+        state.write_text(json.dumps(config))
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(both))
         self.env["CLAUDE_CODE_ACCOUNT_UUID"] = "previous-account"
         self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))
         self.env["CLAUDE_CODE_ACCOUNT_UUID"] = "test-account"
-        self.assertIn("7d All 41% used · Fable 0% used (2h ago)\n", self.render(self.project, rate_limits=limits))
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(both))
+        self.env.pop("CLAUDE_CODE_ACCOUNT_UUID")
+        config["cachedUsageUtilization"]["utilization"]["limits"] = [dict(window, kind="weekly_all", percent=30)]
+        state.write_text(json.dumps(config))
+        self.assertTrue(self.render(self.project, rate_limits=session).endswith(" | Account 7d All 30% used (2h ago)\n"))
         config["oauthAccount"]["accountUuid"] = "switched-account"
         state.write_text(json.dumps(config))
         self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))

@@ -172,13 +172,11 @@ def main():
             config_dir = Path(os.environ.get("CLAUDE_CONFIG_DIR") or Path.home())
             account = os.environ.get("CLAUDE_CODE_ACCOUNT_UUID")
             weekly = cached_weekly_usage(config_dir / ".claude.json", now, account)
-            # Without a session account ID, keep the signed-in account's two
-            # readings together. A running session can outlive a login switch.
-            if live and (account or "Fable" not in weekly):
-                weekly["All"] = f"{live} used"
+            if live:
+                parts.append(f"7d All {live} used")
+                weekly.pop("All", None)
             if weekly:
-                heading = "Account 7d" if not account and "Fable" in weekly else "7d"
-                parts.append(heading + " " + " · ".join(f"{label} {used}" for label, used in weekly.items()))
+                parts.append("Account 7d " + " · ".join(f"{label} {used}" for label, used in weekly.items()))
     if parts:
         print(" | ".join(parts))
 
