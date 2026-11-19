@@ -2,6 +2,7 @@
 
 from configparser import ConfigParser
 from pathlib import Path
+import shlex
 import shutil
 import socket
 import ssl
@@ -83,8 +84,9 @@ class OfflineimapConfigTests(unittest.TestCase):
         del self.client_env["SSL_CERT_FILE"]
         self.assert_certificate_rejected("localhost", b"self-signed certificate")
 
-    @unittest.skipUnless(shutil.which("offlineimap"), "OfflineIMAP is required for login")
     def test_offlineimap_lists_folders_after_login(self):
+        executable = shutil.which("offlineimap")
+        self.assertIsNotNone(executable, "Install OfflineIMAP to run the Gmail login test")
         self.repo["remotehost"] = "localhost"
         self.repo["remoteuser"] = "fixture"
         self.config["general"]["pythonfile"] = str(CONFIG.with_name("offlineimap.py"))
@@ -93,7 +95,7 @@ class OfflineimapConfigTests(unittest.TestCase):
         with ini.open("w") as stream:
             self.config.write(stream)
         client = self.enterContext(subprocess.Popen(
-            [shutil.which("offlineimap"), "-c", str(ini), "--info"],
+            [executable, "-c", str(ini), "--info"],
             env=self.client_env | {"HOME": str(self.directory), "GMAIL_APP_SPECIFIC_PASSWORD": "test"},
             stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         ))
@@ -123,6 +125,16 @@ class OfflineimapConfigTests(unittest.TestCase):
         output, error = client.communicate(timeout=10)
         self.assertEqual(client.returncode, 0, error)
         self.assertIn(b"INBOX", output + error)
+
+
+class OfflineimapTlsPolicyTests(unittest.TestCase):
+    def test_requires_at_least_tls_1_2_even_with_older_system_defaults(self):
+        config = ConfigParser()
+        config.read(CONFIG)
+        tunnel = config["Repository gmail-remote"]["transporttunnel"]
+        args = shlex.split(tunnel.replace("\\\n", ""))
+        self.assertIn("-min_protocol", args)
+        self.assertIn(args[args.index("-min_protocol") + 1], ("TLSv1.2", "TLSv1.3"))
 
 
 if __name__ == "__main__":
