@@ -106,17 +106,14 @@ def percentage(value):
     return None
 
 
-def live_weekly_usage(limits, now):
-    if not isinstance(limits, dict):
+def live_usage(window, now):
+    if not isinstance(window, dict):
         return None
-    week = limits.get("seven_day")
-    if not isinstance(week, dict):
-        return None
-    if "resets_at" in week:
-        reset = week["resets_at"]
+    if "resets_at" in window:
+        reset = window["resets_at"]
         if type(reset) not in (int, float) or not reset > now.timestamp():
             return None
-    return percentage(week.get("used_percentage"))
+    return percentage(window.get("used_percentage"))
 
 
 def cached_weekly_usage(path, now):
@@ -164,14 +161,17 @@ def main():
         home = os.path.expanduser("~")
         parts.append(folder(cwd, home, scratch_roots(home), worktree_label(cwd)))
 
-    config_dir = Path(os.environ.get("CLAUDE_CONFIG_DIR") or Path.home())
     now = datetime.now(timezone.utc)
-    weekly = cached_weekly_usage(config_dir / ".claude.json", now)
-    live = live_weekly_usage(data.get("rate_limits"), now)
-    if live:
-        weekly["All"] = f"{live} used"
-    if weekly:
-        parts.append("7d " + " · ".join(f"{label} {used}" for label, used in weekly.items()))
+    limits = data.get("rate_limits")
+    if isinstance(limits, dict):
+        live = live_usage(limits.get("seven_day"), now)
+        if live or live_usage(limits.get("five_hour"), now):
+            config_dir = Path(os.environ.get("CLAUDE_CONFIG_DIR") or Path.home())
+            weekly = cached_weekly_usage(config_dir / ".claude.json", now)
+            if live:
+                weekly["All"] = f"{live} used"
+            if weekly:
+                parts.append("7d " + " · ".join(f"{label} {used}" for label, used in weekly.items()))
     if parts:
         print(" | ".join(parts))
 

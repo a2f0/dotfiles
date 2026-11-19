@@ -152,7 +152,8 @@ footer badges below this row, and leaves the row blank in folders you have not
 trusted. The script needs Python 3.9 or newer as `python3`, and `git`.
 
 The `7d` segment shows the percentages used across all models and against
-the separate Fable cap. Claude Code supplies the all-model reading
+the separate Fable cap once the session reports subscription limits.
+Claude Code supplies the all-model reading
 in the status-line input. Model-specific readings come from the current
 account’s local `/usage` snapshot in `~/.claude.json` (under
 `CLAUDE_CONFIG_DIR` when set). Cached readings show their age and disappear
@@ -187,8 +188,8 @@ to save
 Review saved changes before committing; keep credentials, API keys, and
 machine-specific paths out of the tracked file.
 
-The shared settings acknowledge the dangerous-mode permission prompt on every
-provisioned machine. Review other prompt acknowledgements that Claude Code
+The owner has opted to share the dangerous-mode prompt acknowledgement across
+these personal machines. Entering bypass mode still requires a separate choice. Review other prompt acknowledgements that Claude Code
 saves here before sharing them.
 
 ## Ansible preview guard

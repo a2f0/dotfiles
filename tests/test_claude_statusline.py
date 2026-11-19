@@ -125,11 +125,16 @@ class WorktreeTests(unittest.TestCase):
         }
         state = self.root / ".claude.json"
         state.write_text(json.dumps(config))
-        self.assertIn("7d All 30% used (2h ago) · Fable 0% used (2h ago)\n", self.render(self.project))
-        fallback = self.render(self.project)
-        for unusable in ("invalid", {"seven_day": [1]}, {"seven_day": {"used_percentage": 80, "resets_at": 1}}):
+        plain = self.render(self.project)
+        self.assertNotIn("7d", plain)
+        for unusable in ("invalid", {"seven_day": [1]}, {"spend_limit": {"used_percentage": 10}}):
             with self.subTest(rate_limits=unusable):
-                self.assertEqual(self.render(self.project, rate_limits=unusable), fallback)
+                self.assertEqual(self.render(self.project, rate_limits=unusable), plain)
+        session = {"five_hour": {"used_percentage": 15}}
+        fallback = self.render(self.project, rate_limits=session)
+        self.assertIn("7d All 30% used (2h ago) · Fable 0% used (2h ago)\n", fallback)
+        expired = {"seven_day": {"used_percentage": 80, "resets_at": 1}}
+        self.assertEqual(self.render(self.project, rate_limits=session | expired), fallback)
         limits = {"seven_day": {"used_percentage": 41.2, "resets_at": now.timestamp() + 3600}}
         self.assertIn("7d All 41% used · Fable 0% used (2h ago)\n", self.render(self.project, rate_limits=limits))
         config["oauthAccount"]["accountUuid"] = "switched-account"
