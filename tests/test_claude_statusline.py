@@ -1,5 +1,6 @@
-"""Claude Code's status line names the folder the way OMP's path segment does."""
+"""Claude Code status line folder and weekly cap regressions."""
 
+from datetime import datetime, timedelta, timezone
 import importlib.util
 import json
 import os
@@ -70,6 +71,7 @@ class WorktreeTests(unittest.TestCase):
         self.addCleanup(directory.cleanup)
         self.root = Path(directory.name).resolve()
         self.env = os.environ | {
+            "CLAUDE_CONFIG_DIR": str(self.root),
             "GIT_CONFIG_GLOBAL": os.devnull,
             "GIT_CONFIG_NOSYSTEM": "1",
             "GIT_AUTHOR_NAME": "Test",
@@ -93,13 +95,44 @@ class WorktreeTests(unittest.TestCase):
         self.git("-C", str(repository), "worktree", "add", "--quiet", "-b", branch, str(path))
         return path
 
-    def render(self, cwd):
+    def render(self, cwd, **data):
         result = subprocess.run(
             [sys.executable, str(SCRIPT)],
-            input=json.dumps({"workspace": {"current_dir": str(cwd)}}),
+            input=json.dumps({"workspace": {"current_dir": str(cwd)}, **data}),
             env=self.env, check=True, capture_output=True, text=True, timeout=30,
         )
         return result.stdout
+
+    def test_weekly_caps_combine_live_and_account_scoped_cache(self):
+        now = datetime.now(timezone.utc)
+        window = {"resets_at": (now + timedelta(days=1)).isoformat()}
+        scoped = {"kind": "weekly_scoped", "scope": {"model": {"display_name": "Fable"}}}
+        rows = [
+            dict(window, kind="weekly_all", percent=30),
+            dict(window, **scoped, percent=0),
+            dict(window, kind="session", percent=90),
+            dict(window, kind="weekly_scoped", percent=80, scope={"model": {"display_name": "Opus"}}),
+            dict(scoped, percent=50, resets_at=(now - timedelta(minutes=1)).isoformat()),
+            dict(window, kind="weekly_scoped", percent=75, scope={"surface": {"display_name": "Code"}}),
+        ]
+        config = {
+            "oauthAccount": {"accountUuid": "test-account"},
+            "cachedUsageUtilization": {
+                "accountUuid": "test-account",
+                "fetchedAtMs": int((now - timedelta(hours=2)).timestamp() * 1000),
+                "utilization": {"limits": rows},
+            },
+        }
+        state = self.root / ".claude.json"
+        state.write_text(json.dumps(config))
+        self.assertIn("7d All 30% used (2h ago) · Fable 0% used (2h ago)\n", self.render(self.project))
+        limits = {"seven_day": {"used_percentage": 41.2}}
+        self.assertIn("7d All 41% used · Fable 0% used (2h ago)\n", self.render(self.project, rate_limits=limits))
+        config["oauthAccount"]["accountUuid"] = "switched-account"
+        state.write_text(json.dumps(config))
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))
+        state.write_text("{")
+        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))
 
     def test_worktrees_show_the_project_and_any_unbranched_directory(self):
         named = self.worktree(self.project, "feature", "feature")

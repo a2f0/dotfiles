@@ -6,7 +6,7 @@ approvals_reviewer = "user"
 inherit = "all"
 
 [tui]
-status_line = ["model-with-reasoning", "hostname", "current-dir", "git-branch", "context-remaining"]
+status_line = ["model-with-reasoning", "hostname", "current-dir", "git-branch", "context-remaining", "weekly-limit"]
 status_line_use_colors = true
 
 # MCP servers and tool approval policies stay in ~/.codex/config.toml.
