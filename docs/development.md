@@ -7,7 +7,9 @@ procedures; [AGENTS.md](../AGENTS.md) owns branch, review, and shipping policy.
 ## Setup and installation
 
 Install the pinned tools and Python dependencies, then enable the hooks.
-The linters also need `shellcheck` and `luacheck`.
+The linters also need `shellcheck` and `luacheck`. The OfflineIMAP
+Gmail tunnel and its loopback tests use OpenSSL 3 or newer. On macOS,
+install Homebrew's `openssl@3` for launchers with a minimal `PATH`.
 
 ```bash
 # Install the pinned tools, Python dependencies, and pre-commit hooks
@@ -20,7 +22,7 @@ pre-commit install
 bun install
 
 # Install system dependencies for linting
-brew install shellcheck luacheck  # macOS
+brew install shellcheck luacheck openssl@3  # macOS
 # Linux: install via luarocks since luacheck isn't in apt repositories
 sudo apt-get install shellcheck lua5.3 lua5.3-dev luarocks
 sudo luarocks install luacheck

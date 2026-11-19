@@ -34,13 +34,13 @@ class OfflineimapConfigTests(unittest.TestCase):
         config = ConfigParser()
         config.read(CONFIG)
         self.repo = config["Repository gmail-remote"]
-        self.repo["sslcacertfile"] = str(cert)
+        self.client_env = {"PATH": "/usr/bin:/bin", "SSL_CERT_FILE": str(cert)}
         self.repo["remoteport"] = str(self.listener.getsockname()[1])
 
     def connect(self, host):
         self.repo["remotehost"] = host
         client = self.enterContext(subprocess.Popen(
-            ["/bin/sh", "-c", self.repo["transporttunnel"]], env={"PATH": "/usr/bin:/bin"},
+            ["/bin/sh", "-c", self.repo["transporttunnel"]], env=self.client_env,
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
         ))
         self.addCleanup(client.kill)
@@ -51,12 +51,19 @@ class OfflineimapConfigTests(unittest.TestCase):
 
     def test_accepts_matching_hostname(self):
         client, conn = self.connect("localhost")
+        command = b"Q001 NOOP\r\n"
+        reply = b"Q001 OK complete\r\n"
         with self.server.wrap_socket(conn, server_side=True) as tls:
             tls.sendall(GREETING)
+            client.stdin.write(command)
+            client.stdin.flush()
+            with tls.makefile("rb") as stream:
+                self.assertEqual(stream.readline(), command)
+            tls.sendall(reply)
             tls.unwrap().close()
         output, error = client.communicate(timeout=5)
         self.assertEqual(client.returncode, 0, error)
-        self.assertEqual(output, GREETING)
+        self.assertEqual(output, GREETING + reply)
 
     def test_rejects_mismatched_hostname(self):
         client, conn = self.connect("127.0.0.1")
