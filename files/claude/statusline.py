@@ -116,13 +116,16 @@ def live_usage(window, now):
     return percentage(window.get("used_percentage"))
 
 
-def cached_weekly_usage(path, now):
+def cached_weekly_usage(path, now, session_account):
     """Read the current account's last /usage snapshot, dropping reset windows."""
     try:
         with path.open(encoding="utf-8") as source:
             config = json.load(source)
         cache = config["cachedUsageUtilization"]
-        if not cache["accountUuid"] or cache["accountUuid"] != config["oauthAccount"]["accountUuid"]:
+        account = cache["accountUuid"]
+        if not account or account != config["oauthAccount"]["accountUuid"]:
+            return {}
+        if session_account and account != session_account:
             return {}
         age = now.timestamp() - cache["fetchedAtMs"] / 1000
         rows = cache["utilization"]["limits"]
@@ -167,11 +170,15 @@ def main():
         live = live_usage(limits.get("seven_day"), now)
         if live or live_usage(limits.get("five_hour"), now):
             config_dir = Path(os.environ.get("CLAUDE_CONFIG_DIR") or Path.home())
-            weekly = cached_weekly_usage(config_dir / ".claude.json", now)
-            if live:
+            account = os.environ.get("CLAUDE_CODE_ACCOUNT_UUID")
+            weekly = cached_weekly_usage(config_dir / ".claude.json", now, account)
+            # Without a session account ID, keep the signed-in account's two
+            # readings together. A running session can outlive a login switch.
+            if live and (account or "Fable" not in weekly):
                 weekly["All"] = f"{live} used"
             if weekly:
-                parts.append("7d " + " · ".join(f"{label} {used}" for label, used in weekly.items()))
+                heading = "Account 7d" if not account and "Fable" in weekly else "7d"
+                parts.append(heading + " " + " · ".join(f"{label} {used}" for label, used in weekly.items()))
     if parts:
         print(" | ".join(parts))
 

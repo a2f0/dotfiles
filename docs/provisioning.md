@@ -151,13 +151,14 @@ becomes `~`; and paths over 40 characters keep their end. The folder is a
 footer badges below this row, and leaves the row blank in folders you have not
 trusted. The script needs Python 3.9 or newer as `python3`, and `git`.
 
-The `7d` segment shows the percentages used across all models and against
-the separate Fable cap once the session reports subscription limits.
-Claude Code supplies the all-model reading
-in the status-line input. Model-specific readings come from the current
-account’s local `/usage` snapshot in `~/.claude.json` (under
-`CLAUDE_CONFIG_DIR` when set). Cached readings show their age and disappear
-after the window resets. Open `/usage` to refresh them.
+Once the session reports subscription limits, the status line shows weekly
+utilization. `Account 7d` shows the all-model and Fable percentages together
+from the signed-in account’s `/usage` snapshot in `~/.claude.json` (under
+`CLAUDE_CONFIG_DIR` when set). Each cached figure shows its age and disappears
+when its window resets. Open `/usage` to refresh the snapshot. When Claude Code
+identifies the session account, a matching snapshot can supply Fable alongside
+the live all-model percentage. With no matching snapshot, the live all-model
+percentage appears on its own.
 
 Install Claude Code separately, then provision its configuration:
 
