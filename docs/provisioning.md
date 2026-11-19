@@ -37,6 +37,14 @@ setting overrides the global one, so set both:
     gh config set git_protocol ssh
     gh config set git_protocol ssh --host github.com
 
+## OfflineIMAP
+
+On macOS, install the mail client and its TLS transport with
+`brew install offlineimap openssl@3`. On Linux, the transport uses
+the system OpenSSL CLI and its CA trust store. With the Gmail app password
+in `GMAIL_APP_SPECIFIC_PASSWORD`, run `offlineimap --info` to verify login
+and list folders before the first sync.
+
 ## SSH terminal titles
 
 SSH Zsh sessions show `hostname: /full/current/path` in Ghostty's title at each

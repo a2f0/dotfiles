@@ -2,6 +2,7 @@
 
 from configparser import ConfigParser
 from pathlib import Path
+import shutil
 import socket
 import ssl
 import subprocess
@@ -31,9 +32,10 @@ class OfflineimapConfigTests(unittest.TestCase):
         self.server.load_cert_chain(cert, key)
         self.listener = self.enterContext(socket.create_server(("127.0.0.1", 0)))
         self.listener.settimeout(5)
-        config = ConfigParser()
-        config.read(CONFIG)
-        self.repo = config["Repository gmail-remote"]
+        self.config = ConfigParser()
+        self.config.read(CONFIG)
+        self.repo = self.config["Repository gmail-remote"]
+        self.directory = directory
         self.client_env = {"PATH": "/usr/bin:/bin", "SSL_CERT_FILE": str(cert)}
         self.repo["remoteport"] = str(self.listener.getsockname()[1])
 
@@ -73,6 +75,47 @@ class OfflineimapConfigTests(unittest.TestCase):
         self.assertNotEqual(client.returncode, 0)
         self.assertIn(b"hostname mismatch", error)
         self.assertEqual(output, b"")
+
+    @unittest.skipUnless(shutil.which("offlineimap"), "OfflineIMAP is required for login")
+    def test_offlineimap_lists_folders_after_login(self):
+        self.repo["remotehost"] = "localhost"
+        self.repo["remoteuser"] = "fixture"
+        self.config["general"]["pythonfile"] = str(CONFIG.with_name("offlineimap.py"))
+        (self.directory / "Mail" / "gmail").mkdir(parents=True)
+        ini = self.directory / "offlineimaprc"
+        with ini.open("w") as stream:
+            self.config.write(stream)
+        client = self.enterContext(subprocess.Popen(
+            [shutil.which("offlineimap"), "-c", str(ini), "--info"],
+            env=self.client_env | {"HOME": str(self.directory), "GMAIL_APP_SPECIFIC_PASSWORD": "test"},
+            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        ))
+        self.addCleanup(client.kill)
+        conn, _ = self.listener.accept()
+        with conn:
+            conn.settimeout(5)
+            with self.server.wrap_socket(conn, server_side=True) as tls, tls.makefile("rb") as stream:
+                tls.sendall(GREETING)
+                logged_in = False
+                for line in stream:
+                    tag, command, *args = line.split()
+                    if command == b"CAPABILITY":
+                        tls.sendall(b"* CAPABILITY IMAP4rev1\r\n")
+                    elif command == b"LOGIN":
+                        self.assertEqual([arg.strip(b'"') for arg in args], [b"fixture", b"test"])
+                        logged_in = True
+                    elif command == b"LIST":
+                        self.assertTrue(logged_in)
+                        tls.sendall(b'* LIST () "/" "INBOX"\r\n')
+                    elif command == b"LOGOUT":
+                        tls.sendall(b"* BYE closing\r\n" + tag + b" OK logout\r\n")
+                        break
+                    else:
+                        self.assertEqual(command, b"NOOP")
+                    tls.sendall(tag + b" OK complete\r\n")
+        output, error = client.communicate(timeout=10)
+        self.assertEqual(client.returncode, 0, error)
+        self.assertIn(b"INBOX", output + error)
 
 
 if __name__ == "__main__":

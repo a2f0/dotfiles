@@ -22,7 +22,7 @@ pre-commit install
 bun install
 
 # Install system dependencies for linting
-brew install shellcheck luacheck openssl@3  # macOS
+brew install shellcheck luacheck openssl@3 offlineimap  # macOS
 # Linux: install via luarocks since luacheck isn't in apt repositories
 sudo apt-get install shellcheck lua5.3 lua5.3-dev luarocks
 sudo luarocks install luacheck
