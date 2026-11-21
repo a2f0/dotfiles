@@ -1,4 +1,4 @@
-"""Claude Code status line folder and weekly cap regressions."""
+"""Claude Code status line folder, config directory, and weekly cap regressions."""
 
 from datetime import datetime, timedelta, timezone
 import importlib.util
@@ -65,13 +65,26 @@ class FolderTests(unittest.TestCase):
         )
 
 
+class ConfigDirTests(unittest.TestCase):
+    def test_only_an_override_is_shown_relative_to_home(self):
+        for value in (None, ""):
+            with self.subTest(value=value):
+                self.assertIsNone(statusline.config_label(value, HOME))
+        self.assertEqual(statusline.config_label("/u/me/.claude2", HOME), "⚙ ~/.claude2")
+        self.assertEqual(statusline.config_label("/srv/claude", HOME), "⚙ /srv/claude")
+        long = "/u/me/accounts/an-unusually-long-name/.claude"
+        self.assertEqual(statusline.config_label(long, HOME), "⚙ …accounts/an-unusually-long-name/.claude")
+
+    def test_control_characters_cannot_reach_the_terminal(self):
+        self.assertEqual(statusline.config_label("/u/me/x\x1b]0;owned\x07", HOME), "⚙ ~/x?]0;owned?")
+
+
 class WorktreeTests(unittest.TestCase):
     def setUp(self):
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)
         self.root = Path(directory.name).resolve()
         self.env = os.environ | {
-            "CLAUDE_CONFIG_DIR": str(self.root),
             "GIT_CONFIG_GLOBAL": os.devnull,
             "GIT_CONFIG_NOSYSTEM": "1",
             "GIT_AUTHOR_NAME": "Test",
@@ -82,6 +95,7 @@ class WorktreeTests(unittest.TestCase):
         for name in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE"):
             self.env.pop(name, None)
         self.env.pop("CLAUDE_CODE_ACCOUNT_UUID", None)
+        self.env.pop("CLAUDE_CONFIG_DIR", None)
         self.project = self.root / "project"
         self.git("init", "--quiet", "-b", "main", str(self.project))
         self.git("-C", str(self.project), "commit", "--quiet", "--allow-empty", "-m", "init")
@@ -130,7 +144,10 @@ class WorktreeTests(unittest.TestCase):
             },
         }
         state = self.root / ".claude.json"
+        self.env["CLAUDE_CONFIG_DIR"] = str(self.root)
         plain = self.render(self.project)
+        label = statusline.config_label(str(self.root), os.path.expanduser("~"))
+        self.assertTrue(label and plain.endswith(f" | {label}\n"))
         state.write_text(json.dumps(config))
         self.assertEqual(self.render(self.project), plain)
         for unusable in ("invalid", {"seven_day": [1]}, {"spend_limit": {"used_percentage": 10}}):
@@ -146,7 +163,7 @@ class WorktreeTests(unittest.TestCase):
         self.assertEqual(self.render(self.project, rate_limits=session | expired), fallback)
         limits = {"seven_day": {"used_percentage": 41.2, "resets_at": now.timestamp() + 3600}}
         both = "7d All 41% used | Account 7d Fable 0% used (2h ago)\n"
-        self.assertTrue(self.render(self.project, rate_limits=limits).endswith(both))
+        self.assertEqual(self.render(self.project, rate_limits=limits), plain[:-1] + " | " + both)
         rows[0]["resets_at"] = (now - timedelta(seconds=1)).isoformat()
         state.write_text(json.dumps(config))
         self.assertTrue(self.render(self.project, rate_limits=limits).endswith(both))

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Claude Code status line: the working folder and weekly cap utilization.
+"""Claude Code status line: the working folder, any `CLAUDE_CONFIG_DIR`, and
+weekly cap utilization.
 
 Claude Code pipes session JSON to stdin and shows what this prints. Mirrors
 OMP's default `path` segment: a linked Git worktree shows its project name,
@@ -18,7 +19,7 @@ import tempfile
 from pathlib import Path
 
 MAX_LENGTH = 40
-FOLDER, SCRATCH, WORKTREE = "📁", "🗑", "🌳"
+FOLDER, SCRATCH, WORKTREE, CONFIG = "📁", "🗑", "🌳", "⚙"
 
 
 def relative_within(root, path):
@@ -91,14 +92,26 @@ def display_path(cwd, home, scratch):
     return FOLDER, cwd
 
 
+def printable(text):
+    """Keep control characters, such as terminal escapes, out of the output."""
+    return "".join(char if char.isprintable() else "?" for char in text)
+
+
 def folder(cwd, home, scratch, worktree=None):
     if worktree:
         icon, text = WORKTREE, worktree
     else:
         icon, text = display_path(cwd, home, scratch)
         text = abbreviate_home(text, home)
-    text = "".join(char if char.isprintable() else "?" for char in clamp(text))
+    text = printable(clamp(text))
     return f"{icon} \x1b]8;;{Path(cwd).as_uri()}\x07{text}\x1b]8;;\x07"
+
+
+def config_label(value, home):
+    """Name a `CLAUDE_CONFIG_DIR` override; an unset or empty one shows nothing."""
+    if not value:
+        return None
+    return f"{CONFIG} {printable(clamp(abbreviate_home(value, home)))}"
 
 
 def percentage(value):
@@ -195,16 +208,20 @@ def main():
     data = json.load(sys.stdin)
     cwd = (data.get("workspace") or {}).get("current_dir") or data.get("cwd")
     parts = []
+    home = os.path.expanduser("~")
     if cwd:
-        home = os.path.expanduser("~")
         parts.append(folder(cwd, home, scratch_roots(home), worktree_label(cwd)))
+    config_home = os.environ.get("CLAUDE_CONFIG_DIR")
+    config = config_label(config_home, home)
+    if config:
+        parts.append(config)
 
     now = datetime.now(timezone.utc)
     limits = data.get("rate_limits")
     if isinstance(limits, dict):
         live = live_usage(limits.get("seven_day"), now)
         if live or live_usage(limits.get("five_hour"), now):
-            config_dir = Path(os.environ.get("CLAUDE_CONFIG_DIR") or Path.home())
+            config_dir = Path(config_home or Path.home())
             account = session_account(data)
             weekly = cached_weekly_usage(config_dir / ".claude.json", now, account)
             if live:

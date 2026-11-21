@@ -147,7 +147,10 @@ OMP's `path` segment does: a linked Git worktree shows `🌳 project`, adding
 directories show `🗑` and their path inside the temporary root; the
 `~/Projects/`, `~/repos/`, and `/work/` prefixes are dropped; the home directory
 becomes `~`; and paths over 40 characters keep their end. The folder is a
-`file://` link where the terminal supports links. Claude Code keeps its own
+`file://` link where the terminal supports links. When `CLAUDE_CONFIG_DIR` is
+set and non-empty, the next segment shows that directory, such as
+`⚙ ~/.claude2`, with the home directory as `~` and paths over 40 characters
+keeping their end; otherwise no segment appears. Claude Code keeps its own
 footer badges below this row, and leaves the row blank in folders you have not
 trusted. The script needs Python 3.9 or newer as `python3`, and `git`.
 
@@ -174,8 +177,8 @@ another account. The `claude2` shell function runs `claude` with
 `.claude.json`, sessions, history, plugins, and user skills; run `/login` in
 it once. Its `settings.json` links to the same tracked file, so preferences
 saved from either install apply to both, and its status line runs the script
-in `~/.claude`, which reads the second account’s `/usage` snapshot. Plain
-`claude` still uses `~/.claude`.
+in `~/.claude`, which shows `⚙ ~/.claude2` and reads the second account’s
+`/usage` snapshot. Plain `claude` still uses `~/.claude`.
 
 Before the first apply, review any existing `~/.claude/settings.json` and merge
 desired non-secret preferences into `files/claude/settings.json`. Move the
