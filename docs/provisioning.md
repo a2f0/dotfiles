@@ -174,11 +174,21 @@ credentials, `~/.claude.json` (account, MCP servers, and folder trust),
 The same tasks prepare `~/.claude2`, a second configuration directory for
 another account. The `claude2` shell function runs `claude` with
 `CLAUDE_CONFIG_DIR=~/.claude2`, so that install keeps its own login,
-`.claude.json`, sessions, history, plugins, and user skills; run `/login` in
-it once. Its `settings.json` links to the same tracked file, so preferences
-saved from either install apply to both, and its status line runs the script
-in `~/.claude`, which shows `⚙ ~/.claude2` and reads the second account’s
-`/usage` snapshot. Plain `claude` still uses `~/.claude`.
+`.claude.json`, sessions, history, plugins, and the skills its account syncs
+into `skills/synced`; run `/login` in it once. Its `settings.json` links to the
+same tracked file, so preferences saved from either install apply to both, and
+its status line runs the script in `~/.claude`, which shows `⚙ ~/.claude2` and
+reads the second account’s `/usage` snapshot. Plain `claude` still uses
+`~/.claude`.
+
+Shared user-wide skills reach both directories through
+`agent-tool skills link --apply`, which the matrix workspace’s `bun run sync`
+and the setup of each repository declaring such skills in its `agent-tool.json`
+run. It links them into `skills/` in `CLAUDE_CONFIG_DIR`, `~/.claude`, and each
+other `~/.claude*` directory holding `settings.json` or `.claude.json`, so
+rerun either after first provisioning `~/.claude2`. User-scope MCP servers live
+in each directory’s `.claude.json`, so register each one again for the second
+account with `claude2 mcp add --scope user <name> -- <command>`.
 
 Before the first apply, review any existing `~/.claude/settings.json` and merge
 desired non-secret preferences into `files/claude/settings.json`. Move the
