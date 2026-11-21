@@ -1,4 +1,4 @@
-"""Claude Code status line folder, config directory, and weekly cap regressions."""
+"""Claude Code status line folder, identity, and weekly cap regressions."""
 
 from datetime import datetime, timedelta, timezone
 import importlib.util
@@ -65,18 +65,45 @@ class FolderTests(unittest.TestCase):
         )
 
 
-class ConfigDirTests(unittest.TestCase):
+class IdentityTests(unittest.TestCase):
     def test_only_an_override_is_shown_relative_to_home(self):
         for value in (None, ""):
             with self.subTest(value=value):
-                self.assertIsNone(statusline.config_label(value, HOME))
-        self.assertEqual(statusline.config_label("/u/me/.claude2", HOME), "⚙ ~/.claude2")
-        self.assertEqual(statusline.config_label("/srv/claude", HOME), "⚙ /srv/claude")
+                self.assertIsNone(statusline.identity_label(value, HOME))
+                self.assertIsNone(statusline.identity_label(value, HOME, ""))
+        self.assertEqual(statusline.identity_label("/u/me/.claude2", HOME), "⚙ ~/.claude2")
+        self.assertEqual(statusline.identity_label("/srv/claude", HOME), "⚙ /srv/claude")
         long = "/u/me/accounts/an-unusually-long-name/.claude"
-        self.assertEqual(statusline.config_label(long, HOME), "⚙ …accounts/an-unusually-long-name/.claude")
+        self.assertEqual(statusline.identity_label(long, HOME), "⚙ …accounts/an-unusually-long-name/.claude")
+
+    def test_the_email_shares_the_segment(self):
+        self.assertEqual(
+            statusline.identity_label("/u/me/.claude2", HOME, "someone@example.com"),
+            "⚙ ~/.claude2 · someone@example.com",
+        )
+        self.assertEqual(statusline.identity_label(None, HOME, "someone@example.com"), "⚙ someone@example.com")
+        long = "a.very.long.mailbox.name@an-unusually-long.example.com"
+        self.assertEqual(statusline.identity_label(None, HOME, long), "⚙ …lbox.name@an-unusually-long.example.com")
 
     def test_control_characters_cannot_reach_the_terminal(self):
-        self.assertEqual(statusline.config_label("/u/me/x\x1b]0;owned\x07", HOME), "⚙ ~/x?]0;owned?")
+        self.assertEqual(statusline.identity_label("/u/me/x\x1b]0;owned\x07", HOME), "⚙ ~/x?]0;owned?")
+        self.assertEqual(statusline.identity_label(None, HOME, "a\x1b]0;owned\x07@example.com"), "⚙ a?]0;owned?@example.com")
+
+    def test_the_email_requires_the_session_account(self):
+        state = {"oauthAccount": {"accountUuid": "test-account", "emailAddress": "someone@example.com"}}
+        self.assertEqual(statusline.signed_in_email(state, "test-account"), "someone@example.com")
+        for account in (None, "", "other-account"):
+            with self.subTest(account=account):
+                self.assertIsNone(statusline.signed_in_email(state, account))
+        for unusable in (
+            None, [], "text", {}, {"oauthAccount": None},
+            {"oauthAccount": {"accountUuid": "test-account"}},
+            {"oauthAccount": {"emailAddress": "someone@example.com"}},
+            {"oauthAccount": {"accountUuid": "test-account", "emailAddress": ""}},
+            {"oauthAccount": {"accountUuid": "test-account", "emailAddress": ["someone@example.com"]}},
+        ):
+            with self.subTest(state=unusable):
+                self.assertIsNone(statusline.signed_in_email(unusable, "test-account"))
 
 
 class WorktreeTests(unittest.TestCase):
@@ -146,7 +173,7 @@ class WorktreeTests(unittest.TestCase):
         state = self.root / ".claude.json"
         self.env["CLAUDE_CONFIG_DIR"] = str(self.root)
         plain = self.render(self.project)
-        label = statusline.config_label(str(self.root), os.path.expanduser("~"))
+        label = statusline.identity_label(str(self.root), os.path.expanduser("~"))
         self.assertTrue(label and plain.endswith(f" | {label}\n"))
         state.write_text(json.dumps(config))
         self.assertEqual(self.render(self.project), plain)
@@ -187,6 +214,25 @@ class WorktreeTests(unittest.TestCase):
         self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))
         state.write_text("{")
         self.assertTrue(self.render(self.project, rate_limits=limits).endswith(" | 7d All 41% used\n"))
+
+    def test_identity_shows_the_session_accounts_email(self):
+        state = {"oauthAccount": {"accountUuid": "test-account", "emailAddress": "someone@example.com"}}
+        (self.root / ".claude.json").write_text(json.dumps(state))
+        self.env["CLAUDE_CONFIG_DIR"] = str(self.root)
+        directory = statusline.identity_label(str(self.root), os.path.expanduser("~"))
+        # Without a known session account, only the directory override shows.
+        self.assertTrue(self.render(self.project).endswith(f" | {directory}\n"))
+        owner = {"accountUuid": "test-account", "sessionId": "session", "type": "session-owner"}
+        (self.root / "session.jsonl").write_text(json.dumps(owner) + "\n")
+        self.assertTrue(self.render(self.project).endswith(f" | {directory} · someone@example.com\n"))
+        self.env["CLAUDE_CODE_ACCOUNT_UUID"] = "other-account"
+        self.assertTrue(self.render(self.project).endswith(f" | {directory}\n"))
+        self.env["CLAUDE_CODE_ACCOUNT_UUID"] = "test-account"
+        self.assertTrue(self.render(self.project).endswith(f" | {directory} · someone@example.com\n"))
+        # The default directory adds no override, so the email stands alone.
+        self.env.pop("CLAUDE_CONFIG_DIR")
+        self.env["HOME"] = str(self.root)
+        self.assertTrue(self.render(self.project).endswith(" | ⚙ someone@example.com\n"))
 
     def test_worktrees_show_the_project_and_any_unbranched_directory(self):
         named = self.worktree(self.project, "feature", "feature")
