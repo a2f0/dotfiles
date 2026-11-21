@@ -41,12 +41,14 @@ class ClaudeLauncherTests(unittest.TestCase):
 
     def test_selects_the_second_directory_for_one_command(self):
         for shell in ("sh", "bash", "zsh"):
-            if not shutil.which(shell):
+            # Resolve from the runner's PATH; the shell runs with a minimal one.
+            path = shutil.which(shell)
+            if not path:
                 continue
             with self.subTest(shell=shell):
                 self.assertEqual(
                     self.run_shell(
-                        shell,
+                        path,
                         # A `claude` function must not intercept the launcher.
                         'claude () { echo intercepted; }\n'
                         "claude2 --resume 'two words' ''\n"

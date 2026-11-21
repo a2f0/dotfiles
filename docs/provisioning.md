@@ -191,9 +191,8 @@ Claude Code saves user settings from `/model`, `/effort`, `/config`,
 `/statusline`, and plugin commands through the symlink into the tracked file,
 staging each save beside it as `settings.json.tmp.*`, which Git ignores. Keep
 `~/.claude/settings.json` and `~/.claude2/settings.json` direct links into the
-checkout: Claude Code resolves
-only one link, so a link to another link is replaced by a regular file or fails
-to save
+checkout: Claude Code resolves only one link, so a link to another link is
+replaced by a regular file or fails to save
 ([anthropics/claude-code#78162](https://github.com/anthropics/claude-code/issues/78162)).
 Review saved changes before committing; keep credentials, API keys, and
 machine-specific paths out of the tracked file.
