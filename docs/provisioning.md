@@ -187,11 +187,13 @@ the second account’s email and reads its `/usage` snapshot. Plain `claude`
 still uses `~/.claude`.
 
 `~/.claude2` needs no skill setup. Shared skills come from each repository’s
-pinned agent-tool as managed skills in its `.claude/skills` and
-`.agents/skills`, which Claude Code reads per project whichever configuration
-directory it runs with. Link nothing into a configuration directory’s
-`skills/`: a personal skill overrides the project’s managed copy of the same
-name, and the matrix workspace’s `bun run health` reports any that do.
+pinned agent-tool as managed skills in its `.claude/skills`, which Claude Code
+reads per project whichever configuration directory it runs with, and in its
+`.agents/skills` for other harnesses. Link nothing into a configuration directory’s
+`skills/`, and remove any skill links an earlier setup left in
+`~/.claude/skills` or `~/.claude2/skills`: a personal skill overrides the
+project’s managed copy of the same name, and the matrix workspace’s
+`bun run health` reports any that do.
 User-scope MCP servers live in each directory’s `.claude.json`, so register
 each one again for the second account with
 `claude2 mcp add --scope user <name> -- <command>`.
