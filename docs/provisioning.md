@@ -168,11 +168,20 @@ files-only Arch. Only the settings file and status-line script are linked;
 credentials, `~/.claude.json` (account, MCP servers, and folder trust),
 `settings.local.json`, sessions, history, plugins, and caches remain local.
 
+The same tasks prepare `~/.claude2`, a second configuration directory for
+another account. The `claude2` shell function runs `claude` with
+`CLAUDE_CONFIG_DIR=~/.claude2`, so that install keeps its own login,
+`.claude.json`, sessions, history, plugins, and user skills; run `/login` in
+it once. Its `settings.json` links to the same tracked file, so preferences
+saved from either install apply to both, and its status line runs the script
+in `~/.claude`, which reads the second account’s `/usage` snapshot. Plain
+`claude` still uses `~/.claude`.
+
 Before the first apply, review any existing `~/.claude/settings.json` and merge
 desired non-secret preferences into `files/claude/settings.json`. Move the
 existing file to a private backup outside the checkout; the guard deliberately
-refuses to overwrite it. Reconcile an existing `~/.claude/statusline.py` the
-same way. Until conflicts are reconciled, use
+refuses to overwrite it. Reconcile an existing `~/.claude/statusline.py` or
+`~/.claude2/settings.json` the same way. Until conflicts are reconciled, use
 `./runAnsible.sh --skip-tags claude` to provision the other dotfiles.
 
 In Claude Code’s `/model` picker, press `s` on the highlighted model to use it
@@ -181,7 +190,8 @@ for this session. Enter saves the default for future sessions.
 Claude Code saves user settings from `/model`, `/effort`, `/config`,
 `/statusline`, and plugin commands through the symlink into the tracked file,
 staging each save beside it as `settings.json.tmp.*`, which Git ignores. Keep
-`~/.claude/settings.json` a direct link into the checkout: Claude Code resolves
+`~/.claude/settings.json` and `~/.claude2/settings.json` direct links into the
+checkout: Claude Code resolves
 only one link, so a link to another link is replaced by a regular file or fails
 to save
 ([anthropics/claude-code#78162](https://github.com/anthropics/claude-code/issues/78162)).

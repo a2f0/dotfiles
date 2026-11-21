@@ -1,18 +1,26 @@
 ---
-- name: Make sure the Claude Code directory exists
+# `.claude2` is a second configuration directory for another account; the
+# `claude2` shell function selects it with CLAUDE_CONFIG_DIR.
+- name: Make sure the Claude Code directories exist
   ansible.builtin.file:
-    path: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.claude"
+    path: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/{{ item }}"
     state: directory
     owner: "{{ ansible_facts['user_id'] }}"
     mode: "0700"
+  loop:
+    - '.claude'
+    - '.claude2'
 
+# Both directories link the same tracked settings, whose status line runs
+# the script in `.claude`.
 - name: Create Claude Code configuration symlinks
   ansible.builtin.file:
-    src: "{{ dotfiles_dir }}/files/claude/{{ item }}"
-    dest: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.claude/{{ item }}"
+    src: "{{ dotfiles_dir }}/files/claude/{{ item.src }}"
+    dest: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/{{ item.dest }}"
     state: link
     force: false
     follow: false
   loop:
-    - 'settings.json'
-    - 'statusline.py'
+    - { src: 'settings.json', dest: '.claude/settings.json' }
+    - { src: 'statusline.py', dest: '.claude/statusline.py' }
+    - { src: 'settings.json', dest: '.claude2/settings.json' }
