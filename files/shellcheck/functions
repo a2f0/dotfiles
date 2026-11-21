@@ -46,3 +46,8 @@ killport () {
     fi
     lsof -i :"$1" | awk 'NR>1 {print $2}' | xargs kill -9
 }
+
+# run Claude Code with the second configuration directory and its own account
+claude2 () {
+    CLAUDE_CONFIG_DIR="$HOME/.claude2" command claude "$@"
+}
