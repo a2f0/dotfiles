@@ -181,12 +181,13 @@ its status line runs the script in `~/.claude`, which shows `⚙ ~/.claude2` and
 reads the second account’s `/usage` snapshot. Plain `claude` still uses
 `~/.claude`.
 
-Shared user-wide skills reach both directories without manual links. The setup
-of each repository that declares them in its `agent-tool.json`, and the matrix
-workspace’s `bun run sync`, run `agent-tool skills link --apply`, which links
-them into `skills/` in every Claude configuration directory; run one of them
-again after first provisioning `~/.claude2`. User-scope MCP servers live in
-each directory’s `.claude.json`, so register each one again for the second
+Shared user-wide skills reach both directories through
+`agent-tool skills link --apply`, which the matrix workspace’s `bun run sync`
+and the setup of each repository declaring such skills in its `agent-tool.json`
+run. It links them into `skills/` in `CLAUDE_CONFIG_DIR`, `~/.claude`, and each
+other `~/.claude*` directory holding `settings.json` or `.claude.json`, so
+rerun either after first provisioning `~/.claude2`. User-scope MCP servers live
+in each directory’s `.claude.json`, so register each one again for the second
 account with `claude2 mcp add --scope user <name> -- <command>`.
 
 Before the first apply, review any existing `~/.claude/settings.json` and merge
