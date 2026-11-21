@@ -14,15 +14,23 @@ accounts = {
     {name = "gmail", account = gmail}
 }
 
--- Helper function to process email filters
+-- Helper function to process email filters. A filter needs a sender or a
+-- subject; every criterion it gives must match. Subject and body patterns are
+-- regexes tested against values that keep their trailing CRLF, so anchor with
+-- ^ but never $.
 local function process_filter(account, from_folder, from_address, to_folder, subject_pattern, body_pattern, mark_read)
-    local messages
+    if not (from_address or subject_pattern) then
+        return
+    end
+    local messages = account[from_folder]
     if from_address then
-        messages = account[from_folder]:contain_from(from_address)
-    elseif subject_pattern and body_pattern then
-        messages = account[from_folder]:match_subject(subject_pattern):match_body(body_pattern)
-    elseif subject_pattern then
-        messages = account[from_folder]:match_subject(subject_pattern)
+        messages = messages:contain_from(from_address)
+    end
+    if subject_pattern then
+        messages = messages:match_subject(subject_pattern)
+    end
+    if body_pattern then
+        messages = messages:match_body(body_pattern)
     end
     if messages then
         if mark_read then
@@ -91,6 +99,9 @@ local common_filters = {
     {from = 'developers.facebook.com', to = "Keep/Notifications/Facebook"},
 
     -- Apple
+    -- TestFlight build notices; before the no_reply@email.apple.com rule,
+    -- whose sender is a substring of this one
+    {from = 'testflight_no_reply@email.apple.com', subject = ' for iOS is now available to test', to = '[Gmail]/Trash'},
     {from = 'no_reply@email.apple.com', to = "Keep/Notifications/Apple", clean_days = 30},
     {from = 'developer@insideapple.apple.com', to = "Keep/Notifications/Apple"},
     {from = 'apple_ads@insideapple.apple.com', to = "Keep/Notifications/Apple"},
@@ -112,6 +123,9 @@ local common_filters = {
     {from = 'learn@sentry.io', to = "Keep/Notifications/Sentry"},
     {from = 'help@sentry.io', to = "Keep/Notifications/Sentry"},
     {from = 'support@sentry.io', to = "Keep/Notifications/Sentry"},
+
+    -- npm publish notices; account and security mail stays in INBOX
+    {from = 'support@npmjs.com', subject = '^Successfully published ', to = '[Gmail]/Trash'},
 
     -- Twilio
     {from = 'twilio.com', to = "Keep/Notifications/Twilio"},
