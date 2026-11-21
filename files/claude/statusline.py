@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Claude Code status line: the working folder, any `CLAUDE_CONFIG_DIR`, and
-weekly cap utilization.
+"""Claude Code status line: the working folder, the Claude identity (any
+`CLAUDE_CONFIG_DIR` and the session's signed-in email), and weekly cap
+utilization.
 
 Claude Code pipes session JSON to stdin and shows what this prints. Mirrors
 OMP's default `path` segment: a linked Git worktree shows its project name,
@@ -107,11 +108,40 @@ def folder(cwd, home, scratch, worktree=None):
     return f"{icon} \x1b]8;;{Path(cwd).as_uri()}\x07{text}\x1b]8;;\x07"
 
 
-def config_label(value, home):
-    """Name a `CLAUDE_CONFIG_DIR` override; an unset or empty one shows nothing."""
-    if not value:
+def identity_label(config_home, home, email=None):
+    """Name a `CLAUDE_CONFIG_DIR` override and the signed-in email in one segment."""
+    names = [abbreviate_home(config_home, home)] if config_home else []
+    if email:
+        names.append(email)
+    if not names:
         return None
-    return f"{CONFIG} {printable(clamp(abbreviate_home(value, home)))}"
+    return f"{CONFIG} " + " · ".join(printable(clamp(name)) for name in names)
+
+
+def read_state(path):
+    """Parse Claude's `.claude.json`, or return None when it is unreadable."""
+    try:
+        with path.open(encoding="utf-8") as source:
+            return json.load(source)
+    except (OSError, ValueError):
+        return None
+
+
+def signed_in_email(state, session_account):
+    """Return the config's signed-in email only when that account owns this session.
+
+    `.claude.json` records the latest `/login` in its directory, which another
+    session sharing the directory may have changed.
+    """
+    if not session_account:
+        return None
+    try:
+        account = state["oauthAccount"]
+        email = account["emailAddress"]
+        owns = account["accountUuid"] == session_account
+    except (KeyError, TypeError):
+        return None
+    return email if owns and isinstance(email, str) and email else None
 
 
 def percentage(value):
@@ -160,16 +190,14 @@ def session_account(data):
     return None
 
 
-def cached_weekly_usage(path, now, session_account):
+def cached_weekly_usage(state, now, session_account):
     """Read the current account's last /usage snapshot, dropping reset windows."""
     if not session_account:
         return {}
     try:
-        with path.open(encoding="utf-8") as source:
-            config = json.load(source)
-        cache = config["cachedUsageUtilization"]
+        cache = state["cachedUsageUtilization"]
         account = cache["accountUuid"]
-        if not account or account != config["oauthAccount"]["accountUuid"]:
+        if not account or account != state["oauthAccount"]["accountUuid"]:
             return {}
         if account != session_account:
             return {}
@@ -177,7 +205,7 @@ def cached_weekly_usage(path, now, session_account):
         rows = cache["utilization"]["limits"]
         if not 0 <= age < 7 * 86400 or not isinstance(rows, list):
             return {}
-    except (OSError, ValueError, KeyError, TypeError, OverflowError):
+    except (KeyError, TypeError, OverflowError):
         return {}
 
     minutes = int(age // 60)
@@ -212,18 +240,18 @@ def main():
     if cwd:
         parts.append(folder(cwd, home, scratch_roots(home), worktree_label(cwd)))
     config_home = os.environ.get("CLAUDE_CONFIG_DIR")
-    config = config_label(config_home, home)
-    if config:
-        parts.append(config)
+    account = session_account(data)
+    state = read_state(Path(config_home or home) / ".claude.json") if account else None
+    identity = identity_label(config_home, home, signed_in_email(state, account))
+    if identity:
+        parts.append(identity)
 
     now = datetime.now(timezone.utc)
     limits = data.get("rate_limits")
     if isinstance(limits, dict):
         live = live_usage(limits.get("seven_day"), now)
         if live or live_usage(limits.get("five_hour"), now):
-            config_dir = Path(config_home or Path.home())
-            account = session_account(data)
-            weekly = cached_weekly_usage(config_dir / ".claude.json", now, account)
+            weekly = cached_weekly_usage(state, now, account)
             if live:
                 parts.append(f"7d All {live} used")
                 weekly.pop("All", None)
