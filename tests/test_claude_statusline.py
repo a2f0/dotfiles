@@ -84,7 +84,11 @@ class ModelTests(unittest.TestCase):
                 )
 
     def test_unusable_fields_are_skipped(self):
-        for data in ({}, {"model": None}, {"model": "Opus"}, {"model": {"display_name": 5}}, {"effort": {"level": ""}}):
+        for data in (
+            {}, {"model": None}, {"model": "Opus"}, {"model": {"display_name": 5}},
+            {"effort": {"level": ""}}, {"effort": {"level": "xhigh"}},
+            {"model": {"id": ""}, "effort": {"level": "xhigh"}},
+        ):
             with self.subTest(data=data):
                 self.assertIsNone(statusline.model_label(data))
         self.assertEqual(statusline.model_label({"model": {"id": "m"}, "effort": "high"}), "🤖 m")
@@ -93,6 +97,10 @@ class ModelTests(unittest.TestCase):
     def test_control_characters_cannot_reach_the_terminal(self):
         data = {"model": {"display_name": "Opus\x1b]0;owned\x07"}, "effort": {"level": "x\x1b[2J"}}
         self.assertEqual(statusline.model_label(data), "🤖 Opus?]0;owned? · x?[2J")
+
+    def test_long_parts_keep_their_end(self):
+        data = {"model": {"display_name": "An Extraordinarily Long Model Name (1M context)"}, "effort": {"level": "xhigh"}}
+        self.assertEqual(statusline.model_label(data), "🤖 …ordinarily Long Model Name (1M context) · xhigh")
 
 
 class IdentityTests(unittest.TestCase):

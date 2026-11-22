@@ -116,12 +116,15 @@ def text_field(data, section, key):
 
 
 def model_label(data):
-    """Name the session's model and, when the model supports one, its effort level."""
+    """Name the session's model and, when the model supports one, its effort level.
+
+    An effort level alone names nothing, so a missing model hides the segment.
+    """
     model = text_field(data, "model", "display_name") or text_field(data, "model", "id")
-    effort = text_field(data, "effort", "level")
-    names = [name for name in (model, effort) if name]
-    if not names:
+    if not model:
         return None
+    effort = text_field(data, "effort", "level")
+    names = [model, effort] if effort else [model]
     return f"{MODEL} " + " · ".join(printable(clamp(name)) for name in names)
 
 
