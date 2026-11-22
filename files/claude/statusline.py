@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Claude Code status line: the working folder, the Claude identity (any
-`CLAUDE_CONFIG_DIR` and the session's signed-in email), and weekly cap
-utilization.
+"""Claude Code status line: the working folder, the active model and its
+effort level, the Claude identity (any `CLAUDE_CONFIG_DIR` and the session's
+signed-in email), and weekly cap utilization.
 
 Claude Code pipes session JSON to stdin and shows what this prints. Mirrors
 OMP's default `path` segment: a linked Git worktree shows its project name,
@@ -20,7 +20,7 @@ import tempfile
 from pathlib import Path
 
 MAX_LENGTH = 40
-FOLDER, SCRATCH, WORKTREE, CONFIG = "📁", "🗑", "🌳", "⚙"
+FOLDER, SCRATCH, WORKTREE, CONFIG, MODEL = "📁", "🗑", "🌳", "⚙", "🤖"
 
 
 def relative_within(root, path):
@@ -106,6 +106,26 @@ def folder(cwd, home, scratch, worktree=None):
         text = abbreviate_home(text, home)
     text = printable(clamp(text))
     return f"{icon} \x1b]8;;{Path(cwd).as_uri()}\x07{text}\x1b]8;;\x07"
+
+
+def text_field(data, section, key):
+    """Return a non-empty string at `data[section][key]`, or None."""
+    value = data.get(section)
+    value = value.get(key) if isinstance(value, dict) else None
+    return value if isinstance(value, str) and value else None
+
+
+def model_label(data):
+    """Name the session's model and, when the model supports one, its effort level.
+
+    An effort level alone names nothing, so a missing model hides the segment.
+    """
+    model = text_field(data, "model", "display_name") or text_field(data, "model", "id")
+    if not model:
+        return None
+    effort = text_field(data, "effort", "level")
+    names = [model, effort] if effort else [model]
+    return f"{MODEL} " + " · ".join(printable(clamp(name)) for name in names)
 
 
 def identity_label(config_home, home, email=None):
@@ -239,6 +259,9 @@ def main():
     home = os.path.expanduser("~")
     if cwd:
         parts.append(folder(cwd, home, scratch_roots(home), worktree_label(cwd)))
+    model = model_label(data)
+    if model:
+        parts.append(model)
     config_home = os.environ.get("CLAUDE_CONFIG_DIR")
     account = session_account(data)
     state = read_state(Path(config_home or home) / ".claude.json") if account else None

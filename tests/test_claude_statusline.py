@@ -1,4 +1,4 @@
-"""Claude Code status line folder, identity, and weekly cap regressions."""
+"""Claude Code status line folder, model, identity, and weekly cap regressions."""
 
 from datetime import datetime, timedelta, timezone
 import importlib.util
@@ -63,6 +63,44 @@ class FolderTests(unittest.TestCase):
             output,
             segment("📁", "/u/me/x%1B%5D0%3Bowned%07", "~/x?]0;owned?"),
         )
+
+
+class ModelTests(unittest.TestCase):
+    def test_the_model_shows_its_effort_level(self):
+        model = {"id": "claude-opus-5-5", "display_name": "Opus 5.5"}
+        self.assertEqual(
+            statusline.model_label({"model": model, "effort": {"level": "xhigh"}}),
+            "🤖 Opus 5.5 · xhigh",
+        )
+        # Claude Code omits `effort` for models without the effort parameter.
+        self.assertEqual(statusline.model_label({"model": model}), "🤖 Opus 5.5")
+
+    def test_the_identifier_stands_in_for_a_missing_display_name(self):
+        for model in ({"id": "claude-opus-5-5"}, {"id": "claude-opus-5-5", "display_name": ""}):
+            with self.subTest(model=model):
+                self.assertEqual(
+                    statusline.model_label({"model": model, "effort": {"level": "high"}}),
+                    "🤖 claude-opus-5-5 · high",
+                )
+
+    def test_unusable_fields_are_skipped(self):
+        for data in (
+            {}, {"model": None}, {"model": "Opus"}, {"model": {"display_name": 5}},
+            {"effort": {"level": ""}}, {"effort": {"level": "xhigh"}},
+            {"model": {"id": ""}, "effort": {"level": "xhigh"}},
+        ):
+            with self.subTest(data=data):
+                self.assertIsNone(statusline.model_label(data))
+        self.assertEqual(statusline.model_label({"model": {"id": "m"}, "effort": "high"}), "🤖 m")
+        self.assertEqual(statusline.model_label({"model": {"id": "m"}, "effort": {"level": ["high"]}}), "🤖 m")
+
+    def test_control_characters_cannot_reach_the_terminal(self):
+        data = {"model": {"display_name": "Opus\x1b]0;owned\x07"}, "effort": {"level": "x\x1b[2J"}}
+        self.assertEqual(statusline.model_label(data), "🤖 Opus?]0;owned? · x?[2J")
+
+    def test_long_parts_keep_their_end(self):
+        data = {"model": {"display_name": "An Extraordinarily Long Model Name (1M context)"}, "effort": {"level": "xhigh"}}
+        self.assertEqual(statusline.model_label(data), "🤖 …ordinarily Long Model Name (1M context) · xhigh")
 
 
 class IdentityTests(unittest.TestCase):
@@ -233,6 +271,13 @@ class WorktreeTests(unittest.TestCase):
         self.env.pop("CLAUDE_CONFIG_DIR")
         self.env["HOME"] = str(self.root)
         self.assertTrue(self.render(self.project).endswith(" | ⚙ someone@example.com\n"))
+
+    def test_the_model_follows_the_folder(self):
+        self.env["CLAUDE_CONFIG_DIR"] = str(self.root)
+        plain = self.render(self.project)
+        folder, _, identity = plain.partition(" | ")
+        data = {"model": {"id": "claude-opus-5-5", "display_name": "Opus 5.5"}, "effort": {"level": "xhigh"}}
+        self.assertEqual(self.render(self.project, **data), f"{folder} | 🤖 Opus 5.5 · xhigh | {identity}")
 
     def test_worktrees_show_the_project_and_any_unbranched_directory(self):
         named = self.worktree(self.project, "feature", "feature")

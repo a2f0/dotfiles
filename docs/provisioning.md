@@ -148,15 +148,19 @@ directories show `🗑` and their path inside the temporary root; the
 `~/Projects/`, `~/repos/`, and `/work/` prefixes are dropped; the home directory
 becomes `~`; and paths over 40 characters keep their end. The folder is a
 `file://` link where the terminal supports links. The next segment names the
-Claude identity: a set, non-empty `CLAUDE_CONFIG_DIR` with the home directory
-as `~`, then the signed-in email from `~/.claude.json` (from `.claude.json`
-inside `CLAUDE_CONFIG_DIR` when set), such as `⚙ ~/.claude2 · you@example.com`,
-or `⚙ you@example.com` without an override. Each part over 40 characters keeps
-its end. The email appears only when its account matches the session account
-ID described below, so another session’s `/login` in the same directory cannot
-mislabel this one; a new session may show it only after its first exchange.
-Without either part, no segment appears. Claude Code keeps its own footer
-badges below this row, and leaves the row blank in folders you have not
+active model and the session's effort level, such as `🤖 Opus 5.5 · xhigh`.
+Claude Code reports the effort only for models that support it, and it does not
+reflect a level a skill, a subagent, or `ultrathink` sets for one turn. The
+following segment names the Claude identity: a set, non-empty
+`CLAUDE_CONFIG_DIR` with the home directory as `~`, then the signed-in email
+from `~/.claude.json` (from `.claude.json` inside `CLAUDE_CONFIG_DIR` when set),
+such as `⚙ ~/.claude2 · you@example.com`, or `⚙ you@example.com` without an
+override. In both segments, each part over 40 characters keeps its end. The
+email appears only when its account matches the session account ID described
+below, so another session’s `/login` in the same directory cannot mislabel this
+one; a new session may show it only after its first exchange. With neither the
+directory nor the email, no identity segment appears. Claude Code keeps its own
+footer badges below this row, and leaves the row blank in folders you have not
 trusted. The script needs Python 3.9 or newer as `python3`, and `git`.
 
 Once the session reports subscription limits, `7d All` shows its live weekly
