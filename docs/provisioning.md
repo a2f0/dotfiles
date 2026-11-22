@@ -148,7 +148,11 @@ directories show `🗑` and their path inside the temporary root; the
 `~/Projects/`, `~/repos/`, and `/work/` prefixes are dropped; the home directory
 becomes `~`; and paths over 40 characters keep their end. The folder is a
 `file://` link where the terminal supports links. The next segment names the
-Claude identity: a set, non-empty `CLAUDE_CONFIG_DIR` with the home directory
+active model and the session's effort level, such as `🤖 Opus 5.5 · xhigh`.
+Claude Code reports the effort only for models that support it, and it does not
+reflect a level a skill, a subagent, or `ultrathink` sets for one turn. The
+following segment names the Claude identity: a set, non-empty
+`CLAUDE_CONFIG_DIR` with the home directory
 as `~`, then the signed-in email from `~/.claude.json` (from `.claude.json`
 inside `CLAUDE_CONFIG_DIR` when set), such as `⚙ ~/.claude2 · you@example.com`,
 or `⚙ you@example.com` without an override. Each part over 40 characters keeps
