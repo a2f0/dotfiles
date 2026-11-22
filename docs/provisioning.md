@@ -158,8 +158,8 @@ such as `⚙ ~/.claude2 · you@example.com`, or `⚙ you@example.com` without an
 override. In both segments, each part over 40 characters keeps its end. The
 email appears only when its account matches the session account ID described
 below, so another session’s `/login` in the same directory cannot mislabel this
-one; a new session may show it only after its first exchange. Without the
-directory or the email, no identity segment appears. Claude Code keeps its own
+one; a new session may show it only after its first exchange. With neither the
+directory nor the email, no identity segment appears. Claude Code keeps its own
 footer badges below this row, and leaves the row blank in folders you have not
 trusted. The script needs Python 3.9 or newer as `python3`, and `git`.
 
