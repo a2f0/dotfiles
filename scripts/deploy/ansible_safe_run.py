@@ -660,6 +660,41 @@ def preview_restarts(names):
         print(f"Read-only restart preview: {name} (no signals sent)")
 
 
+def printable(value, limit=300):
+    text = "".join(c if c.isprintable() else "?" for c in str(value))
+    return text if len(text) <= limit else text[: limit - 1] + "…"
+
+
+def preview_failures(stdout):
+    """Name each failed preview task, item path, and message, since the JSON
+    callback otherwise hides why Ansible failed."""
+    try:
+        plays = json.loads(stdout)["plays"]
+        failures = []
+        for play in plays:
+            for entry in play.get("tasks", []):
+                name = entry.get("task", {}).get("name", "unnamed task")
+                for result in entry.get("hosts", {}).values():
+                    if not result.get("failed"):
+                        continue
+                    # Loop items report failure with an exception, not a flag.
+                    items = [
+                        item for item in result.get("results", [])
+                        if item.get("failed") or "exception" in item
+                    ] or [result]
+                    for item in items:
+                        path = item.get("path") or item.get("dest")
+                        where = f" ({path})" if path else ""
+                        failures.append(
+                            printable(
+                                f"Preview failed: {name}{where}: {item.get('msg', 'no message')}"
+                            )
+                        )
+        return failures
+    except (AttributeError, KeyError, TypeError, ValueError):
+        return []
+
+
 def describe_changes(plan, expected, handlers):
     """Show reviewed targets without exposing Ansible diff values or file contents."""
     for play in plan["plays"]:
@@ -793,6 +828,8 @@ def main(argv=None):
         if preview.stderr:
             print(preview.stderr, file=sys.stderr, end="")
         if preview.returncode:
+            for failure in preview_failures(preview.stdout):
+                print(failure, file=sys.stderr)
             raise UnsafePreview("Ansible preview failed; apply was not started")
         plan = json.loads(preview.stdout)
         snapshots, restarts = inspect_preview(plan, expected, handlers)

@@ -2,7 +2,7 @@ import json
 import os
 import sys
 import sysconfig
-from contextlib import redirect_stdout
+from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 from pathlib import Path
 import platform
@@ -605,6 +605,43 @@ class PreviewTests(unittest.TestCase):
             self.assertEqual(run.call_count, 1)
             self.assertIn("--check", run.call_args.args[0])
             self.assertIn("--diff", run.call_args.args[0])
+
+    def test_preview_failure_names_failed_items(self):
+        path, _ = self.safe_directory_plan()
+        failed = {
+            "plays": [{"tasks": [{
+                "task": {"name": "Create links"},
+                "hosts": {"127.0.0.1": {"failed": True, "results": [
+                    {"changed": True, "path": "/tmp/ok"},
+                    {"exception": "(traceback unavailable)",
+                     "path": "/tmp/existing\x1b[2J",
+                     "msg": "refusing to convert from file to symlink"},
+                ]}},
+            }]}],
+        }
+        errors = StringIO()
+        with patch(
+            "scripts.deploy.ansible_safe_run.subprocess.run",
+            return_value=subprocess.CompletedProcess([], 2, json.dumps(failed), ""),
+        ), redirect_stderr(errors):
+            with self.assertRaises(UnsafePreview):
+                main([str(path), "--check"])
+        self.assertEqual(
+            errors.getvalue(),
+            "Preview failed: Create links (/tmp/existing?[2J): "
+            "refusing to convert from file to symlink\n",
+        )
+
+    def test_unparseable_preview_failure_reports_nothing_extra(self):
+        path, _ = self.safe_directory_plan()
+        errors = StringIO()
+        with patch(
+            "scripts.deploy.ansible_safe_run.subprocess.run",
+            return_value=subprocess.CompletedProcess([], 2, "not json", ""),
+        ), redirect_stderr(errors):
+            with self.assertRaises(UnsafePreview):
+                main([str(path), "--check"])
+        self.assertEqual(errors.getvalue(), "")
 
     def test_implicit_fact_gathering_is_rejected_before_preview(self):
         path = self.root / "implicit-facts.yaml"
