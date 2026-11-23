@@ -660,6 +660,48 @@ def preview_restarts(names):
         print(f"Read-only restart preview: {name} (no signals sent)")
 
 
+def printable(value, limit=300):
+    text = "".join(c if c.isprintable() else "?" for c in str(value))
+    return text if len(text) <= limit else text[: limit - 1] + "…"
+
+
+def preview_failures(stdout):
+    """Name each failed or unreachable preview task and item path, since the
+    JSON callback otherwise hides why Ansible failed. Only file-module messages
+    are shown: they name paths, while other modules' can carry values."""
+    failures = []
+    try:
+        plays = json.loads(stdout)["plays"]
+    except (KeyError, TypeError, ValueError):
+        return failures
+    for play in plays if isinstance(plays, list) else []:
+        for entry in play.get("tasks", []) if isinstance(play, dict) else []:
+            try:
+                name = entry.get("task", {}).get("name", "unnamed task")
+                for result in entry.get("hosts", {}).values():
+                    if not (result.get("failed") or result.get("unreachable")):
+                        continue
+                    # The JSON callback can omit `failed` on a failed loop item
+                    # (seen with ansible.builtin.file), so accept either marker.
+                    items = [
+                        item for item in result.get("results", [])
+                        if item.get("failed") or "exception" in item
+                    ] or [result]
+                    for item in items:
+                        path = item.get("path") or item.get("dest")
+                        line = f"Preview failed: {name}"
+                        if path:
+                            line += f" ({path})"
+                        if result.get("unreachable"):
+                            line += ": host unreachable"
+                        elif result.get("action") == "ansible.builtin.file":
+                            line += f": {item.get('msg', 'no message')}"
+                        failures.append(printable(line))
+            except (AttributeError, TypeError):
+                continue
+    return failures
+
+
 def describe_changes(plan, expected, handlers):
     """Show reviewed targets without exposing Ansible diff values or file contents."""
     for play in plan["plays"]:
@@ -793,6 +835,8 @@ def main(argv=None):
         if preview.stderr:
             print(preview.stderr, file=sys.stderr, end="")
         if preview.returncode:
+            for failure in preview_failures(preview.stdout):
+                print(failure, file=sys.stderr)
             raise UnsafePreview("Ansible preview failed; apply was not started")
         plan = json.loads(preview.stdout)
         snapshots, restarts = inspect_preview(plan, expected, handlers)
