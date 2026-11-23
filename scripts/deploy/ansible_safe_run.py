@@ -681,7 +681,8 @@ def preview_failures(stdout):
                 for result in entry.get("hosts", {}).values():
                     if not (result.get("failed") or result.get("unreachable")):
                         continue
-                    # Loop items report failure with an exception, not a flag.
+                    # The JSON callback can omit `failed` on a failed loop item
+                    # (seen with ansible.builtin.file), so accept either marker.
                     items = [
                         item for item in result.get("results", [])
                         if item.get("failed") or "exception" in item

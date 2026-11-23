@@ -647,6 +647,21 @@ class PreviewTests(unittest.TestCase):
             ["Preview failed: Set key", "Preview failed: Reach host: host unreachable"],
         )
 
+    def test_preview_failure_reports_flagged_items_and_bare_results(self):
+        failed = {"plays": [{"tasks": [
+            {"task": {"name": "Links"}, "hosts": {"127.0.0.1": {
+                "action": "ansible.builtin.file", "failed": True, "results": [
+                    {"failed": True, "dest": "/tmp/a", "msg": "boom"},
+                    {"changed": False, "dest": "/tmp/b"},
+                ]}}},
+            {"task": {"name": "Dir"}, "hosts": {"127.0.0.1": {
+                "action": "ansible.builtin.file", "failed": True}}},
+        ]}]}
+        self.assertEqual(
+            preview_failures(json.dumps(failed)),
+            ["Preview failed: Links (/tmp/a): boom", "Preview failed: Dir: no message"],
+        )
+
     def test_unparseable_preview_failure_reports_nothing_extra(self):
         path, _ = self.safe_directory_plan()
         errors = StringIO()
