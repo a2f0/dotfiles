@@ -22,6 +22,7 @@ from scripts.deploy.ansible_safe_run import (
     fingerprint,
     inspect_preview,
     main,
+    preview_failures,
     preview_restarts,
     selected,
 )
@@ -611,7 +612,7 @@ class PreviewTests(unittest.TestCase):
         failed = {
             "plays": [{"tasks": [{
                 "task": {"name": "Create links"},
-                "hosts": {"127.0.0.1": {"failed": True, "results": [
+                "hosts": {"127.0.0.1": {"action": "ansible.builtin.file", "failed": True, "results": [
                     {"changed": True, "path": "/tmp/ok"},
                     {"exception": "(traceback unavailable)",
                      "path": "/tmp/existing\x1b[2J",
@@ -630,6 +631,20 @@ class PreviewTests(unittest.TestCase):
             errors.getvalue(),
             "Preview failed: Create links (/tmp/existing?[2J): "
             "refusing to convert from file to symlink\n",
+        )
+
+    def test_preview_failure_hides_other_module_messages(self):
+        failed = {"plays": [{"tasks": [
+            {"task": {"name": "Set key"}, "hosts": {"127.0.0.1": {
+                "action": "community.general.dconf", "failed": True,
+                "msg": "private-value"}}},
+            "malformed",
+            {"task": {"name": "Reach host"}, "hosts": {"127.0.0.1": {
+                "unreachable": True, "msg": "private-value"}}},
+        ]}]}
+        self.assertEqual(
+            preview_failures(json.dumps(failed)),
+            ["Preview failed: Set key", "Preview failed: Reach host: host unreachable"],
         )
 
     def test_unparseable_preview_failure_reports_nothing_extra(self):

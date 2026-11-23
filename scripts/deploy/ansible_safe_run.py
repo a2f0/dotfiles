@@ -666,16 +666,20 @@ def printable(value, limit=300):
 
 
 def preview_failures(stdout):
-    """Name each failed preview task, item path, and message, since the JSON
-    callback otherwise hides why Ansible failed."""
+    """Name each failed or unreachable preview task and item path, since the
+    JSON callback otherwise hides why Ansible failed. Only file-module messages
+    are shown: they name paths, while other modules' can carry values."""
+    failures = []
     try:
         plays = json.loads(stdout)["plays"]
-        failures = []
-        for play in plays:
-            for entry in play.get("tasks", []):
+    except (KeyError, TypeError, ValueError):
+        return failures
+    for play in plays if isinstance(plays, list) else []:
+        for entry in play.get("tasks", []) if isinstance(play, dict) else []:
+            try:
                 name = entry.get("task", {}).get("name", "unnamed task")
                 for result in entry.get("hosts", {}).values():
-                    if not result.get("failed"):
+                    if not (result.get("failed") or result.get("unreachable")):
                         continue
                     # Loop items report failure with an exception, not a flag.
                     items = [
@@ -684,15 +688,17 @@ def preview_failures(stdout):
                     ] or [result]
                     for item in items:
                         path = item.get("path") or item.get("dest")
-                        where = f" ({path})" if path else ""
-                        failures.append(
-                            printable(
-                                f"Preview failed: {name}{where}: {item.get('msg', 'no message')}"
-                            )
-                        )
-        return failures
-    except (AttributeError, KeyError, TypeError, ValueError):
-        return []
+                        line = f"Preview failed: {name}"
+                        if path:
+                            line += f" ({path})"
+                        if result.get("unreachable"):
+                            line += ": host unreachable"
+                        elif result.get("action") == "ansible.builtin.file":
+                            line += f": {item.get('msg', 'no message')}"
+                        failures.append(printable(line))
+            except (AttributeError, TypeError):
+                continue
+    return failures
 
 
 def describe_changes(plan, expected, handlers):
