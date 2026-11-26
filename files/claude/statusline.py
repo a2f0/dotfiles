@@ -19,9 +19,11 @@ import socket
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 MAX_LENGTH = 40
+GIT_SECONDS = 2
 FOLDER, SCRATCH, WORKTREE, BRANCH, CONFIG, MODEL, HOST = "📁", "🗑", "🌳", "🌿", "⚙", "🤖", "💻"
 
 
@@ -53,23 +55,26 @@ def clamp(text):
     return "…" + text[-(MAX_LENGTH - 1):]
 
 
-def git(cwd, *args):
-    """Return a Git query's output lines in `cwd`, or None when it fails."""
+def git(cwd, deadline, *args):
+    """Return a Git query's output lines in `cwd`, or None when it fails or the deadline passes."""
+    remaining = deadline - time.monotonic()
+    if remaining <= 0:
+        return None
     try:
         result = subprocess.run(
-            ["git", "-C", cwd, *args], capture_output=True, text=True, timeout=2,
+            ["git", "-C", cwd, *args], capture_output=True, text=True, timeout=remaining,
         )
     except (OSError, subprocess.SubprocessError):
         return None
     return result.stdout.splitlines() if result.returncode == 0 else None
 
 
-def checked_out(cwd):
+def checked_out(cwd, deadline):
     """Name the branch, even before its first commit, or `(commit)` when detached."""
-    branch = git(cwd, "symbolic-ref", "--quiet", "--short", "HEAD")
+    branch = git(cwd, deadline, "symbolic-ref", "--quiet", "--short", "HEAD")
     if branch:
         return branch[0]
-    commit = git(cwd, "rev-parse", "--short", "HEAD")
+    commit = git(cwd, deadline, "rev-parse", "--short", "HEAD")
     return f"({commit[0]})" if commit else None
 
 
@@ -89,14 +94,18 @@ def worktree_label(git_dir, common_dir, root, branch):
 
 
 def git_labels(cwd):
-    """Return the folder's worktree label and checked-out branch, each None when absent."""
+    """Return the folder's worktree label and checked-out branch, each None when absent.
+
+    The queries share one deadline, so a slow repository delays a redraw once.
+    """
+    deadline = time.monotonic() + GIT_SECONDS
     layout = git(
-        cwd, "rev-parse", "--absolute-git-dir", "--path-format=absolute",
+        cwd, deadline, "rev-parse", "--absolute-git-dir", "--path-format=absolute",
         "--git-common-dir", "--show-toplevel",
     )
     if not layout or len(layout) != 3:
         return None, None
-    branch = checked_out(cwd)
+    branch = checked_out(cwd, deadline)
     return worktree_label(*layout, branch), branch
 
 
