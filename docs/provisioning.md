@@ -141,8 +141,11 @@ other dotfiles without installing this profile.
 
 `files/claude/settings.json` manages the user settings file
 `~/.claude/settings.json`. Its status line runs `files/claude/statusline.py`,
-linked as `~/.claude/statusline.py`, which shows the working folder the way
-OMP's `path` segment does: a linked Git worktree shows `🌳 project`, adding
+linked as `~/.claude/statusline.py`. The row opens with the machine's hostname
+up to its first dot, as a shell's `\h` shows it, such as `💻 laptop` for
+`laptop.local`; a name over 40 characters keeps its end, and an empty one
+hides the segment. Next it shows the working folder the way OMP's `path`
+segment does: a linked Git worktree shows `🌳 project`, adding
 `/directory` when the directory is not named after the branch; temporary
 directories show `🗑` and their path inside the temporary root; the
 `~/Projects/`, `~/repos/`, and `/work/` prefixes are dropped; the home directory
