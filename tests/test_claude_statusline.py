@@ -26,7 +26,7 @@ def segment(icon, cwd, text):
 class HostTests(unittest.TestCase):
     def test_the_domain_is_dropped(self):
         for hostname, label in (
-            ("m2.local", "💻 m2"),
+            ("laptop.local", "💻 laptop"),
             ("build-01.example.com", "💻 build-01"),
             ("workstation", "💻 workstation"),
         ):
