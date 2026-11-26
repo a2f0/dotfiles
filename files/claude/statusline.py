@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Claude Code status line: the machine's short hostname, the working folder,
-the active model and its effort level, the Claude identity (any
+its Git branch, the active model and its effort level, the Claude identity (any
 `CLAUDE_CONFIG_DIR` and the session's signed-in email), and weekly cap
 utilization.
 
@@ -22,7 +22,7 @@ import tempfile
 from pathlib import Path
 
 MAX_LENGTH = 40
-FOLDER, SCRATCH, WORKTREE, CONFIG, MODEL, HOST = "📁", "🗑", "🌳", "⚙", "🤖", "💻"
+FOLDER, SCRATCH, WORKTREE, BRANCH, CONFIG, MODEL, HOST = "📁", "🗑", "🌳", "🌿", "⚙", "🤖", "💻"
 
 
 def relative_within(root, path):
@@ -53,23 +53,30 @@ def clamp(text):
     return "…" + text[-(MAX_LENGTH - 1):]
 
 
-def worktree_label(cwd):
-    """Name a linked worktree by its project, adding the directory when it is not the branch."""
+def git(cwd, *args):
+    """Return a Git query's output lines in `cwd`, or None when it fails."""
     try:
         result = subprocess.run(
-            [
-                "git", "-C", cwd, "rev-parse", "--absolute-git-dir",
-                "--path-format=absolute", "--git-common-dir", "--show-toplevel",
-                "--abbrev-ref", "HEAD",
-            ],
-            capture_output=True, text=True, timeout=2, check=True,
+            ["git", "-C", cwd, *args], capture_output=True, text=True, timeout=2,
         )
     except (OSError, subprocess.SubprocessError):
         return None
-    lines = result.stdout.splitlines()
-    if len(lines) != 4 or lines[0] == lines[1]:
+    return result.stdout.splitlines() if result.returncode == 0 else None
+
+
+def checked_out(cwd):
+    """Name the branch, even before its first commit, or `(commit)` when detached."""
+    branch = git(cwd, "symbolic-ref", "--quiet", "--short", "HEAD")
+    if branch:
+        return branch[0]
+    commit = git(cwd, "rev-parse", "--short", "HEAD")
+    return f"({commit[0]})" if commit else None
+
+
+def worktree_label(git_dir, common_dir, root, branch):
+    """Name a linked worktree by its project, adding the directory when it is not the branch."""
+    if git_dir == common_dir:
         return None
-    _, common_dir, root, branch = lines
     # A bare repository's worktrees share `name.git` itself as the project.
     primary = os.path.dirname(common_dir) if os.path.basename(common_dir) == ".git" else common_dir
     project = os.path.basename(primary)
@@ -79,6 +86,18 @@ def worktree_label(cwd):
         return None
     directory = os.path.basename(root)
     return project if branch == directory else f"{project}/{directory}"
+
+
+def git_labels(cwd):
+    """Return the folder's worktree label and checked-out branch, each None when absent."""
+    layout = git(
+        cwd, "rev-parse", "--absolute-git-dir", "--path-format=absolute",
+        "--git-common-dir", "--show-toplevel",
+    )
+    if not layout or len(layout) != 3:
+        return None, None
+    branch = checked_out(cwd)
+    return worktree_label(*layout, branch), branch
 
 
 def display_path(cwd, home, scratch):
@@ -108,6 +127,10 @@ def folder(cwd, home, scratch, worktree=None):
         text = abbreviate_home(text, home)
     text = printable(clamp(text))
     return f"{icon} \x1b]8;;{Path(cwd).as_uri()}\x07{text}\x1b]8;;\x07"
+
+
+def branch_label(branch):
+    return f"{BRANCH} {printable(clamp(branch))}" if branch else None
 
 
 def host_label(hostname):
@@ -269,7 +292,10 @@ def main():
         parts.append(host)
     home = os.path.expanduser("~")
     if cwd:
-        parts.append(folder(cwd, home, scratch_roots(home), worktree_label(cwd)))
+        worktree, branch = git_labels(cwd)
+        parts.append(folder(cwd, home, scratch_roots(home), worktree))
+        if branch:
+            parts.append(branch_label(branch))
     model = model_label(data)
     if model:
         parts.append(model)

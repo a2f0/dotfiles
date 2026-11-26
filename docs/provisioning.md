@@ -151,7 +151,11 @@ directories show `🗑` and their path inside the temporary root; the
 `~/Projects/`, `~/repos/`, and `/work/` prefixes are dropped; the home directory
 becomes `~`; and paths over 40 characters keep their end. The folder is a
 `file://` link where the terminal supports links. The next segment names the
-active model and the session's effort level, such as `🤖 Opus 5.5 · xhigh`.
+checked-out Git branch, such as `🌿 main`, even before its first commit; a
+detached checkout shows its short commit, such as `🌿 (3bd8603)`, and a folder
+outside a work tree shows no branch. A branch name over 40 characters keeps its
+end. The next segment names the active model and the session's effort level,
+such as `🤖 Opus 5.5 · xhigh`.
 Claude Code reports the effort only for models that support it, and it does not
 reflect a level a skill, a subagent, or `ultrathink` sets for one turn. The
 following segment names the Claude identity: a set, non-empty
