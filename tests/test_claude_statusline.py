@@ -1,4 +1,4 @@
-"""Claude Code status line host, folder, model, identity, and weekly cap regressions."""
+"""Claude Code status line host, folder, branch, model, identity, and weekly cap regressions."""
 
 from datetime import datetime, timedelta, timezone
 import importlib.util
@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 SCRIPT = Path(__file__).resolve().parents[1] / "files" / "claude" / "statusline.py"
 SPEC = importlib.util.spec_from_file_location("claude_statusline", SCRIPT)
@@ -44,6 +45,48 @@ class HostTests(unittest.TestCase):
 
     def test_control_characters_cannot_reach_the_terminal(self):
         self.assertEqual(statusline.host_label("x\x1b]0;owned\x07"), "💻 x?]0;owned?")
+
+
+class BranchTests(unittest.TestCase):
+    def test_the_branch_is_named(self):
+        self.assertEqual(statusline.branch_label("feat/topic"), "🌿 feat/topic")
+        self.assertEqual(statusline.branch_label("(3bd8603)"), "🌿 (3bd8603)")
+
+    def test_no_branch_hides_the_segment(self):
+        for branch in (None, ""):
+            with self.subTest(branch=branch):
+                self.assertIsNone(statusline.branch_label(branch))
+
+    def test_long_names_keep_their_end(self):
+        long = "feat/an-unusually-long-topic-name-for-a-branch"
+        self.assertEqual(statusline.branch_label(long), "🌿 …-unusually-long-topic-name-for-a-branch")
+
+    def test_control_characters_cannot_reach_the_terminal(self):
+        self.assertEqual(statusline.branch_label("x\x1b]0;owned\x07"), "🌿 x?]0;owned?")
+
+
+class GitDeadlineTests(unittest.TestCase):
+    def test_queries_share_one_deadline(self):
+        timeouts = []
+
+        def run(args, **options):
+            timeouts.append(options["timeout"])
+            clock[0] += 1
+            if args[3] == "symbolic-ref":
+                return subprocess.CompletedProcess(args, 1, "", "")
+            return subprocess.CompletedProcess(args, 0, "/r/.git\n/r/.git\n/r\n", "")
+
+        clock = [100.0]
+        with mock.patch.object(statusline.time, "monotonic", lambda: clock[0]), \
+                mock.patch.object(statusline.subprocess, "run", run):
+            # The detached lookup's time has run out after two slow queries.
+            self.assertEqual(statusline.git_labels("/r"), (None, None))
+        self.assertEqual(timeouts, [2, 1])
+
+    def test_a_passed_deadline_starts_no_query(self):
+        with mock.patch.object(statusline.subprocess, "run") as run:
+            self.assertIsNone(statusline.git("/r", statusline.time.monotonic() - 1, "status"))
+        run.assert_not_called()
 
 
 class FolderTests(unittest.TestCase):
@@ -183,6 +226,8 @@ class WorktreeTests(unittest.TestCase):
         }
         for name in ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE"):
             self.env.pop(name, None)
+        # Discovery stops below the temporary root, whatever repository holds it.
+        self.env["GIT_CEILING_DIRECTORIES"] = str(self.root)
         self.env.pop("CLAUDE_CODE_ACCOUNT_UUID", None)
         self.env.pop("CLAUDE_CONFIG_DIR", None)
         self.project = self.root / "project"
@@ -300,27 +345,65 @@ class WorktreeTests(unittest.TestCase):
         self.env["HOME"] = str(self.root)
         self.assertTrue(self.render(self.project).endswith(" | ⚙ someone@example.com\n"))
 
-    def test_the_model_follows_the_folder(self):
+    def test_the_model_follows_the_branch(self):
         self.env["CLAUDE_CONFIG_DIR"] = str(self.root)
         plain = self.render(self.project)
-        folder, _, identity = plain.partition(" | ")
+        folder, branch, identity = plain.split(" | ")
+        self.assertEqual(branch, "🌿 main")
         data = {"model": {"id": "claude-opus-5-5", "display_name": "Opus 5.5"}, "effort": {"level": "xhigh"}}
-        self.assertEqual(self.render(self.project, **data), f"{folder} | 🤖 Opus 5.5 · xhigh | {identity}")
+        self.assertEqual(self.render(self.project, **data), f"{folder} | {branch} | 🤖 Opus 5.5 · xhigh | {identity}")
+
+    def test_the_branch_follows_the_folder(self):
+        def folder(path):
+            home = os.path.expanduser("~")
+            return statusline.folder(str(path), home, statusline.scratch_roots(home))
+
+        self.assertEqual(self.render(self.project), f"{folder(self.project)} | 🌿 main\n")
+        # A branch without commits is still named.
+        self.git("-C", str(self.project), "switch", "--quiet", "--orphan", "fresh")
+        self.assertEqual(self.render(self.project), f"{folder(self.project)} | 🌿 fresh\n")
+        # A detached checkout names its commit instead.
+        self.git("-C", str(self.project), "switch", "--quiet", "--detach", "main")
+        commit = subprocess.run(
+            ["git", "-C", str(self.project), "rev-parse", "--short", "HEAD"],
+            env=self.env, check=True, capture_output=True, text=True, timeout=30,
+        ).stdout.strip()
+        self.assertEqual(self.render(self.project), f"{folder(self.project)} | 🌿 ({commit})\n")
+        # Outside a work tree, including inside the Git directory, no branch shows.
+        outside = self.root / "outside"
+        outside.mkdir()
+        self.assertEqual(self.render(outside), folder(outside) + "\n")
+        git_dir = self.project / ".git"
+        self.assertEqual(self.render(git_dir), folder(git_dir) + "\n")
 
     def test_worktrees_show_the_project_and_any_unbranched_directory(self):
         named = self.worktree(self.project, "feature", "feature")
         (named / "src").mkdir()
         other = self.worktree(self.project, "checkout-2", "topic")
-        self.assertEqual(self.render(named / "src"), segment("🌳", named / "src", "project") + "\n")
-        self.assertEqual(self.render(other), segment("🌳", other, "project/checkout-2") + "\n")
+        self.assertEqual(self.render(named / "src"), segment("🌳", named / "src", "project") + " | 🌿 feature\n")
+        self.assertEqual(self.render(other), segment("🌳", other, "project/checkout-2") + " | 🌿 topic\n")
         # The primary checkout is a folder, here inside the temporary scratch root.
         self.assertTrue(self.render(self.project).startswith("🗑 "))
+
+    def test_worktrees_without_a_branch_commit_or_with_a_detached_head(self):
+        fresh = self.worktree(self.project, "fresh", "start")
+        self.git("-C", str(fresh), "switch", "--quiet", "--orphan", "fresh")
+        self.assertEqual(self.render(fresh), segment("🌳", fresh, "project") + " | 🌿 fresh\n")
+        detached = self.root / "detached"
+        self.git("-C", str(self.project), "worktree", "add", "--quiet", "--detach", str(detached))
+        commit = subprocess.run(
+            ["git", "-C", str(detached), "rev-parse", "--short", "HEAD"],
+            env=self.env, check=True, capture_output=True, text=True, timeout=30,
+        ).stdout.strip()
+        self.assertEqual(
+            self.render(detached), segment("🌳", detached, "project/detached") + f" | 🌿 ({commit})\n",
+        )
 
     def test_bare_repository_worktrees_drop_the_git_suffix(self):
         bare = self.root / "shared.git"
         self.git("clone", "--quiet", "--bare", str(self.project), str(bare))
         checkout = self.worktree(bare, "bare-checkout", "topic")
-        self.assertEqual(self.render(checkout), segment("🌳", checkout, "shared/bare-checkout") + "\n")
+        self.assertEqual(self.render(checkout), segment("🌳", checkout, "shared/bare-checkout") + " | 🌿 topic\n")
 
 
 if __name__ == "__main__":
