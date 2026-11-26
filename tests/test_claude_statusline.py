@@ -1,10 +1,11 @@
-"""Claude Code status line folder, model, identity, and weekly cap regressions."""
+"""Claude Code status line host, folder, model, identity, and weekly cap regressions."""
 
 from datetime import datetime, timedelta, timezone
 import importlib.util
 import json
 import os
 from pathlib import Path
+import socket
 import subprocess
 import sys
 import tempfile
@@ -20,6 +21,29 @@ HOME = "/u/me"
 
 def segment(icon, cwd, text):
     return f"{icon} \x1b]8;;file://{cwd}\x07{text}\x1b]8;;\x07"
+
+
+class HostTests(unittest.TestCase):
+    def test_the_domain_is_dropped(self):
+        for hostname, label in (
+            ("m2.local", "💻 m2"),
+            ("build-01.example.com", "💻 build-01"),
+            ("workstation", "💻 workstation"),
+        ):
+            with self.subTest(hostname=hostname):
+                self.assertEqual(statusline.host_label(hostname), label)
+
+    def test_an_empty_name_hides_the_segment(self):
+        for hostname in ("", ".local"):
+            with self.subTest(hostname=hostname):
+                self.assertIsNone(statusline.host_label(hostname))
+
+    def test_long_names_keep_their_end(self):
+        long = "an-unusually-long-hostname-for-a-build-machine.example.com"
+        self.assertEqual(statusline.host_label(long), "💻 …ually-long-hostname-for-a-build-machine")
+
+    def test_control_characters_cannot_reach_the_terminal(self):
+        self.assertEqual(statusline.host_label("x\x1b]0;owned\x07"), "💻 x?]0;owned?")
 
 
 class FolderTests(unittest.TestCase):
@@ -176,6 +200,7 @@ class WorktreeTests(unittest.TestCase):
         return path
 
     def render(self, cwd, **data):
+        """Render the row, check that this machine's host leads it, and return the rest."""
         result = subprocess.run(
             [sys.executable, str(SCRIPT)],
             input=json.dumps({
@@ -186,7 +211,10 @@ class WorktreeTests(unittest.TestCase):
             }),
             env=self.env, check=True, capture_output=True, text=True, timeout=30,
         )
-        return result.stdout
+        host = statusline.host_label(socket.gethostname())
+        prefix = f"{host} | " if host else ""
+        self.assertTrue(result.stdout.startswith(prefix), result.stdout)
+        return result.stdout[len(prefix):]
 
     def test_weekly_caps_combine_live_and_account_scoped_cache(self):
         now = datetime.now(timezone.utc)

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Claude Code status line: the working folder, the active model and its
-effort level, the Claude identity (any `CLAUDE_CONFIG_DIR` and the session's
-signed-in email), and weekly cap utilization.
+"""Claude Code status line: the machine's short hostname, the working folder,
+the active model and its effort level, the Claude identity (any
+`CLAUDE_CONFIG_DIR` and the session's signed-in email), and weekly cap
+utilization.
 
 Claude Code pipes session JSON to stdin and shows what this prints. Mirrors
 OMP's default `path` segment: a linked Git worktree shows its project name,
@@ -14,13 +15,14 @@ import json
 from datetime import datetime, timezone
 import os
 import re
+import socket
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 
 MAX_LENGTH = 40
-FOLDER, SCRATCH, WORKTREE, CONFIG, MODEL = "📁", "🗑", "🌳", "⚙", "🤖"
+FOLDER, SCRATCH, WORKTREE, CONFIG, MODEL, HOST = "📁", "🗑", "🌳", "⚙", "🤖", "💻"
 
 
 def relative_within(root, path):
@@ -106,6 +108,12 @@ def folder(cwd, home, scratch, worktree=None):
         text = abbreviate_home(text, home)
     text = printable(clamp(text))
     return f"{icon} \x1b]8;;{Path(cwd).as_uri()}\x07{text}\x1b]8;;\x07"
+
+
+def host_label(hostname):
+    """Name the machine by its hostname up to the first dot, as a shell's `\\h` does."""
+    name = hostname.partition(".")[0]
+    return f"{HOST} {printable(clamp(name))}" if name else None
 
 
 def text_field(data, section, key):
@@ -256,6 +264,9 @@ def main():
     data = json.load(sys.stdin)
     cwd = (data.get("workspace") or {}).get("current_dir") or data.get("cwd")
     parts = []
+    host = host_label(socket.gethostname())
+    if host:
+        parts.append(host)
     home = os.path.expanduser("~")
     if cwd:
         parts.append(folder(cwd, home, scratch_roots(home), worktree_label(cwd)))
