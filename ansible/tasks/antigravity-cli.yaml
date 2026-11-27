@@ -1,0 +1,21 @@
+---
+# Only the status-line script is linked; settings.json (which agy rewrites in
+# place and populates with local trustedWorkspaces), auth tokens, sessions, and
+# caches stay local in ~/.gemini/antigravity-cli.
+- name: Make sure the Antigravity CLI directories exist
+  ansible.builtin.file:
+    path: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/{{ item }}"
+    state: directory
+    owner: "{{ ansible_facts['user_id'] }}"
+    mode: "0700"
+  loop:
+    - '.gemini'
+    - '.gemini/antigravity-cli'
+
+- name: Create the Antigravity CLI status-line symlink
+  ansible.builtin.file:
+    src: "{{ dotfiles_dir }}/files/antigravity-cli/statusline.py"
+    dest: "{{ dotfiles_home | default(ansible_facts['user_dir']) }}/.gemini/antigravity-cli/statusline.py"
+    state: link
+    force: false
+    follow: false

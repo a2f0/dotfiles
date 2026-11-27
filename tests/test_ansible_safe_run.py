@@ -1553,6 +1553,29 @@ class PreviewTests(unittest.TestCase):
             {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}, before,
         )
 
+        # Antigravity CLI links only its status-line script; local settings and auth stay untouched.
+        agy = home / ".gemini/antigravity-cli"
+        agy.mkdir(parents=True)
+        (agy / "settings.json").write_text('{"trustedWorkspaces": ["/local/project"]}\n')
+        (agy / "antigravity-oauth-token").write_bytes(b"private credential fixture")
+        before = {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}
+        result = self.launcher_preview(checkout, home, tags="agy")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn(f"Would create link: {agy / 'statusline.py'}", result.stdout)
+        self.assertEqual(
+            {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}, before,
+        )
+
+        # Never replace an existing Antigravity CLI status-line script.
+        (agy / "statusline.py").write_text("#!/usr/bin/env python3\n")
+        before = {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}
+        result = self.launcher_preview(checkout, home, tags="agy")
+        self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("Apply blocked:", result.stderr)
+        self.assertEqual(
+            {entry.relative_to(home): fingerprint(entry) for entry in home.rglob("*")}, before,
+        )
+
     def test_arch_launcher_preserves_conflicting_files_and_symlinks(self):
         if self.host_release().get("ID") != "arch":
             self.skipTest("Arch launcher conflicts require actual Arch Linux")
