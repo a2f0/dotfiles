@@ -233,6 +233,52 @@ The owner has opted to share the dangerous-mode prompt acknowledgement across
 these personal machines. Entering bypass mode still requires a separate choice. Review other prompt acknowledgements that Claude Code
 saves here before sharing them.
 
+## Antigravity CLI configuration
+
+`files/antigravity-cli/statusline.py` is linked as
+`~/.gemini/antigravity-cli/statusline.py`. It mirrors the Claude Code status
+line for Antigravity CLI (`agy`): the machine's short hostname up to the first
+dot, the working folder (as a `file://` link, matching OMP's worktree, scratch,
+and project-root path rules), the checked-out Git branch or detached short
+commit, the active model and effort level (omitting a duplicate effort suffix
+when the model's display name already ends with it), the signed-in account
+email from the CLI payload, context window usage (`ctx <N>%` once the window
+size and usage are reported), and active quota buckets with a remaining
+fraction as percentage used. Segments over 40 characters keep their end, and
+control characters are stripped. The script needs Python 3.9 or newer as
+`python3`, and `git`.
+
+Install Antigravity CLI separately, provision the status-line script, and
+enable it in `~/.gemini/antigravity-cli/settings.json`:
+
+    ./runAnsible.sh --tags agy
+
+Inside `agy`, run `/statusline ~/.gemini/antigravity-cli/statusline.py` or add
+a `statusLine` block to `~/.gemini/antigravity-cli/settings.json` (set
+`"stack_with_default": true` to keep the built-in status line above it):
+
+    {
+      "statusLine": {
+        "type": "command",
+        "command": "~/.gemini/antigravity-cli/statusline.py",
+        "stack_with_default": true
+      }
+    }
+
+The normal `files` tag (and `--tags antigravity-cli` or `--tags agy`) includes
+these tasks on macOS, Ubuntu/Linux Mint, and files-only Arch. Only the
+status-line script is linked; `~/.gemini/antigravity-cli/settings.json` stays
+local because `agy` stores machine-specific `trustedWorkspaces` there and
+replaces a symlinked `settings.json` with a regular file when it saves or
+normalizes settings. Authentication (`antigravity-oauth-token`), sessions,
+conversations, databases, logs, and caches also remain local and are never
+tracked.
+
+An existing `~/.gemini/antigravity-cli/statusline.py` blocks installation
+rather than being overwritten. Move it to a private backup outside the checkout
+before applying, or use `./runAnsible.sh --skip-tags agy` to provision other
+dotfiles first.
+
 ## Ansible preview guard
 
 `runAnsible.sh` invokes `scripts/deploy/ansible_safe_run.py` to audit the selected playbook and its static imports before

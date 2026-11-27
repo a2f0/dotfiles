@@ -74,3 +74,9 @@
   ansible.builtin.import_tasks: claude.yaml
   tags:
     - claude
+
+- name: Import Antigravity CLI configuration tasks
+  ansible.builtin.import_tasks: antigravity-cli.yaml
+  tags:
+    - antigravity-cli
+    - agy
