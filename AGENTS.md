@@ -111,11 +111,11 @@ name the commit that addresses it, and resolve only fully addressed findings.
 After upgrading `@a2f0/agent-tool` or changing `permissions.executables` in
 `agent-tool.json`, run `bun run agents:sync` and commit the skills with
 `.agent-tool-skills.json` and the generated `.claude/settings.json`,
-`.codex/rules/agent-tool.rules`, `.gemini/policies/agent-tool.toml`, and
-`.agent-tool-permissions.json`. Do not edit the managed skills in
-`.agents/skills` or `.claude/skills`, or the generated permission files.
-Classify an installed CLI in `permissions.executables` only when this guidance
-tells agents to run it through `bun x`.
+`.codex/rules/agent-tool.rules`, and `.agent-tool-permissions.json`. Do not
+edit the managed skills in `.agents/skills` or `.claude/skills`, or the
+generated permission files. Classify an installed CLI in
+`permissions.executables` only when this guidance tells agents to run it
+through `bun x`.
 
 Use the managed `update-dependencies` skill for dependency upgrades. Keep all
 runtime pins synchronized and check controller and target Python against the
